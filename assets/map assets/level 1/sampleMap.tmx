@@ -4,6 +4,7 @@
  <tileset firstgid="369" source="TileA5_PHC_Interior-Hospital.tsx"/>
  <tileset firstgid="497" source="TileB_PHC_Interior-Hospital.tsx"/>
  <tileset firstgid="753" source="Elevator Doors.tsx"/>
+ <tileset firstgid="825" source="Hospital Floor.tsx"/>
  <layer name="floor" width="45" height="45">
   <data encoding="csv">
 377,377,377,377,377,377,377,377,377,377,377,377,377,377,377,377,377,377,377,377,377,377,377,377,377,377,377,377,377,377,377,377,377,377,377,377,377,377,377,377,377,377,377,377,377,
