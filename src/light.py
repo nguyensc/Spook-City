@@ -11,7 +11,7 @@ class Light(Character):
         self.y = target.y
         self.scale = int(256 / 64);
 
-        self.image = pygame.image.load("../assets/light assets/Radial4.png")
+        self.image = pygame.image.load("../assets/light assets/Radial4.png").convert_alpha()
         self.image = pygame.transform.scale(self.image, (256,256))
         
     
@@ -20,5 +20,5 @@ class Light(Character):
 
   
     def update(self, time):
-        self.x = (self.target.rect.x - self.scale) - 120; self.y = self.target.rect.y - 128;
+        self.x = (self.target.rect.x - self.scale) - 120; self.y = self.target.rect.y - 120;
         

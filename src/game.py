@@ -7,6 +7,7 @@ import league
 from player import Player
 from overlay import Overlay
 from light import Light
+from flashlight import Flashlight
 
 """This file is garbage. It was a hastily coded mockup
 to demonstrate how to use the engine.  We will be creating
@@ -30,6 +31,7 @@ def main():
     e.drawables.add(b.passable.sprites()) 
     p = Player(1, 400, 300)
     l = Light(200, 500, 1, p)
+    f = Flashlight(200, 500, 1, p)
     q = Player(2, 300, 400)
     o = Overlay(p)
     p.world_size = world_size
@@ -38,10 +40,12 @@ def main():
     e.objects.append(p)
     e.objects.append(q)
     e.objects.append(l)
+    e.objects.append(f)
     e.drawables.add(p)
     e.drawables.add(q)
     e.drawables.add(o)
     e.drawables.add(l)
+    e.drawables.add(f)
     c = league.LessDumbCamera(720, 720, p, e.drawables, world_size)
     e.objects.append(c)
     e.objects.append(o)
