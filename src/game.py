@@ -5,7 +5,8 @@ import sys
 sys.path.append('..')
 import league
 from player import Player
-from overlay import Overlay 
+from overlay import Overlay
+from light import Light
 
 """This file is garbage. It was a hastily coded mockup
 to demonstrate how to use the engine.  We will be creating
@@ -21,33 +22,27 @@ def main():
     floor = league.Spritesheet('../assets/map assets/sprite sheets/Hospital Tiles/TileA5_PHC_Interior-Hospital.png', 16, 8)
     walls = league.Spritesheet('../assets/map assets/sprite sheets/Hospital Tiles/TileA4_PHC_Interior-Hospital.png', 16, 23)
     floorLayer = league.Tilemap('../assets/map assets/level 1/floors.lvl', floor, layer = 1)
-    wallLayer = league.Tilemap('../assets/map assets/level 1/walls.lvl', walls, layer = 2)
-    b = league.Tilemap('../assets/map assets/level 1/background.lvl', floor, layer = 0)
+    wallLayer = league.Tilemap('../assets/map assets/level 1/walls.lvl', walls, layer = 1)
+    b = league.Tilemap('../assets/map assets/level 1/background.lvl', floor, layer = 1)
     world_size = (floorLayer.wide*league.Settings.tile_size, floorLayer.high *league.Settings.tile_size)
     e.drawables.add(floorLayer.passable.sprites())
     e.drawables.add(wallLayer.passable.sprites())
     e.drawables.add(b.passable.sprites()) 
-    p = Player(2, 400, 300)
-    s = Player(2, 400, 300)
+    p = Player(1, 400, 300)
+    l = Light(200, 500, 1, p)
+    q = Player(2, 300, 400)
     o = Overlay(p)
-    p.blocks.add(floorLayer.impassable)
-    s.blocks.add(wallLayer.impassable)
     p.world_size = world_size
     p.rect = p.image.get_rect()
-    s.world_size = world_size
-    s.rect = s.image.get_rect()
-    q = Player(10, 100, 100)
     q.image = p.image
     e.objects.append(p)
-    e.objects.append(s)
     e.objects.append(q)
+    e.objects.append(l)
     e.drawables.add(p)
-    e.drawables.add(s)
     e.drawables.add(q)
     e.drawables.add(o)
-    c = league.LessDumbCamera(800, 600, p, e.drawables, world_size)
-    #c = league.DumbCamera(800, 600, p, e.drawables, world_size)
-    
+    e.drawables.add(l)
+    c = league.LessDumbCamera(720, 720, p, e.drawables, world_size)
     e.objects.append(c)
     e.objects.append(o)
 

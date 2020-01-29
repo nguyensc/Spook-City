@@ -1,6 +1,7 @@
 from league import *
 import pygame
 
+
 class Player(Character):
     """This is a sample class for a player object.  A player
     is a character, is a drawable, and an updateable object.
@@ -22,7 +23,7 @@ class Player(Character):
         # The image to use.  This will change frequently
         # in an animated Player class.
         self.image = pygame.image.load('../assets/character assets/zombie.png').convert_alpha()
-        self.image = pygame.transform.scale(self.image, (64, 64))
+        self.image = pygame.transform.scale(self.image, (32, 32))
         self.rect = self.image.get_rect()
         # How big the world is, so we can check for boundries
         self.world_size = (Settings.width, Settings.height)
@@ -119,3 +120,8 @@ class Player(Character):
         if now - self.last_hit > 1000:
             self.health = self.health - 10
             self.last_hit = now
+
+    def getX(self):
+        return self.x   
+    def getY(self):
+        return self.y
