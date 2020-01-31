@@ -30,7 +30,7 @@ class Player(Character):
         # What sprites am I not allowd to cross?
         self.blocks = pygame.sprite.Group()
         # Which collision detection function?
-        self.collide_function = pygame.sprite.collide_circle
+        self.collide_function = pygame.sprite.collide_rect
         self.collisions = []
         # For collision detection, we need to compare our sprite
         # with collideable sprites.  However, we have to remap
