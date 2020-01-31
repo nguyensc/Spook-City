@@ -23,8 +23,8 @@ def main() :
     e.drawables.add(floorLayer.passable.sprites())
     e.drawables.add(wallLayer.passable.sprites())
     e.drawables.add(b.passable.sprites()) 
-    p = Player(2, 400, 300)
-    l = Light(200, 500, 1, p)
+    p = Player(1, 400, 300)
+    l = Light(1, 0, 0, p)
     f = Flashlight(200, 500, 2, p)
     q = Player(2, 300, 400)
     o = Overlay(p)
@@ -44,7 +44,7 @@ def main() :
     
     e.light_source = l
 
-    e.collisions[p] = (q, p.ouch) 
+    e.collisions[p] = (q, p.ouch)
     pygame.time.set_timer(pygame.USEREVENT + 1, 1000 // league.Settings.gameTimeFactor)
     e.key_events[pygame.K_a] = p.move_left
     e.key_events[pygame.K_d] = p.move_right

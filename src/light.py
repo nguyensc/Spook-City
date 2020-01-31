@@ -3,8 +3,8 @@ import pygame
 
 
 class Light(DUGameObject):
-    def __init__(self, x=0, y=0, z=0, target=None):
-        super().__init__(x, y, z)
+    def __init__(self, z=0,x=0,y=0, target=None):
+        super().__init__(z,x,y)
         self.delta = 512
         self.target = target
         self.x = target.x
@@ -12,8 +12,8 @@ class Light(DUGameObject):
         self.scale = int(256 / 64);
 
         self.image = pygame.image.load("../assets/light assets/Radial4.png").convert_alpha()
-        self.image.fill((255, 255, 255, 255),None, pygame.BLEND_RGBA_MULT)
-        self.image = pygame.transform.scale(self.image, (256,256))
+        self.image.fill((255, 255, 255, 200),None, pygame.BLEND_RGBA_MULT)
+        self.image = pygame.transform.scale(self.image, (512,512))
         
         
     
@@ -22,5 +22,6 @@ class Light(DUGameObject):
 
   
     def update(self, time):
-        self.x = (self.target.rect.x - self.scale) - 120; self.y = self.target.rect.y - 120;
+        self.x = (self.target.rect.x - self.scale) - 230
+        self.y = self.target.rect.y - 230
         
