@@ -26,7 +26,7 @@ class Player(Character):
         
         # The image to use.  This will change frequently
         # in an animated Player class.
-        self.image = pygame.image.load('./assets/zombie.png').convert_alpha()
+        self.image = pygame.image.load('../assets/character assets/zombie.png').convert_alpha()
         self.image = pygame.transform.scale(self.image, (64, 64))
         self.rect = self.image.get_rect()
         

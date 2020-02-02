@@ -21,7 +21,7 @@ class Player(Character):
         self.y = y
         # The image to use.  This will change frequently
         # in an animated Player class.
-        self.image = pygame.image.load('./assets/zombie.png').convert_alpha()
+        self.image = pygame.image.load('../assets/character assets/zombie.png').convert_alpha()
         self.image = pygame.transform.scale(self.image, (64, 64))
         self.rect = self.image.get_rect()
         # How big the world is, so we can check for boundries
@@ -43,6 +43,8 @@ class Player(Character):
         # Overlay
         self.font = pygame.font.Font('freesansbold.ttf',32)
         self.overlay = self.font.render(str(self.health) + "        4 lives", True, (0,0,0))
+        self.inventory =  pygame.image.load('../assets/overlay assets/Hearts/basic/heart.png').convert_alpha()
+        self.items = []
 
     def move_left(self, time):
         amount = self.delta * time
@@ -119,3 +121,6 @@ class Player(Character):
         if now - self.last_hit > 1000:
             self.health = self.health - 10
             self.last_hit = now
+    
+    def getCoords(self):
+        return [self.x, self.y]
