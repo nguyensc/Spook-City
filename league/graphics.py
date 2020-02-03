@@ -7,6 +7,7 @@ import math
 import os
 os.environ['PYGAME_HIDE_SUPPORT_PROMPT'] = "hide"
 import pygame
+import league
 
 class Camera(UGameObject):
     def __init__(self, width, height, center_on, drawables, world_size):
@@ -18,7 +19,7 @@ class Camera(UGameObject):
         self.y = self.center_on.y
         self.world_size = world_size
 
-    def update(deltaTime):
+    def update(self, deltaTime):
         pass
 
 class DumbCamera(Camera):
@@ -37,7 +38,7 @@ class LessDumbCamera(Camera):
         if self.center_on.x - self.width // 2 > 0 and self.center_on.x + self.width // 2 < self.world_size[0] - Settings.tile_size:
             self.x = self.center_on.x
         if self.center_on.y - self.height // 2 > 0 and self.center_on.y + self.height // 2 < self.world_size[1] - Settings.tile_size:
-            self.y = self.center_on.y
+            self.y = self.center_on.yls
         offset_x = - (self.x - (self.width // 2))
         offset_y = - (self.y - (self.height // 2))
         #print(str(offset_x) + ", " + str(offset_y))
@@ -89,6 +90,9 @@ class Tilemap:
         """This function begins the process of (attempting) to
         parse a level file.  The structure of the file is described above.
         """
+        #default image for replacing tiles with blank images
+        defaultImg = league.Spritesheet('../assets/map assets/sprite sheets/Hospital Tiles/TileA5_PHC_Interior-Hospital.png', 16, 1)
+        
         with open(self.path, 'r') as f:
             reader = csv.reader(f)
             contents = list(reader)
@@ -100,15 +104,26 @@ class Tilemap:
         # multidimensional list "world".
         self.world = contents[2:]
         a = 0
+
+        skipVal = 555
+
         for i in self.world:
             b = 0
             for j in i:
                 x = b * self.spritesheet.tile_size
                 y = a * self.spritesheet.tile_size
                 num = int(j)
-                base_sprite = self.spritesheet.sprites[abs(num)]
+                    
+                if (num == skipVal):
+                    num = 0
+                    base_sprite = defaultImg.sprites[25]
+
+                else:
+                    base_sprite = self.spritesheet.sprites[abs(num)]
+                
                 sprite = Drawable(self.layer)
                 sprite.image = base_sprite.image
+
                 # Set rectangle coords (using top-left coords here)
                 rect = sprite.image.get_rect() 
                 rect.x = x

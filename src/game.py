@@ -7,6 +7,7 @@ import league
 from player import Player
 from overlay import Overlay 
 
+from mapRenderer import MapRenderer
 """This file is garbage. It was a hastily coded mockup
 to demonstrate how to use the engine.  We will be creating
 a Game class that organizes this code better (and is
@@ -18,31 +19,15 @@ reusable).
 def main():
     e = league.Engine("Survive")
     e.init_pygame()
-    floor = league.Spritesheet('../assets/map assets/sprite sheets/Hospital Tiles/TileA5_PHC_Interior-Hospital.png', 16, 8)
-    walls = league.Spritesheet('../assets/map assets/sprite sheets/Hospital Tiles/TileA4_PHC_Interior-Hospital.png', 16, 23)
-    floorLayer = league.Tilemap('../assets/map assets/level 1/floors.lvl', floor, layer = 1)
-    wallLayer = league.Tilemap('../assets/map assets/level 1/walls.lvl', walls, layer = 2)
-    b = league.Tilemap('../assets/map assets/level 1/background.lvl', floor, layer = 0)
-    world_size = (floorLayer.wide*league.Settings.tile_size, floorLayer.high *league.Settings.tile_size)
-    e.drawables.add(floorLayer.passable.sprites())
-    e.drawables.add(wallLayer.passable.sprites())
-    e.drawables.add(b.passable.sprites()) 
     p = Player(2, 400, 300)
-    s = Player(2, 400, 300)
+    renderer = MapRenderer("first floor", e, p)
+    renderer.renderMap()
     o = Overlay(p)
-    p.blocks.add(floorLayer.impassable)
-    s.blocks.add(wallLayer.impassable)
-    p.world_size = world_size
-    p.rect = p.image.get_rect()
-    s.world_size = world_size
-    s.rect = s.image.get_rect()
-    q = Player(10, 100, 100)
+     q = Player(10, 100, 100)
     q.image = p.image
     e.objects.append(p)
-    e.objects.append(s)
     e.objects.append(q)
     e.drawables.add(p)
-    e.drawables.add(s)
     e.drawables.add(q)
     e.drawables.add(o)
     c = league.LessDumbCamera(800, 600, p, e.drawables, world_size)
