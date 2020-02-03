@@ -14,21 +14,14 @@ def main() :
     e.init_pygame()
     timer = pygame.time.set_timer(pygame.USEREVENT + 1, 1000 // league.Settings.gameTimeFactor)
     count = 0
-    floor = league.Spritesheet('../assets/map assets/sprite sheets/Hospital Tiles/TileA5_PHC_Interior-Hospital.png', 16, 8)
-    walls = league.Spritesheet('../assets/map assets/sprite sheets/Hospital Tiles/TileA4_PHC_Interior-Hospital.png', 16, 23)
-    floorLayer = league.Tilemap('../assets/map assets/level 1/floors.lvl', floor, layer = 1)
-    wallLayer = league.Tilemap('../assets/map assets/level 1/walls.lvl', walls, layer = 1)
-    world_size = (floorLayer.wide*league.Settings.tile_size, floorLayer.high *league.Settings.tile_size)
-
-    e.drawables.add(floorLayer.passable.sprites())
-    e.drawables.add(wallLayer.passable.sprites())
     p = Player(1, 400, 300)
-    generator = MapRenderer("level 1", e, p)
-    l = Light(1, 0, 0, p)
+    map = MapRenderer("first floor", e)
+    world_size = map.renderMap()
+    p.world_size = world_size
+    l = Light(20, 0, 0, p)
     f = Flashlight(200, 500, 2, p)
     q = Player(2, 300, 400)
     o = Overlay(p)
-    p.world_size = world_size
     p.rect = p.image.get_rect()
     q.image = p.image
     e.objects.append(p)
