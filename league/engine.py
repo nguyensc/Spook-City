@@ -5,6 +5,7 @@ os.environ['PYGAME_HIDE_SUPPORT_PROMPT'] = "hide"
 import pygame
 from .settings import *
 
+
 class Engine:
     """Engine is the definition of our game engine.  We want it to
     be as game agnostic as possible, and will try to emulate code
@@ -39,6 +40,7 @@ class Engine:
         self.statistics_font = None
         self.collisions = {}
         self.overlay = None
+        self.light_source = None
 
     def init_pygame(self):
         """This function sets up the state of the pygame system,
@@ -86,8 +88,12 @@ class Engine:
 
             # Generate outputs
             #d.update()
-            self.drawables.draw(self.screen)
+            dark = pygame.Surface((720, 720))
+            dark.fill(pygame.color.Color('Grey'))
+            
 
+
+            self.drawables.draw(self.screen)
             # Show statistics?
             if self.visible_statistics:
                 self.show_statistics()
@@ -95,6 +101,8 @@ class Engine:
             # Show overlay?
             if self.overlay:
                 self.show_overlay()
+            dark.blit(self.light_source.image, (self.objects[0].rect.x, self.objects[0].rect.y))
+            self.screen.blit(dark, (0, 0), special_flags=pygame.BLEND_RGBA_SUB)
 
             # Could keep track of rectangles and update here, but eh.
             pygame.display.flip()

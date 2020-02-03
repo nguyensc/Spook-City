@@ -23,7 +23,7 @@ class Settings:
     height = 720
     tile_size = 16
     gameTimeFactor = 1
-    fill_color = (255, 255, 255)
+    fill_color = (0, 0, 0)
     statistics_color = (0, 0, 0)
     statistics_key = pygame.K_BACKQUOTE
     overlay_color = (0, 0, 0)

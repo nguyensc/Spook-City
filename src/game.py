@@ -1,42 +1,50 @@
-#!/usr/bin/env python3
-
 import pygame
 import sys
 sys.path.append('..')
 import league
 from player import Player
 from overlay import Overlay 
-
 from mapRenderer import MapRenderer
-"""This file is garbage. It was a hastily coded mockup
-to demonstrate how to use the engine.  We will be creating
-a Game class that organizes this code better (and is
-reusable).
-"""
+from light import Light
+from flashlight import Flashlight
+from overlay import Overlay
 
-# Function to call when colliding with zombie
-
-def main():
+def main() :
     e = league.Engine("Survive")
     e.init_pygame()
-    p = Player(2, 400, 300)
-    renderer = MapRenderer("first floor", e, p)
-    renderer.renderMap()
+    timer = pygame.time.set_timer(pygame.USEREVENT + 1, 1000 // league.Settings.gameTimeFactor)
+    count = 0
+    floor = league.Spritesheet('../assets/map assets/sprite sheets/Hospital Tiles/TileA5_PHC_Interior-Hospital.png', 16, 8)
+    walls = league.Spritesheet('../assets/map assets/sprite sheets/Hospital Tiles/TileA4_PHC_Interior-Hospital.png', 16, 23)
+    floorLayer = league.Tilemap('../assets/map assets/level 1/floors.lvl', floor, layer = 1)
+    wallLayer = league.Tilemap('../assets/map assets/level 1/walls.lvl', walls, layer = 1)
+    world_size = (floorLayer.wide*league.Settings.tile_size, floorLayer.high *league.Settings.tile_size)
+
+    e.drawables.add(floorLayer.passable.sprites())
+    e.drawables.add(wallLayer.passable.sprites())
+    p = Player(1, 400, 300)
+    generator = MapRenderer("level 1", e, p)
+    l = Light(1, 0, 0, p)
+    f = Flashlight(200, 500, 2, p)
+    q = Player(2, 300, 400)
     o = Overlay(p)
-     q = Player(10, 100, 100)
+    p.world_size = world_size
+    p.rect = p.image.get_rect()
     q.image = p.image
     e.objects.append(p)
     e.objects.append(q)
+    e.objects.append(l)
+    e.objects.append(f)
     e.drawables.add(p)
     e.drawables.add(q)
-    e.drawables.add(o)
-    c = league.LessDumbCamera(800, 600, p, e.drawables, world_size)
-    #c = league.DumbCamera(800, 600, p, e.drawables, world_size)
-    
+    e.drawables.add(l)
+    e.drawables.add(f)
+    c = league.LessDumbCamera(720, 720, p, e.drawables, world_size)
     e.objects.append(c)
-    e.objects.append(o)
+    
+    e.light_source = l
 
-    e.collisions[p] = (q, p.ouch) 
+    e.collisions[p] = (q, p.ouch)
     pygame.time.set_timer(pygame.USEREVENT + 1, 1000 // league.Settings.gameTimeFactor)
     e.key_events[pygame.K_a] = p.move_left
     e.key_events[pygame.K_d] = p.move_right
