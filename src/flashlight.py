@@ -8,7 +8,7 @@ class Flashlight(DUGameObject):
         self.target = target
         self.x = target.x
         self.y = target.y
-        self.scale = int(256 / 64);
+        self.scale = int(256 / 64)
 
         self.image = pygame.image.load("../assets/light assets/RadialTrapezoid.png").convert_alpha()
         self.image.fill((255, 255, 255, 255),None, pygame.BLEND_RGBA_MULT)
