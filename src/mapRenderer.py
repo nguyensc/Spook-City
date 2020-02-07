@@ -6,15 +6,13 @@ class MapParams():
     def __init__(self, floorTS, floorWidth, floorLayer, wallTS,
                  wallWidth, wallLayer, decorationTS, decorationWidth,
                  decorationLayer, decoration2Ts, decoration2Width,
-                 decoration2Layer, ceilingTs, ceilingLayer, ceilingWidth):
+                 decoration2Layer, ceilingTs, ceilingWidth, ceilingLayer):
 
-        self.doors = [ceilingTs, ceilingWidth, ceilingLayer]
+        self.ceiling = [ceilingTs, ceilingWidth, ceilingLayer]
         self.decoration2 = [decoration2Ts, decoration2Width, decoration2Layer]
         self.decoration = [decorationTS, decorationWidth, decorationLayer]
         self.walls = [wallTS, wallWidth, wallLayer]
         self.floor = [floorTS, floorWidth, floorLayer]
-        self.map = map
-
 
 class MapRenderer():
     def __init__(self, mapName, engine):
@@ -69,6 +67,7 @@ class MapRenderer():
         return world_size
 
     def renderForeGround(self):
-        ceiling = league.Spritesheet(self.map.doors[0], 16, self.map.doors[1])
-        ceilingLayer = league.Tilemap(self.map.doors[2], ceiling, layer = 4)
+        ceiling = league.Spritesheet(self.map.ceiling[0], 16, self.map.ceiling[1])
+        print(self.map.ceiling)
+        ceilingLayer = league.Tilemap(self.map.ceiling[2], ceiling, layer=4)
         self.engine.drawables.add(ceilingLayer.impassable.sprites())
