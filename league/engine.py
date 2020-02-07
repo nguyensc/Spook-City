@@ -41,6 +41,7 @@ class Engine:
         self.collisions = {}
         self.overlay = None
         self.light_source = None
+        self.flashlight = None
 
     def init_pygame(self):
         """This function sets up the state of the pygame system,
@@ -88,10 +89,8 @@ class Engine:
 
             # Generate outputs
             #d.update()
-            dark = pygame.Surface((720, 720))
-            dark.fill(pygame.color.Color('Grey'))
-            
-
+            fog = pygame.Surface((Settings.width, Settings.height))
+            fog.fill(pygame.color.Color(20,20,20))
 
             self.drawables.draw(self.screen)
             # Show statistics?
@@ -101,8 +100,20 @@ class Engine:
             # Show overlay?
             if self.overlay:
                 self.show_overlay()
-            dark.blit(self.light_source.image, (self.objects[0].rect.x, self.objects[0].rect.y))
-            self.screen.blit(dark, (0, 0), special_flags=pygame.BLEND_RGBA_SUB)
+
+            #self.light_source.image.unlock()
+            self.flashlight.image.unlock()
+
+            coords = self.flashlight.lineOfSight(200)
+            # make new surface with raycasting sizes
+            # blit flashlight onto the new surface
+            pygame.draw.line(self.screen, (255,0,0),(self.flashlight.target.rect.x , self.flashlight.target.rect.y), (coords[0], coords[1]))
+            fog.blit(self.light_source.image, self.light_source.rect)
+            fog.blit(self.flashlight.image, self.flashlight.rect)
+            
+            self.screen.blit(fog,(0,0),special_flags=pygame.BLEND_RGBA_MULT)
+
+
 
             # Could keep track of rectangles and update here, but eh.
             pygame.display.flip()
@@ -144,3 +155,18 @@ class Engine:
                 if event.key in self.key_events.keys():
                     self.key_events[event.key](self.game_delta_time) 
 
+
+# [1 0 0 0
+#  0 cos -sin 0
+#  0 sin cos 0
+#  0 0 0 1] rotate x
+
+#[cos 0 sin 0
+# 0 1 0 0
+# -sin 0 cos 0
+# 0 0 0 1] rotate y
+
+#[cos -sin 0 0
+# sin cos 0 0
+# 0 0 1 0
+# 0 0 0 1] rotate z
