@@ -88,8 +88,8 @@ class Engine:
 
             # Generate outputs
             #d.update()
-            dark = pygame.Surface((720, 720))
-            dark.fill(pygame.color.Color('Grey'))
+            #dark = pygame.Surface((720, 720))
+            #dark.fill(pygame.color.Color('Grey'))
             
 
 
@@ -101,8 +101,8 @@ class Engine:
             # Show overlay?
             if self.overlay:
                 self.show_overlay()
-            dark.blit(self.light_source.image, (self.objects[0].rect.x, self.objects[0].rect.y))
-            self.screen.blit(dark, (0, 0), special_flags=pygame.BLEND_RGBA_SUB)
+            #dark.blit(self.light_source.image, (self.objects[0].rect.x, self.objects[0].rect.y))
+            #self.screen.blit(dark, (0, 0), special_flags=pygame.BLEND_RGBA_SUB)
 
             # Could keep track of rectangles and update here, but eh.
             pygame.display.flip()

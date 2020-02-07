@@ -16,7 +16,7 @@ def main() :
     count = 0
     p = Player(1, 400, 300)
     map = MapRenderer("first floor", e)
-    world_size = map.renderMap()
+    world_size = map.renderBackground()
     p.world_size = world_size
     l = Light(20, 0, 0, p)
     f = Flashlight(200, 500, 2, p)
@@ -32,11 +32,10 @@ def main() :
     e.drawables.add(q)
     e.drawables.add(l)
     e.drawables.add(f)
+    map.renderForeGround()
     c = league.LessDumbCamera(720, 720, p, e.drawables, world_size)
     e.objects.append(c)
-    
     e.light_source = l
-
     e.collisions[p] = (q, p.ouch)
     pygame.time.set_timer(pygame.USEREVENT + 1, 1000 // league.Settings.gameTimeFactor)
     e.key_events[pygame.K_a] = p.move_left
