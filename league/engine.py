@@ -26,6 +26,8 @@ class Engine:
     """
 
     def __init__(self, title):
+        self.nospriteables = []
+
         self.title = title
         self.running = False
         self.clock = None 
@@ -90,7 +92,7 @@ class Engine:
             # Generate outputs
             #d.update()
             fog = pygame.Surface((Settings.width, Settings.height))
-            fog.fill(pygame.color.Color(20,20,20))
+            fog.fill(pygame.color.Color(60,60,60))
 
             self.drawables.draw(self.screen)
             # Show statistics?
@@ -113,6 +115,8 @@ class Engine:
             
             self.screen.blit(fog,(0,0),special_flags=pygame.BLEND_RGBA_MULT)
 
+            for rect, color in self.nospriteables:
+                pygame.draw.rect(self.screen, color, rect, 3)
 
 
             # Could keep track of rectangles and update here, but eh.

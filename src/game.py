@@ -37,12 +37,12 @@ def main() :
     e.objects.append(q)
     e.objects.append(l)
     e.objects.append(f)
+   
 
     e.drawables.add(p)
     e.drawables.add(q)
     e.drawables.add(l)
-    e.drawables.add(f)
-    
+    e.drawables.add(f)    
 
     c = league.LessDumbCamera(league.Settings.height, league.Settings.width, p, e.drawables, world_size)
     e.objects.append(c)
@@ -52,6 +52,8 @@ def main() :
 
     e.collisions[p] = (q, p.ouch)
   
+    e.nospriteables.append((f, (255, 0, 0, 255)))
+
     pygame.time.set_timer(pygame.USEREVENT + 1, 1000 // league.Settings.gameTimeFactor)
     e.key_events[pygame.K_a] = p.move_left
     e.key_events[pygame.K_d] = p.move_right
