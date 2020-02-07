@@ -68,6 +68,5 @@ class MapRenderer():
 
     def renderForeGround(self):
         ceiling = league.Spritesheet(self.map.ceiling[0], 16, self.map.ceiling[1])
-        print(self.map.ceiling)
         ceilingLayer = league.Tilemap(self.map.ceiling[2], ceiling, layer=4)
         self.engine.drawables.add(ceilingLayer.impassable.sprites())

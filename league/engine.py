@@ -107,13 +107,9 @@ class Engine:
             if self.overlay:
                 self.show_overlay()
 
-            #self.light_source.image.unlock()
-            self.flashlight.image.unlock()
-
-            coords = self.flashlight.lineOfSight(200)
             # make new surface with raycasting sizes
             # blit flashlight onto the new surface
-            pygame.draw.line(self.screen, (255,0,0),(self.flashlight.target.rect.x , self.flashlight.target.rect.y), (coords[0], coords[1]))
+            #pygame.draw.line(self.screen, (255,0,0),(self.flashlight.target.rect.x , self.flashlight.target.rect.y), (coords[0], coords[1]))
             fog.blit(self.light_source.image, self.light_source.rect)
             fog.blit(self.flashlight.image, self.flashlight.rect)
             

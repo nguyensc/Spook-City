@@ -20,6 +20,7 @@ def main() :
     p.world_size = world_size
     l = Light(20, 0, 0, p)
     f = Flashlight(200, 500, 2, p)
+    e.flashlight = f
     q = Player(2, 300, 400)
     o = Overlay(p)
     p.rect = p.image.get_rect()

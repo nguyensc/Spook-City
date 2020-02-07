@@ -41,7 +41,6 @@ class LessDumbCamera(Camera):
             self.y = self.center_on.yls
         offset_x = - (self.x - (self.width // 2))
         offset_y = - (self.y - (self.height // 2))
-        #print(str(offset_x) + ", " + str(offset_y))
         
         for d in self.drawables:
             if hasattr(d, 'static'):

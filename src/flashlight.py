@@ -63,10 +63,7 @@ class Flashlight(DUGameObject):
                     self.current_collision_width = collision_width
                 break
         
-        if not collision_width:
-            print("")
-        else:
-            print("hit")
+        if collision_width:
             self.width = max(1, self.originalWidth - collision_width)
 
 
@@ -90,5 +87,4 @@ class Flashlight(DUGameObject):
 
         self.rect.width = self.width
 
-        print(self.width)
         self.image.blit(self.pic, (0, 0), area=(0, 0, self.width, self.pic.get_height()))
