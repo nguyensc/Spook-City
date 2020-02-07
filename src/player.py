@@ -24,7 +24,7 @@ class Player(Character):
         self.y = y
         self.camera = None
         
-        self.sheet = Spritesheet('./assets/player/Black/player_idle.png', 48, 1)
+        self.sheet = Spritesheet('../assets/player/Black/player_idle.png', 48, 1)
         self.sprites = self.sheet.sprites
         self.image = self.sprites[0].image
 

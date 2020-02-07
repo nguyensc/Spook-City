@@ -26,6 +26,10 @@ class Engine:
     """
 
     def __init__(self, title):
+        # vars added by max (enemy stuff, bullet stuff, and collision stuff)
+        self.extra_rect_drawables = []
+        self.extra_line_drawables = []
+        self.projectiles = []
         self.nospriteables = []
 
         self.title = title
@@ -90,15 +94,10 @@ class Engine:
                 o.update(self.game_delta_time)
 
             # Generate outputs
-            #d.update()
-            fog = pygame.Surface((Settings.width, Settings.height))
-            fog.fill(pygame.color.Color(60,60,60))
-            #dark = pygame.Surface((720, 720))
-            #dark.fill(pygame.color.Color('Grey'))
-            
-
+            #d.update()            
 
             self.drawables.draw(self.screen)
+            
             # Show statistics?
             if self.visible_statistics:
                 self.show_statistics()
@@ -107,9 +106,22 @@ class Engine:
             if self.overlay:
                 self.show_overlay()
 
-            # make new surface with raycasting sizes
-            # blit flashlight onto the new surface
-            #pygame.draw.line(self.screen, (255,0,0),(self.flashlight.target.rect.x , self.flashlight.target.rect.y), (coords[0], coords[1]))
+            # draw projectiles
+            for p in self.projectiles:
+                
+                # otherwise see if the projectile is done
+                if p.alpha <= 0:
+                    self.projectiles.remove(p)
+                    p.delete() # destroy the projectile memory
+                    continue
+
+                self.screen.blit(p.surf, (p.x, p.y)) # display the bullet
+                p.update() # updates any values for the projectile to progress
+                new_alpha = p.alpha - p.delta_alpha # increase the transparency
+                p.set_colors((p.red, p.green - 5, 0, new_alpha)) # move colors towards white
+
+            fog = pygame.Surface((Settings.width, Settings.height))
+            fog.fill(pygame.color.Color(60,60,60))
             fog.blit(self.light_source.image, self.light_source.rect)
             fog.blit(self.flashlight.image, self.flashlight.rect)
             
@@ -118,8 +130,10 @@ class Engine:
             for rect, color in self.nospriteables:
                 pygame.draw.rect(self.screen, color, rect, 3)
 
-            #dark.blit(self.light_source.image, (self.objects[0].rect.x, self.objects[0].rect.y))
-            #self.screen.blit(dark, (0, 0), special_flags=pygame.BLEND_RGBA_SUB)
+            # debug drawings (like collision rectangles)
+            for rect, color in self.extra_rect_drawables:
+                pygame.draw.rect(self.screen, color, rect, 3)
+
 
             # Could keep track of rectangles and update here, but eh.
             pygame.display.flip()

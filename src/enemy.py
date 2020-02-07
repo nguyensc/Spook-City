@@ -1,198 +1,274 @@
-from .settings import *
-from .engine import *
-from .game_objects import *
+import time as t
+from datetime import datetime
 
-import csv
-import math
-import os
-os.environ['PYGAME_HIDE_SUPPORT_PROMPT'] = "hide"
+from league import *
 import pygame
-import league
+from math import copysign
+from random import seed, randint
 
-class Camera(UGameObject):
-    def __init__(self, width, height, center_on, drawables, world_size, nospriteables):
-        self.width = width
-        self.height = height
-        self.center_on = center_on
-        self.drawables = drawables
+class Enemy(Character):
+    """This is a sample class for a player object.  A player
+    is a character, is a drawable, and an updateable object.
+    This class should handle everything a player does, such as
+    moving, throwing/shooting, collisions, etc.  It was hastily
+    written as a demo but should direction.
+    """
+    def __init__(self, z=0, x=0, y=0, player=None):
+        super().__init__(z, x, y)
+        # This unit's attributes
+        self.health = 100
+        self.walk_speed = 2
+        self.run_speed = 4
+        self.move_speed = self.walk_speed # the current movement speed
+
+        # state 0 -> PATROL
+        # state 1 -> DECIDE DIRECTION
+        # state 2 -> CHASE
+        self.state = 0
         
-        # added nospriteables for drawing things w/o sprite (lines, rectangles, ...)
-        self.nospriteables = nospriteables
+        self.target = player
+        self.dirx = 0
+        self.diry = 1
 
-        self.x = self.center_on.x
-        self.y = self.center_on.y
-        self.world_size = world_size
+        # timeout movement values
+        self.timeout = 10
+        self.timeout_counter = self.timeout
+        self.timeout_position = (self.rect.x, self.rect.y)
+        # player spotted timeout (how long to chase for)
+        self.sight_timeout = 30
+        self.sight_counter = self.sight_timeout
 
-    def update(self, deltaTime):
-        pass
+        # Last time I was hit
+        self.last_hit = pygame.time.get_ticks()
+        # A unit-less value.  Bigger is faster.
+        self.delta = 512
+        # Where the player is positioned
+        self.x = x
+        self.y = y
+        # The image to use.  This will change frequently
+        # in an animated Player class.
+        self.image = pygame.image.load('../assets/skeleton-clothed-1.png').convert_alpha()
+        self.image = pygame.image.load('../assets/character assets/zombie.png').convert_alpha()
+        self.image = pygame.transform.scale(self.image, (64, 64))
+        self.rect = self.image.get_rect()
+        self.rect.x = x; self.rect.y = y;
+        # How big the world is, so we can check for boundries
+        self.world_size = (Settings.width, Settings.height)
+        # What sprites am I not allowd to cross?
+        self.blocks = pygame.sprite.Group()
+        # Which collision detection function?
+        self.collide_function = pygame.sprite.collide_rect
+        self.collisions = []
+        self.collider = Drawable()
+        self.collider.image = pygame.Surface([Settings.tile_size, Settings.tile_size])
+        self.collider.rect = self.collider.image.get_rect()
 
-class DumbCamera(Camera):
-    def update(self, time):
-        self.x = self.center_on.x
-        self.y = self.center_on.y
-        offset_x = - (self.x - (self.width // 2))
-        offset_y = - (self.y - (self.height // 2))
-        
-        for d in self.drawables:
-            d.rect.x = d.x + offset_x
-            d.rect.y = d.y + offset_y
+        self.test = Drawable()
+        self.test.image = pygame.Surface([Settings.tile_size, Settings.tile_size])
+        self.test.rect = self.image.get_rect()
 
-class LessDumbCamera(Camera):
-    def update(self, time):
-        if self.center_on.x - self.width // 2 > 0 and self.center_on.x + self.width // 2 < self.world_size[0] - Settings.tile_size:
-            self.x = self.center_on.x
-        if self.center_on.y - self.height // 2 > 0 and self.center_on.y + self.height // 2 < self.world_size[1] - Settings.tile_size:
-            self.y = self.center_on.yls
-        offset_x = - (self.x - (self.width // 2))
-        offset_y = - (self.y - (self.height // 2))
-        #print(str(offset_x) + ", " + str(offset_y))
-        
-        for d in self.drawables:
-            if hasattr(d, 'static'):
+        self.test1 = Drawable()
+        self.test1.image = pygame.Surface([Settings.tile_size, Settings.tile_size])
+        self.test1.rect = self.image.get_rect()
+
+        self.test2 = Drawable()
+        self.test2.image = pygame.Surface([Settings.tile_size, Settings.tile_size])
+        self.test2.rect = self.image.get_rect()
+
+        self.test3 = Drawable()
+        self.test3.image = pygame.Surface([Settings.tile_size, Settings.tile_size])
+        self.test3.rect = self.image.get_rect()
+
+        self.tests = [self.test, self.test1, self.test2, self.test3]
+
+
+        # SEED SET HERE MIGHT NEED TO CHANGE LATER
+        seed(datetime.now())
+
+
+    def set_directions(self, new_dirx, new_diry):
+        self.dirx = new_dirx; self.diry = new_diry;
+
+    def new_direction(self):
+        prev_dir = (self.dirx, self.diry)
+        possible_dirs = [
+            (-1, 0),
+            (0, -1),
+            (0, 1),
+            (1, 0),
+        ]
+        valid_dirs = []
+        length_dirs = len(possible_dirs) - 1
+
+        # set up valid directions
+        i = 0
+        for direction in possible_dirs:
+            # loop through each direction
+            xx = (direction[0] * self.image.get_width()) + self.rect.x
+            yy = (direction[1] * self.image.get_height()) + self.rect.y
+            # move collider object there
+            self.collider.rect.x = self.collider.x = xx
+            self.collider.rect.y = self.collider.y = yy
+            # if there is a collision, set that possible direction to None
+            valid_dirs.append(pygame.sprite.spritecollideany(self.collider, self.blocks))
+
+            self.tests[i].x = self.collider.rect.x; self.tests[i].y = self.collider.rect.y;
+            i+=1
+
+        # randomly pick valid direction to being moving
+
+        # check if all directions are 'None', bugged
+        flag = 0
+        for j in range(4):
+            if valid_dirs[j] != None:
+                flag = 1
+        if not flag:
+            # if the none direction bug is encountered move towards opposite
+            # direction
+            self.dirx = prev_dir[0] * -1
+            self.diry = prev_dir[1] * -1
+            return
+
+        # grab legit direction
+        i = randint(0, length_dirs)
+        for valid_dir in valid_dirs:
+            if possible_dirs[i] == prev_dir:
+                i = (i + randint(1, 2)) % length_dirs
                 continue
+            elif valid_dir != None:
+                self.dirx = possible_dirs[i][0]
+                self.diry = possible_dirs[i][1]
+                break
+            i = (i + randint(1, 2)) % length_dirs
 
-            d.rect.x = d.x + offset_x
-            d.rect.y = d.y + offset_y
+        # reset state to patrol
+        self.state = 0
+        return
 
-        # added this loop for drawing objects which don't have sprites
-        # such as lines, rectangles, so on
-        for n in self.nospriteables.items():
-            n[1].rect.x = n[1].x + offset_x
-            n[1].rect.y = n[1].y + offset_y
 
-class Tilemap:
-    """An object that represents an MxN list of tiles.  Give x, y
-    returns various pieces of information about that tile, such as
-    the image to draw, etc.
 
-    Fields:
-    path - A path to the file that holds the tilemap data.  Structure described below.
-    spritesheet - The spritesheet from which to get the images for the tiles.
-    tile_size - The number of pixels wide and high (we are forcing squares) per tile.
-    wide - The number of tiles wide the map holds.
-    high - The number of tiles vertically the map holds.
-    world - The MxN list of tile numbers.
-    sprites - The sprites for drawing the world.
+    def check_and_handle_timeout(self):
+        # see how far the enemy has moved from the last known NON-stuck position
+        self.timeout_check = (abs(self.rect.x - self.timeout_position[0]), abs(self.rect.y - self.timeout_position[1]))
 
-    File structure:
-    A tilemap file begins with the width (an integer) of the map (in tiles, not pixels), a newline,
-    the height (an integer; again in tiles, not pixels), followed by a comma-separated list of lists
-    of integers that represent the sprite number from the spritesheet.  For instance,
+        # see if timeout has been reached yet, this means the enemy has not been moving enough and must be stuck
+        # in a state loop
+        if self.timeout_counter <= 0:
+            self.state = (self.state + 1) % 2 # change movement direction state
+            self.timeout_counter = self.timeout # reset timer
 
-    5
-    7
-    1, 1, 1, 1, 2, 1, 1
-    1, 1, 1, 1, 2, 1, 1
-    1, 1, 1, 2, 1, 2, 1
-    1, 1, 1, 2, 1, 2, 2
-    2, 2, 2, 2, 1, 2, 2
-    """
-    def __init__(self, path, spritesheet, tile_size = Settings.tile_size, layer = 0):
-        self.path = path
-        self.spritesheet = spritesheet
-        self.tile_size = tile_size
-        self.layer = layer
-        self.world = []
-        self.passable = pygame.sprite.Group()
-        self.impassable = pygame.sprite.Group()
-        self.__parse()
+        # see how far the enemy has moved since the last check, this is to see if the enemy has become
+        # stuck for some reason
+        elif self.timeout_check[0] >= 7 or self.timeout_check[1] >= 7:
+            # reset the timeout counter if the enemy has moved enough to not be stuck
+            self.timeout_counter = self.timeout
+            self.timeout_position = (self.rect.x, self.rect.y) # update the position to be checked next time
+        else:
+            self.timeout_counter-=1
 
-    def __parse(self):
-        """This function begins the process of (attempting) to
-        parse a level file.  The structure of the file is described above.
-        """
-        #default image for replacing tiles with blank images
-        defaultImg = league.Spritesheet('../assets/map assets/sprite sheets/Hospital Tiles/TileA5_PHC_Interior-Hospital.png', 16, 1)
+
+    def move(self):
+        # state machine -> updates self.dirx and self.diry (the direction of movement)
+        self.x += self.move_speed * self.dirx
+        self.y += self.move_speed * self.diry 
+
+        # collision handling
+        while len(self.collisions) != 0:
+            # move in opposite x/y directions
+            # will not be moved if direction if 0
+            self.x -= self.dirx * 20
+            self.y -= self.diry * 20 # move in opposite y direction
+
+            self.update(0) # update to recheck collisions
+            
+            # set state to new direction
+            self.state = 1
+        return
+
+    def chase(self):
+        # when to stop chasing and give up back to patrolling
+        if (self.sight_counter <= 0):
+            self.move_speed = self.walk_speed
+            self.state = 0
         
-        with open(self.path, 'r') as f:
-            reader = csv.reader(f)
-            contents = list(reader)
-        # How many tiles wide is our world?
-        self.wide = int(contents[0][0])
-        # And how tall?
-        self.high = int(contents[1][0])
-        # Sprite numbers for all tiles are in the
-        # multidimensional list "world".
-        self.world = contents[2:]
-        a = 0
+        # begin running instead of walking
+        self.move_speed = self.run_speed
+        tarx = self.x + self.move_speed * self.dirx
+        tary = self.y + self.move_speed * self.diry
+        # temporary direction values, will be changed if there is a potential collision
+        dirx = self.dirx; diry = self.diry;
 
-        skipVal = 555
+        self.collider.x = tarx; self.collider.y = tary;
+        if (pygame.sprite.spritecollideany(self.collider, self.blocks) != None):
+            if not self.dirx:
+                dirx = copysign(1, self.target.x - self.x)
+                diry *= -1
+            else:
+                dirx *= -1
+                diry = copysign(1, self.target.y - self.y)
 
-        for i in self.world:
-            b = 0
-            for j in i:
-                x = b * self.spritesheet.tile_size
-                y = a * self.spritesheet.tile_size
-                num = int(j)
-                    
-                if (num == skipVal):
-                    num = 0
-                    base_sprite = defaultImg.sprites[25]
+        # move toward specified direction
+        self.x += self.move_speed * dirx
+        self.y += self.move_speed * diry
 
-                else:
-                    base_sprite = self.spritesheet.sprites[abs(num)]
-                
-                sprite = Drawable(self.layer)
-                sprite.image = base_sprite.image
-<<<<<<< HEAD
-                # Set rectangle coords (using top-left coords here
-=======
+        # lower the sight counter, determines when enemy loses interest
+        self.sight_counter -= 1
+        
+        return
 
-                # Set rectangle coords (using top-left coords here)
->>>>>>> ba50b5c6f9e171556b67bdf457dcf42071ff2fe6
-                rect = sprite.image.get_rect() 
-                rect.x = x
-                rect.y = y
-                sprite.x = x
-                sprite.y = y
-                sprite.rect = rect
-                self.passable.add(sprite)
-                if num < 0:
-                    self.impassable.add(sprite)
-                b = b + 1
-            a = a + 1
 
-class Spritesheet:
-    """An object that represents a spritesheet and provides
-    methods to access individual sprites from it.
+    def shot(self):
+        now = pygame.time.get_ticks()
 
-    There are better ways to create spritesheets.  This code does
-    not allow for packed sprites for instance.  Instead, it forces
-    sprites to be in nice, tiled squares.
+        if now - self.last_hit > 1000:
+            self.health = self.health - 25
+            self.last_hit = now
 
-    Fields:
-    path - The path to the spritesheet file.
-    tile_size - The number of pixels wide and high the sprites are.  We are forcing square tiles for this engine.
-    per_row - The number of sprites per row on the spritesheet.
-    width - Number of pixels wide of the spritesheet image.
-    height - Number of pixels high of the spritesheet image.
-    sprites - A single-dimensional list of the sprites from the sheet.
-    """
-    def __init__(self, path, tile_size, per_row):
-        self.path = path
-        self.sheet = pygame.image.load(self.path).convert_alpha()
-        self.tile_size = tile_size
-        self.per_row = per_row
-        self.width, self.height = self.sheet.get_size()
-        self.sprites = self.__split_up()
+        self.image.fill(255, 0, 0, 255)
 
-    def __split_up(self):
-        # This function splits the sheet up into equal-sized chunks,
-        # and returns a list of the chunks.
-        sprites = []
-        for i in range((self.width * self.height) // (self.tile_size * self.tile_size)):
-                
-                image = self.__get_image_num(i)
-                sprites.append(image)
-        return sprites
+    def update(self, time):
+        if time != 0:
+            # patrol state
+            if self.state == 0:
+                self.move()
+            # new direction state
+            elif self.state == 1:
+                self.new_direction()
+            # chase state
+            elif self.state == 2:
+                self.chase()
 
-    def __get_image_num(self, num):
-        # This function copies an MxM image from x, y
-        # to a new Sprite and returns it.
-        y = self.tile_size * (num  // self.per_row)
-        x = self.tile_size * (num  % self.per_row)
-        sprite = Drawable()
-        sprite.image = pygame.Surface((self.tile_size, self.tile_size)).convert_alpha()
-        sprite.image.fill((255,255,255,0)) # necessary addition for transparency - xam
-        sprite.image.blit(self.sheet, (0, 0), (x, y, x + self.tile_size, y + self.tile_size))
-        return sprite
+       
+
+        self.collider.x = self.rect.x = self.x
+        self.collider.y = self.rect.y = self.y
+        self.collisions = []
+
+        for sprite in self.blocks:
+            self.collider.rect.x = sprite.x
+            self.collider.rect.y = sprite.y
+
+            if pygame.sprite.collide_rect(self, self.collider):
+                self.collisions.append(sprite)
+            '''
+            if time != 0 and self.sight_counter <= 0:
+                sight = self.line_of_sight(sprite, self.dirx, self.diry)
+                #print(sight)
+                if sight[0] == 1:
+                    self.move_speed = self.run_speed
+                    self.state = 0
+                    return
+                elif sight[1] == 1:
+                    self.move_speed = self.run_speed
+                    self.state = 1
+                elif sight[2] == 1:
+                    self.move_speed = self.run_speed
+                    self.state = 2
+                elif sight[3] == 1:
+                    self.move_speed = self.run_speed
+                    self.state = 3
+                self.sight_counter = self.sight
+
+            self.move_speed = self.walk_speed'''
+
+        self.sight_counter-=1

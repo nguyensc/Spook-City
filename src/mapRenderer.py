@@ -14,10 +14,12 @@ class MapParams():
         self.walls = [wallTS, wallWidth, wallLayer]
         self.floor = [floorTS, floorWidth, floorLayer]
 
+
 class MapRenderer():
     def __init__(self, mapName, engine):
         self.engine = engine
         self.mapName = mapName
+        self.all_impassables = [] # needed for collisions currently - xam
 
         mapDict = {
             "first floor": 1,
@@ -42,6 +44,12 @@ class MapRenderer():
                 '../assets/map assets/sprite sheets/Hospital Tiles/TileA4_PHC_Interior-Hospital.png', 23, '../assets/map assets/level 1/walls.lvl',
                 '../assets/map assets/sprite sheets/Hospital Tiles/TileA4_PHC_Interior-Hospital.png', 23, '../assets/map assets/level 1/walls.lvl')
 
+
+    def getAllImpassables(self):
+        # returns all impassable sprites, this function is only used in game.py -xam
+        return self.all_impassables
+
+
     def renderBackground(self):
         floor = league.Spritesheet(self.map.floor[0], 16, self.map.floor[1])
         wall = league.Spritesheet(self.map.walls[0], 16, self.map.walls[1])
@@ -64,7 +72,13 @@ class MapRenderer():
         self.engine.drawables.add(decoLayer.impassable.sprites())
         self.engine.drawables.add(deco2Layer.impassable.sprites())
 
+        # list of all impassable objects that are only used in game.py for collisions
+        self.all_impassables.append(wallLayer.impassable.sprites())
+        self.all_impassables.append(decoLayer.impassable.sprites())
+        self.all_impassables.append(deco2Layer.impassable.sprites())
+
         return world_size
+
 
     def renderForeGround(self):
         ceiling = league.Spritesheet(self.map.ceiling[0], 16, self.map.ceiling[1])
