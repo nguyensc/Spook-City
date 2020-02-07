@@ -3,16 +3,18 @@ import sys
 sys.path.append('..')
 import league
 from player import Player
+from overlay import Overlay 
+from mapRenderer import MapRenderer
 from light import Light
 from flashlight import Flashlight
 from overlay import Overlay
 
 def main() :
-    
     e = league.Engine("Survive")
     e.init_pygame()
     timer = pygame.time.set_timer(pygame.USEREVENT + 1, 1000 // league.Settings.gameTimeFactor)
     count = 0
+<<<<<<< HEAD
     floor = league.Spritesheet('../assets/map assets/sprite sheets/Hospital Tiles/TileA5_PHC_Interior-Hospital.png', 16, 8)
     walls = league.Spritesheet('../assets/map assets/sprite sheets/Hospital Tiles/TileA4_PHC_Interior-Hospital.png', 16, 23)
     floorLayer = league.Tilemap('../assets/map assets/level 1/floors.lvl', floor, layer = 0)
@@ -31,6 +33,16 @@ def main() :
     o = Overlay(p)
     f.blocks.add(wallLayer.impassable)
     p.world_size = world_size
+=======
+    p = Player(1, 400, 300)
+    map = MapRenderer("first floor", e)
+    world_size = map.renderBackground()
+    p.world_size = world_size
+    l = Light(20, 0, 0, p)
+    f = Flashlight(200, 500, 2, p)
+    q = Player(2, 300, 400)
+    o = Overlay(p)
+>>>>>>> ba50b5c6f9e171556b67bdf457dcf42071ff2fe6
     p.rect = p.image.get_rect()
     q.image = p.image
     e.objects.append(p)
@@ -42,14 +54,22 @@ def main() :
     e.drawables.add(p)
     e.drawables.add(q)
     e.drawables.add(l)
+<<<<<<< HEAD
     e.drawables.add(f)    
 
     c = league.LessDumbCamera(league.Settings.height, league.Settings.width, p, e.drawables, world_size)
+=======
+    e.drawables.add(f)
+    map.renderForeGround()
+    c = league.LessDumbCamera(720, 720, p, e.drawables, world_size)
+>>>>>>> ba50b5c6f9e171556b67bdf457dcf42071ff2fe6
     e.objects.append(c)
-    
     e.light_source = l
+<<<<<<< HEAD
     e.flashlight = f  
 
+=======
+>>>>>>> ba50b5c6f9e171556b67bdf457dcf42071ff2fe6
     e.collisions[p] = (q, p.ouch)
   
     e.nospriteables.append((f, (255, 0, 0, 255)))

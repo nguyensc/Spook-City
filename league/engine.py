@@ -91,8 +91,15 @@ class Engine:
 
             # Generate outputs
             #d.update()
+<<<<<<< HEAD
             fog = pygame.Surface((Settings.width, Settings.height))
             fog.fill(pygame.color.Color(60,60,60))
+=======
+            #dark = pygame.Surface((720, 720))
+            #dark.fill(pygame.color.Color('Grey'))
+            
+
+>>>>>>> ba50b5c6f9e171556b67bdf457dcf42071ff2fe6
 
             self.drawables.draw(self.screen)
             # Show statistics?
@@ -102,6 +109,7 @@ class Engine:
             # Show overlay?
             if self.overlay:
                 self.show_overlay()
+<<<<<<< HEAD
 
             #self.light_source.image.unlock()
             self.flashlight.image.unlock()
@@ -118,6 +126,10 @@ class Engine:
             for rect, color in self.nospriteables:
                 pygame.draw.rect(self.screen, color, rect, 3)
 
+=======
+            #dark.blit(self.light_source.image, (self.objects[0].rect.x, self.objects[0].rect.y))
+            #self.screen.blit(dark, (0, 0), special_flags=pygame.BLEND_RGBA_SUB)
+>>>>>>> ba50b5c6f9e171556b67bdf457dcf42071ff2fe6
 
             # Could keep track of rectangles and update here, but eh.
             pygame.display.flip()
