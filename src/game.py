@@ -28,6 +28,8 @@ def main() :
     e.objects.append(q)
     e.objects.append(l)
     e.objects.append(f)
+   
+
     e.drawables.add(p)
     e.drawables.add(q)
     e.drawables.add(l)
@@ -37,6 +39,9 @@ def main() :
     e.objects.append(c)
     e.light_source = l
     e.collisions[p] = (q, p.ouch)
+  
+    e.nospriteables.append((f, (255, 0, 0, 255)))
+
     pygame.time.set_timer(pygame.USEREVENT + 1, 1000 // league.Settings.gameTimeFactor)
     e.key_events[pygame.K_a] = p.move_left
     e.key_events[pygame.K_d] = p.move_right

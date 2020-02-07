@@ -25,6 +25,7 @@ class Player(Character):
         self.image = pygame.image.load('../assets/character assets/zombie.png').convert_alpha()
         self.image = pygame.transform.scale(self.image, (32, 32))
         self.rect = self.image.get_rect()
+        self.rect = pygame.Rect(0, 0, 16, 16)
         # How big the world is, so we can check for boundries
         self.world_size = (Settings.width, Settings.height)
         # What sprites am I not allowd to cross?
@@ -32,14 +33,14 @@ class Player(Character):
         # Which collision detection function?
         self.collide_function = pygame.sprite.collide_rect
         self.collisions = []
-        # For collision detection, we need to compare our sprite
+        # For collision detection we need to compare our sprite
         # with collideable sprites.  However, we have to remap
         # the collideable sprites coordinates since they change.
         # For performance reasons I created this sprite so we
         # don't have to create more memory each iteration of
         # collision detection.
         self.collider = Drawable()
-        self.collider.image = pygame.Surface([Settings.tile_size, Settings.tile_size])
+        self.collider.image = pygame.Surface([32, 32])
         self.collider.rect = self.collider.image.get_rect()
         # Overlay
         self.font = pygame.font.Font('freesansbold.ttf',32)
