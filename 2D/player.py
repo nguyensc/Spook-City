@@ -1,6 +1,8 @@
 from league import *
 import pygame
 
+abc = Character()
+
 class Player(Character):
     """This is a sample class for a player object.  A player
     is a character, is a drawable, and an updateable object.
