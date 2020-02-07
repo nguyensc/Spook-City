@@ -5,6 +5,7 @@ os.environ['PYGAME_HIDE_SUPPORT_PROMPT'] = "hide"
 import pygame
 from .settings import *
 
+
 class Engine:
     """Engine is the definition of our game engine.  We want it to
     be as game agnostic as possible, and will try to emulate code
@@ -25,6 +26,13 @@ class Engine:
     """
 
     def __init__(self, title):
+        # vars added by max (enemy stuff, bullet stuff, and collision stuff)
+        self.extra_rect_drawables = []
+        self.extra_line_drawables = []
+        self.projectiles = []
+        self.nospriteables = {} # explained further in graphics.py
+
+        # defaults
         self.title = title
         self.running = False
         self.clock = None 
@@ -39,6 +47,7 @@ class Engine:
         self.statistics_font = None
         self.collisions = {}
         self.overlay = None
+        self.light_source = None
 
     def init_pygame(self):
         """This function sets up the state of the pygame system,
@@ -86,8 +95,15 @@ class Engine:
 
             # Generate outputs
             #d.update()
-            self.drawables.draw(self.screen)
+            #dark = pygame.Surface((720, 720))
+            #dark.fill(pygame.color.Color('Grey'))
+            
 
+
+<<<<<<< HEAD
+=======
+            self.drawables.draw(self.screen)
+>>>>>>> ba50b5c6f9e171556b67bdf457dcf42071ff2fe6
             # Show statistics?
             if self.visible_statistics:
                 self.show_statistics()
@@ -95,6 +111,25 @@ class Engine:
             # Show overlay?
             if self.overlay:
                 self.show_overlay()
+            #dark.blit(self.light_source.image, (self.objects[0].rect.x, self.objects[0].rect.y))
+            #self.screen.blit(dark, (0, 0), special_flags=pygame.BLEND_RGBA_SUB)
+
+            for rect, color in self.extra_rect_drawables:
+                pygame.draw.rect(self.screen, color, rect, 3)
+
+            # draw projectiles
+            for p in self.projectiles:
+                
+                # otherwise see if the projectile is done
+                if p.alpha <= 0:
+                    self.projectiles.remove(p)
+                    p.delete() # destroy the projectile memory
+                    continue
+
+                self.screen.blit(p.surf, (p.x, p.y)) # display the bullet
+                p.update() # updates any values for the projectile to progress
+                new_alpha = p.alpha - p.delta_alpha # increase the transparency
+                p.set_colors((p.red, p.green - 5, 0, new_alpha)) # move colors towards white
 
             # Could keep track of rectangles and update here, but eh.
             pygame.display.flip()
@@ -129,10 +164,16 @@ class Engine:
         pygame.quit()
 
     def handle_inputs(self):
-        for event in pygame.event.get():
+        events = pygame.event.get()
+        for event in events:
+            # left mouse button presse
             if event.type in self.events.keys():
                 self.events[event.type](self.game_delta_time)
-            if event.type == pygame.KEYDOWN:
-                if event.key in self.key_events.keys():
-                    self.key_events[event.key](self.game_delta_time) 
 
+        # handle key pressed events
+        pressed_keys = pygame.key.get_pressed() # get all pressed keys
+        # if a key with an event is pressed do the event
+        for key_event in  self.key_events.keys():
+            # check if a key with an event is pressed
+            if (pressed_keys[key_event]):
+                self.key_events[key_event](self.game_delta_time) # run the event associated with the key
