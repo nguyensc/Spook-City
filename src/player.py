@@ -34,13 +34,8 @@ class Player(Character):
         self.spotted_timer = 30
         self.spotted_counter = self.spotted_timer
 
-        self.rect = pygame.Rect((0, 0, 100, 100))
+        self.rect = pygame.Rect((8, 8, 20, 20)) # the players collision mask, this determines when the player collides with things
         self.enemy = enemy;
-        # The image to use.  This will change frequently
-        # in an animated Player class.
-        self.image = pygame.image.load('../assets/character assets/zombie.png').convert_alpha()
-        self.image = pygame.transform.scale(self.image, (32, 32))
-        self.rect = self.image.get_rect()
         # How big the world is, so we can check for boundries
         self.world_size = (Settings.width, Settings.height)
         # What sprites am I not allowd to cross?
@@ -56,7 +51,7 @@ class Player(Character):
         # collision detection.
         self.collider = Drawable()
         self.collider.image = pygame.Surface([Settings.tile_size, Settings.tile_size])
-        self.collider.rect = pygame.Rect(0, 0, 32, 32)
+        self.collider.rect = pygame.Rect(0, 0, 16, 16)
 
         self.cpoint = Drawable()
         self.cpoint.image = pygame.Surface([Settings.tile_size, Settings.tile_size])
@@ -139,15 +134,25 @@ class Player(Character):
             pass
 
 
-    def shoot_bullet_up(self, time):
+    def shoot_bullet(self, time, dir):
         if (self.shoot_counter > 0):
             return
         self.shoot_counter = self.shoot_timer
 
-        start = (self.get_x(), self.get_y())
-        end = self.lineofsight_up(300)
-        bullet = Bullet(start, end)
+        bullet = Bullet((self.x - 32, self.y + 64), dir, 10, self.blocks)
         self.bullets.append(bullet)
+
+    def shoot_bullet_up(self, time):
+        self.shoot_bullet(time, 90)
+
+    def shoot_bullet_down(self, time):
+        self.shoot_bullet(time, 270)
+
+    def shoot_bullet_left(self, time):
+        self.shoot_bullet(time, 180)
+
+    def shoot_bullet_right(self, time):
+        self.shoot_bullet(time, 0)
 
 
     def spotted_by_enemy(self, enemy, dirx, diry):
@@ -181,7 +186,7 @@ class Player(Character):
             elif pygame.sprite.spritecollideany(self.cpoint, self.blocks) != None:
                 end_position = (xx, yy)
                 break
-            xx += 4
+            xx += 16
 
         self.sight_coords[0] = end_position
         return end_position
@@ -204,7 +209,7 @@ class Player(Character):
             elif pygame.sprite.spritecollideany(self.cpoint, self.blocks) != None:
                 end_position = (xx, yy)
                 break
-            xx -= 4
+            xx -= 16
 
         self.sight_coords[1] = end_position
         return end_position
@@ -228,7 +233,7 @@ class Player(Character):
             elif pygame.sprite.spritecollideany(self.cpoint, self.blocks) != None:
                 end_position = (xx, yy)
                 break
-            yy -= 2
+            yy -= 8
 
         self.sight_coords[2] = end_position
         return end_position
@@ -251,10 +256,29 @@ class Player(Character):
             elif pygame.sprite.spritecollideany(self.cpoint, self.blocks) != None:
                 end_position = (xx, yy)
                 break
-            yy += 2
+            yy += 8
 
         self.sight_coords[3] = end_position
         return end_position
+
+
+
+
+    def spotted_by_enemy(self, enemy, dirx, diry):
+        enemy.state = 2; # enemy chase state is 2
+        enemy.sight_counter = enemy.sight_timeout # reset the enemy chase timer
+        enemy.target = self
+        enemy.dirx = dirx # target x direction to move to
+        enemy.diry = diry # target y direction to move to
+
+        # increase heart rate and set counter for when to catch breath
+        self.spotted_counter = self.spotted_timer  
+        self.heart_rate = 3
+
+        return
+
+
+    
 
     def update(self, time):      
         '''
@@ -271,15 +295,19 @@ class Player(Character):
             if self.spotted_counter <= 0:
                 self.heart_rate = 10
 
+        
         self.lineofsight_right(400)
         self.lineofsight_left(400)
         self.lineofsight_up(200)
         self.lineofsight_down(200)
+        
 
         self.collisions = []
         prevrect = (self.rect.x, self.rect.y)
         self.collider.x = self.collider.rect.x = self.rect.x = self.x;
         self.collider.y = self.collider.rect.y = self.rect.y = self.y;
+
+        self.rect.x += 8; self.rect.y += 8;
 
         for sprite in self.blocks:
             self.collider.rect.x = sprite.x
@@ -287,8 +315,8 @@ class Player(Character):
             if pygame.sprite.collide_rect(self, self.collider):
                 self.collisions.append(sprite)
         
-        self.collider.x += 5; self.collider.y+= 5;
-        self.rect.x = prevrect[0]; self.rect.y = prevrect[1]
+        #self.collider.x += 5; self.collider.y+= 5;
+        #self.rect.x = prevrect[0]; self.rect.y = prevrect[1]
         
         #pygame.display.flip()
 

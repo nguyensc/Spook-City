@@ -1,54 +1,60 @@
 import pygame
-from league import Drawable
-from math import copysign, cos, sin, radians
+import league
+from math import cos, sin, radians, floor
+from random import randint
 
 class Bullet:
-	def __init__(self, start_position, end_position):
-		self.start_position = start_position
-		self.end_position = end_position
-		self.x = end_position[0]
-		self.y = end_position[1]
+	def __init__(self, position=(0,0), direction=90, speed=1, blocks=None):
+		self.x = position[0]
+		self.y = position[1]
+		self.direction = direction
+		self.blocks = blocks
+		self.displayed = 0
+		self.destroyed = 0
 
-		self.tag = None
+		newdir = direction + randint(-8, 5)
+		rads = radians(newdir)
+		self.hspeed = (floor(cos(rads)*10) / 10) * speed
+		self.vspeed = (floor(sin(rads)*10) / 10) * speed
 
-		self.red = 255
-		self.green = 255
-		self.blue = 0
-		self.alpha = 255
-		self.delta_alpha = 10 # how much to change the transparency by
-		self.colors = (self.red, self.green, self.blue, self.alpha)
+		self.image = pygame.image.load("../assets/projectiles/bullet.png").convert_alpha()
+		self.image = pygame.transform.scale(self.image, (16,16))
+		self.image = pygame.transform.rotate(self.image, newdir + 90)
 
-		self.width = start_position[0] - end_position[0]
-		self.height = start_position[1] - end_position[1]
-		self.minsize = 5
+		self.rect = self.image.get_rect() 
 
-		w = max(abs(self.width), self.minsize)
-		h = max(abs(self.height), self.minsize)
-		self.surf = pygame.Surface([w, h]).convert_alpha()
-		self.rect = pygame.Rect((0, 0, w, h))
-		self.surf.fill(self.colors)
+		self.wall_collider = league.Drawable()
+		self.wall_collider.image = pygame.Surface((self.rect.height, self.rect.width))
+		self.wall_collider.rect = pygame.Rect((0, 0, 16, 16))
+
+	def move(self):
+		x = self.x + self.hspeed * 2
+		y = self.y - self.vspeed * 2
+		
+		# should check for collisions here
+		if self.destroyed:
+			return
+
+		self.destroyed = self.check_wall_collision()
+
+		self.x = self.rect.x = x
+		self.y = self.rect.y = y
+
+	def check_wall_collision(self):
+		# all enemy collisions occur in the enemy class
+		for sprite in self.blocks:
+			self.wall_collider.x = sprite.x
+			self.wall_collider.y = sprite.y
+
+			if pygame.sprite.spritecollideany(self, self.blocks):
+				return 1
+		return 0
 
 
-	def set_colors(self, new_colors):
-		self.red = max(0, new_colors[0])
-		self.green = max(0, new_colors[1])
-		self.blue = max(0, new_colors[2])
-		self.alpha = max(0, new_colors[3])
-		self.colors = (self.red, self.green, self.blue, self.alpha)
+	def print_pos(self):
+		print(self.x, " ", self.y)
 
-	def delete(self):
-		del self
-
-	def make_surf(self, w, h):
-		self.surf = pygame.Surface([w, h]).convert_alpha()
-		self.rect = pygame.Rect((0, 0, w, h))
-		self.surf.fill(self.colors)
 
 	def update(self):
-		# rebuild surface with any new color/size values
-		w = max(abs(self.width), self.minsize)
-		h = max(abs(self.height), self.minsize)
-		self.make_surf(w, h)
-
-
-
+		self.move()
+		return

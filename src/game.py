@@ -27,7 +27,7 @@ def main() :
 
     o = Overlay(p)
 
-    p.rect = p.image.get_rect()
+    #p.rect = p.image.get_rect()
 
     enemy = Enemy(2, 100, 100)
     p.enemy = enemy
@@ -71,12 +71,17 @@ def main() :
     for impassable in mapRenderer.getAllImpassables():
         p.blocks.add(impassable)
         enemy.blocks.add(impassable)
+        f.blocks.add(impassable)
 
     pygame.time.set_timer(pygame.USEREVENT + 1, 1000 // league.Settings.gameTimeFactor)
     e.key_events[pygame.K_a] = p.move_left
     e.key_events[pygame.K_d] = p.move_right
     e.key_events[pygame.K_w] = p.move_up
     e.key_events[pygame.K_s] = p.move_down
+    e.key_events[pygame.K_UP] = p.shoot_bullet_up
+    e.key_events[pygame.K_DOWN] = p.shoot_bullet_down
+    e.key_events[pygame.K_LEFT] = p.shoot_bullet_left
+    e.key_events[pygame.K_RIGHT] = p.shoot_bullet_right
     e.events[pygame.QUIT] = e.stop
     e.run()
 

@@ -74,8 +74,8 @@ class MapRenderer():
 
         # list of all impassable objects that are only used in game.py for collisions
         self.all_impassables.append(wallLayer.impassable.sprites())
-        self.all_impassables.append(decoLayer.impassable.sprites())
-        self.all_impassables.append(deco2Layer.impassable.sprites())
+        #self.all_impassables.append(decoLayer.impassable.sprites())
+        #self.all_impassables.append(deco2Layer.impassable.sprites())
 
         return world_size
 

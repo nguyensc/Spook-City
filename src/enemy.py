@@ -48,9 +48,9 @@ class Enemy(Character):
         # The image to use.  This will change frequently
         # in an animated Player class.
         self.image = pygame.image.load('../assets/skeleton-clothed-1.png').convert_alpha()
-        self.image = pygame.image.load('../assets/character assets/zombie.png').convert_alpha()
         self.image = pygame.transform.scale(self.image, (64, 64))
-        self.rect = self.image.get_rect()
+        
+        self.rect = pygame.Rect((0, 0, 32, 32))
         self.rect.x = x; self.rect.y = y;
         # How big the world is, so we can check for boundries
         self.world_size = (Settings.width, Settings.height)

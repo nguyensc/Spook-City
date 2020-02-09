@@ -20,7 +20,7 @@ class Flashlight(DUGameObject):
 
         self.image = pygame.Surface([self.originalWidth , self.pic.get_height()]).convert_alpha()
         
-        self.rect = self.pic.get_rect()
+        self.rect = pygame.Rect((0, 0, 32, 16))
         self.rect.x = self.width
     
         self.collide = Drawable()
@@ -49,12 +49,14 @@ class Flashlight(DUGameObject):
         self.collide.rect.x = self.x; self.collide.rect.y = self.y;
         target_face = 0
         collision_width = 0
+        collision_occurred_flag = 0
 
         for sprite in self.blocks:
             self.collide.rect.x = sprite.x
             self.collide.rect.y = sprite.y
-            
+
             if pygame.sprite.collide_rect(self, self.collide):
+                collision_occurred_flag = 1
                 target_face = sprite.x 
                 collision_width = (int((self.x + self.originalWidth) - target_face) // 5)
                 if self.current_collision_width == collision_width:
@@ -63,8 +65,11 @@ class Flashlight(DUGameObject):
                     self.current_collision_width = collision_width
                 break
         
-        if collision_width:
-            self.width = max(1, self.originalWidth - collision_width)
+        if collision_occurred_flag:
+            if collision_width:
+                self.width = max(1, self.originalWidth - collision_width)
+        else:
+            self.width = self.originalWidth
 
 
     def update(self, time):
