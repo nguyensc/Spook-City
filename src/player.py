@@ -262,7 +262,10 @@ class Player(Character):
         return end_position
 
 
-
+    def light_raycast(self):
+        new_ray_coords = self.lineofsight_down(200)
+        self.light_rays = [(self.x, self.y), new_ray_coords]
+        
 
     def spotted_by_enemy(self, enemy, dirx, diry):
         enemy.state = 2; # enemy chase state is 2
@@ -277,8 +280,6 @@ class Player(Character):
 
         return
 
-
-    
 
     def update(self, time):      
         '''
@@ -295,19 +296,23 @@ class Player(Character):
             if self.spotted_counter <= 0:
                 self.heart_rate = 10
 
-        
-        self.lineofsight_right(400)
-        self.lineofsight_left(400)
-        self.lineofsight_up(200)
-        self.lineofsight_down(200)
+            self.lineofsight_right(400)
+            self.lineofsight_left(400)
+            self.lineofsight_up(200)
+            self.lineofsight_down(200)
         
 
         self.collisions = []
-        prevrect = (self.rect.x, self.rect.y)
+        prevrect = (self.get_x(), self.get_y())
         self.collider.x = self.collider.rect.x = self.rect.x = self.x;
         self.collider.y = self.collider.rect.y = self.rect.y = self.y;
 
-        self.rect.x += 8; self.rect.y += 8;
+        # check if character is idle
+        #if prevrect == (self.rect.x, self.rect.y):
+            # although unintuitive everything here is when the player is NOT idle (moving)
+            # only raycast if moving
+
+            
 
         for sprite in self.blocks:
             self.collider.rect.x = sprite.x
