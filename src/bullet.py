@@ -1,5 +1,6 @@
 import pygame
 import league
+from light import Light
 from math import cos, sin, radians, floor
 from random import randint
 
@@ -21,7 +22,7 @@ class Bullet:
 		self.image = pygame.transform.scale(self.image, (16,16))
 		self.image = pygame.transform.rotate(self.image, newdir + 90)
 
-		self.rect = self.image.get_rect() 
+		self.rect = self.image.get_rect()
 
 		self.wall_collider = league.Drawable()
 		self.wall_collider.image = pygame.Surface((self.rect.height, self.rect.width))
@@ -57,4 +58,3 @@ class Bullet:
 
 	def update(self):
 		self.move()
-		return

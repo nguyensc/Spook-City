@@ -3,7 +3,7 @@ import pygame
 
 
 class Light(DUGameObject):
-    def __init__(self, z=0,x=0,y=0, target=None):
+    def __init__(self, z=0,x=0,y=0, target=None, scale=170):
         super().__init__(z,x,y)
         self.delta = 512
         self.target = target
@@ -13,7 +13,7 @@ class Light(DUGameObject):
 
         self.image = pygame.image.load("../assets/light assets/Radial4.png").convert_alpha()
         self.image.fill((255, 255, 255, 100),None, pygame.BLEND_RGBA_MULT)
-        self.image = pygame.transform.scale(self.image, (170,170))
+        self.image = pygame.transform.scale(self.image, (scale,scale))
                   
         self.world_size = (Settings.width, Settings.height)
         self.blocks = pygame.sprite.Group()

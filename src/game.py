@@ -24,6 +24,7 @@ def main() :
     f = Flashlight(200, 500, 2, p)
     e.flashlight = f
     e.light_source = l
+    e.player = p
 
     o = Overlay(p)
 

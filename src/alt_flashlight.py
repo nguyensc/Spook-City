@@ -16,11 +16,11 @@ class Flashlight(DUGameObject):
 
         self.originalWidth = self.pic.get_width()
         self.width = self.originalWidth 
-        self.currentWidth = self.width
+        self.current_collision_width = 0
 
         self.image = pygame.Surface([self.originalWidth , self.pic.get_height()]).convert_alpha()
         
-        self.rect = pygame.Rect((0, 0, 64, 4))
+        self.rect = pygame.Rect((0, 0, 32, 16))
         self.rect.x = self.width
     
         self.collide = Drawable()
@@ -29,7 +29,6 @@ class Flashlight(DUGameObject):
 
         self.world_size = (Settings.width, Settings.height)
         self.blocks = pygame.sprite.Group()
-
 
     def lineOfSight(self, length = 0):
         xx = int(self.rect.x)
@@ -47,41 +46,42 @@ class Flashlight(DUGameObject):
     
 
     def check_collision(self):
+        self.collide.rect.x = self.x; self.collide.rect.y = self.y;
         target_face = 0
         collision_width = 0
         collision_occurred_flag = 0
-
-        wallx = 0
-        overlap = 0
-        newWidth = self.originalWidth
 
         for sprite in self.blocks:
             self.collide.rect.x = sprite.x
             self.collide.rect.y = sprite.y
 
             if pygame.sprite.collide_rect(self, self.collide):
-                wallx = sprite.x
-                overlap = self.originalWidth - (self.x - wallx)
+                collision_occurred_flag = 1
+                target_face = sprite.x 
+                collision_width = (int((self.x + self.originalWidth) - target_face) // 5)
+                if self.current_collision_width == collision_width:
+                    collision_width = 0
+                else:
+                    self.current_collision_width = collision_width
                 break
         
-        newWidth = self.originalWidth - overlap
-        self.width = abs(newWidth)
+        if collision_occurred_flag:
+            if collision_width:
+                self.width = max(1, self.originalWidth - collision_width)
+        else:
+            self.width = self.originalWidth
 
 
     def update(self, time):
         self.x = self.target.x + 20
         self.y = self.target.y - 10
 
-        self.y += 16
-
         self.rect.x = self.x
         self.rect.y = self.y
-        self.rect.width = self.originalWidth
 
+        self.check_collision()
 
-        # a collision safety buffer, don't want collisions to begin too soon
-        if pygame.time.get_ticks() > 1000:
-            self.check_collision()
+        self.rightFace = self.rect.x + self.width
 
         self.pic = pygame.transform.scale(self.pic, (128, 64))
         self.image = pygame.Surface([1000, self.pic.get_height()]).convert_alpha()
@@ -89,5 +89,7 @@ class Flashlight(DUGameObject):
 
         self.collide.rect.width = self.width
         self.collide.width = self.width
+
+        self.rect.width = self.width
 
         self.image.blit(self.pic, (0, 0), area=(0, 0, self.width, self.pic.get_height()))
