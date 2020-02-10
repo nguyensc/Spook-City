@@ -32,9 +32,9 @@ class MapRenderer():
             self.map = MapParams(
                 '../assets/map assets/sprite sheets/Hospital Tiles/TileA5_PHC_Interior-Hospital.png', 8, '../assets/map assets/level 1/floors.lvl',
                 '../assets/map assets/sprite sheets/Hospital Tiles/TileA4_PHC_Interior-Hospital.png', 23, '../assets/map assets/level 1/walls.lvl',
-                '../assets/map assets/sprite sheets/Hospital Tiles/TileA4_PHC_Interior-Hospital.png', 23, '../assets/map assets/level 1/walls.lvl',
-                '../assets/map assets/sprite sheets/Hospital Tiles/TileA4_PHC_Interior-Hospital.png', 23, '../assets/map assets/level 1/walls.lvl',
-                '../assets/map assets/sprite sheets/Hospital Tiles/TileA4_PHC_Interior-Hospital.png', 23, '../assets/map assets/level 1/walls.lvl')
+                '../assets/map assets/sprite sheets/Hospital Tiles/TileB_PHC_Interior-Hospital.png', 16, '../assets/map assets/level 1/level1_decoration 1.lvl',
+                '../assets/map assets/sprite sheets/Hospital Tiles/TileB_PHC_Interior-Hospital.png', 16, '../assets/map assets/level 1/level1_decoration 2.lvl',
+                '../assets/map assets/sprite sheets/Hospital Tiles/TileA4_PHC_Interior-Hospital.png', 23, '../assets/map assets/level 1/level1_ceiling.lvl')
 
         else:
             self.map = MapParams(
@@ -67,20 +67,20 @@ class MapRenderer():
         world_size = (floorLayer.wide*league.Settings.tile_size,
                       floorLayer.high * league.Settings.tile_size)
 
-        self.engine.drawables.add(floorLayer.passable.sprites())
-        self.engine.drawables.add(wallLayer.impassable.sprites())
-        self.engine.drawables.add(decoLayer.impassable.sprites())
-        self.engine.drawables.add(deco2Layer.impassable.sprites())
+        self.engine.mapDrawables.add(floorLayer.passable.sprites())
+        self.engine.mapDrawables.add(wallLayer.impassable.sprites())
+        self.engine.mapDrawables.add(decoLayer.impassable.sprites())
+        self.engine.mapDrawables.add(deco2Layer.impassable.sprites())
 
         # list of all impassable objects that are only used in game.py for collisions
-        self.all_impassables.append(wallLayer.impassable.sprites())
-        #self.all_impassables.append(decoLayer.impassable.sprites())
-        #self.all_impassables.append(deco2Layer.impassable.sprites())
-
+       
         return world_size
 
 
     def renderForeGround(self):
         ceiling = league.Spritesheet(self.map.ceiling[0], 16, self.map.ceiling[1])
         ceilingLayer = league.Tilemap(self.map.ceiling[2], ceiling, layer=4)
-        self.engine.drawables.add(ceilingLayer.impassable.sprites())
+
+        self.engine.mapDrawables.add(ceilingLayer.impassable.sprites())
+        self.all_impassables.append(ceilingLayer.impassable.sprites())
+

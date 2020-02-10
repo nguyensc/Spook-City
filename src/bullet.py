@@ -50,11 +50,6 @@ class Bullet:
 				return 1
 		return 0
 
-
-	def print_pos(self):
-		print(self.x, " ", self.y)
-
-
 	def update(self):
 		self.move()
 		return
