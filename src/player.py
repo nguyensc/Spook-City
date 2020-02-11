@@ -1,5 +1,7 @@
 from league import *
+from math import radians, cos, sin, copysign
 import pygame
+from beartrap import BearTrap
 from bullet import Bullet
 
 
@@ -16,6 +18,8 @@ class Player(Character):
         self.health = 100
         self.heart_rate = 10 # lower = faster heart animation speed
         self.bullets = []
+        self.interactables = pygame.sprite.Group()
+
         self.last_hit = pygame.time.get_ticks()
         self.delta = 512
         self.screen = None
@@ -23,6 +27,12 @@ class Player(Character):
         self.x = x
         self.y = y
         self.camera = None
+
+        self.items = None # set up by in engine in game.py
+        self.inventory = {
+            0: "None"
+        }
+        self.active_item = 0
         
         self.sheet = Spritesheet('../assets/player/Black/player_idle.png', 48, 1)
         self.sprites = self.sheet.sprites
@@ -155,119 +165,55 @@ class Player(Character):
         self.shoot_bullet(time, 0)
 
 
-    def spotted_by_enemy(self, enemy, dirx, diry):
-        enemy.state = 2; # enemy chase state is 2
-        enemy.sight_counter = enemy.sight_timeout # reset the enemy chase timer
-        enemy.target = self
-        enemy.dirx = dirx # target x direction to move to
-        enemy.diry = diry # target y direction to move to
+    def lineofsight_raycast(self, length, direction):
+        xx = int(self.rect.x); yy = int(self.rect.y)
+        r = radians(direction)
+        dirx = int(cos(r))
+        diry = int(sin(r))
+        end_position = (xx + dirx * length, yy + diry * length)
 
-        # increase heart rate and set counter for when to catch breath
-        self.spotted_counter = self.spotted_timer  
-        self.heart_rate = 3
+        for i in range(length):
+            self.cpoint.x = self.cpoint.rect.x = xx
+            self.cpoint.y = self.cpoint.rect.y = yy
 
-        return
+            # line of sight runs into enemy
+            if self.enemy.rect.collidepoint(xx, yy):
+                if not dirx:
+                    self.spotted_by_enemy(self.enemy, 0, copysign(-1, self.y - self.enemy.y)) # set enemy state
+                else:
+                    self.spotted_by_enemy(self.enemy, copysign(1, self.x - self.enemy.x), 0)
 
+                end_position = (xx, yy)
+                break
+            # line of sight runs into wall
+            elif pygame.sprite.spritecollideany(self.cpoint, self.blocks) != None:
+                end_position = (xx, yy)
+                break     
+            xx += dirx * 2
+            yy += diry * 2
+        return end_position  
 
     def lineofsight_right(self, length):
-        xx = int(self.rect.x); yy = int(self.rect.y);
-        end_position = (xx + length, yy)
-
-        for i in range(length):
-            self.cpoint.x = self.cpoint.rect.x = xx
-            self.cpoint.y = self.cpoint.rect.y = yy
-
-            # line of sight runs into enemy
-            if self.enemy.rect.collidepoint(xx, yy):
-                self.spotted_by_enemy(self.enemy, -1, 0) # set enemy state
-                end_position = (xx, yy)
-                break
-            # line of sight runs into wall
-            elif pygame.sprite.spritecollideany(self.cpoint, self.blocks) != None:
-                end_position = (xx, yy)
-                break
-            xx += 16
-
-        self.sight_coords[0] = end_position
-        return end_position
-
+        self.sight_coords[0] = self.lineofsight_raycast(length, 0)
+        return self.sight_coords[0]
 
     def lineofsight_left(self, length):
-        xx = int(self.rect.x); yy = int(self.rect.y)
-        end_position = (xx - length, yy)
-
-        for i in range(length):
-            self.cpoint.x = self.cpoint.rect.x = xx
-            self.cpoint.y = self.cpoint.rect.y = yy
-
-            # line of sight runs into enemy
-            if self.enemy.rect.collidepoint(xx, yy):
-                self.spotted_by_enemy(self.enemy, 1, 0) # set enemy state
-                end_position = (xx, yy)
-                break
-            # line of sight runs into wall
-            elif pygame.sprite.spritecollideany(self.cpoint, self.blocks) != None:
-                end_position = (xx, yy)
-                break
-            xx -= 16
-
-        self.sight_coords[1] = end_position
-        return end_position
-
+        self.sight_coords[1] = self.lineofsight_raycast(length, 180)
+        return self.sight_coords[1]
 
     def lineofsight_up(self, length):
-        xx = int(self.rect.x); yy = int(self.rect.y)
-
-        end_position = (xx, yy - length)
-
-        for i in range(length):
-            self.cpoint.x = self.cpoint.rect.x = xx
-            self.cpoint.y = self.cpoint.rect.y = yy
-
-            # line of sight runs into enemy
-            if self.enemy.rect.collidepoint(xx, yy):
-                self.spotted_by_enemy(self.enemy, 0, 1) # set enemy state
-                end_position = (xx, yy)
-                break
-            # line of sight runs into wall
-            elif pygame.sprite.spritecollideany(self.cpoint, self.blocks) != None:
-                end_position = (xx, yy)
-                break
-            yy -= 8
-
-        self.sight_coords[2] = end_position
-        return end_position
-
+        self.sight_coords[2] = self.lineofsight_raycast(length, 90)
+        return self.sight_coords[2]
 
     def lineofsight_down(self, length):
-        xx = int(self.rect.x); yy = int(self.rect.y)
-        end_position = (xx, yy + length)
+        self.sight_coords[3] = self.lineofsight_raycast(length, 270)
+        return self.sight_coords[3]
 
-        for i in range(length):
-            self.cpoint.x = self.cpoint.rect.x = xx
-            self.cpoint.y = self.cpoint.rect.y = yy
-
-            # line of sight runs into enemy
-            if self.enemy.rect.collidepoint(xx, yy):
-                self.spotted_by_enemy(self.enemy, 0, -1) # set enemy state
-                end_position = (xx, yy)
-                break
-            # line of sight runs into wall
-            elif pygame.sprite.spritecollideany(self.cpoint, self.blocks) != None:
-                end_position = (xx, yy)
-                break
-            yy += 8
-
-        self.sight_coords[3] = end_position
-        return end_position
-
-
-    def light_raycast(self):
-        new_ray_coords = self.lineofsight_down(200)
-        self.light_rays = [(self.x, self.y), new_ray_coords]
-        
 
     def spotted_by_enemy(self, enemy, dirx, diry):
+        # the 'trapped' state is state 3, enemies should be unable to move in this case
+        if enemy.state == 3:
+            return
         enemy.state = 2; # enemy chase state is 2
         enemy.sight_counter = enemy.sight_timeout # reset the enemy chase timer
         enemy.target = self
@@ -278,18 +224,37 @@ class Player(Character):
         self.spotted_counter = self.spotted_timer  
         self.heart_rate = 3
 
-        return
+        return  
 
+
+    def interact(self, time):
+        # loop through the interactable sprite group
+        for sprite in self.interactables:
+            #self.collider.rect.x = sprite.x
+            #self.collider.rect.y = sprite.y
+            '''
+            self.cpoint.rect.x = self.rect.x
+            self.cpoint.rect.y = self.rect.y - 64
+            '''
+            if pygame.sprite.collide_rect(self, sprite):
+                print("interaction triggered!  ", sprite.contents)
+                self.inventory[self.active_item] = sprite.contents
+
+
+
+    def use_active_item(self, time):
+        if self.inventory[self.active_item] == "beartrap":
+            self.create_physical_item(0, BearTrap(self.x, self.y))
+            self.inventory[self.active_item] = "None" # empty out the current inventory slot
+
+    def create_physical_item(self, impassable, item):
+        if impassable:
+            self.blocks.append(item)
+        # add a new object to the list of entities created from user input
+        self.items.append(item) 
 
     def update(self, time):      
-        '''
-        xx = self.x; yy = self.y;
-        for i in range(100):
-            self.cpoint.rect.x = xx; self.cpoint.rect.y = yy;
-            xx-=1
-            if self.enemy.rect.collide(self.cpoint.x, self.cpoint.y) != None:
-                printd("hit")
-                break '''
+        self.lineofsight_raycast(100, 90)
         if time != 0:
             self.shoot_counter -= 1
             self.spotted_counter -= 1
@@ -300,30 +265,18 @@ class Player(Character):
             self.lineofsight_left(400)
             self.lineofsight_up(200)
             self.lineofsight_down(200)
-        
 
         self.collisions = []
         prevrect = (self.get_x(), self.get_y())
         self.collider.x = self.collider.rect.x = self.rect.x = self.x;
-        self.collider.y = self.collider.rect.y = self.rect.y = self.y;
-
-        # check if character is idle
-        #if prevrect == (self.rect.x, self.rect.y):
-            # although unintuitive everything here is when the player is NOT idle (moving)
-            # only raycast if moving
-
-            
+        self.collider.y = self.collider.rect.y = self.rect.y = self.y;            
 
         for sprite in self.blocks:
             self.collider.rect.x = sprite.x
             self.collider.rect.y = sprite.y
             if pygame.sprite.collide_rect(self, self.collider):
                 self.collisions.append(sprite)
-        
-        #self.collider.x += 5; self.collider.y+= 5;
-        #self.rect.x = prevrect[0]; self.rect.y = prevrect[1]
-        
-        #pygame.display.flip()
+
 
     def ouch(self):
         now = pygame.time.get_ticks()
