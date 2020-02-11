@@ -4,11 +4,11 @@ sys.path.append('..')
 import league
 from player import Player
 from enemy import Enemy
-from overlay import Overlay 
 from mapRenderer import MapRenderer
 from light import Light
 from flashlight import Flashlight
 from overlay import Overlay
+from container import Container
 
 def main() :
     e = league.Engine("Survive")
@@ -22,31 +22,40 @@ def main() :
 
     l = Light(20, 0, 0, p)
     f = Flashlight(200, 500, 2, p)
+
     e.flashlight = f
     e.light_source = l
     e.player = p
 
     o = Overlay(p)
+    e.overlay = o
 
     #p.rect = p.image.get_rect()
 
     enemy = Enemy(2, 100, 100)
     p.enemy = enemy
 
+    container1 = Container(600, 300, 0, "beartrap")
+
     e.objects.append(p)
     e.objects.append(enemy)
     e.objects.append(l)
     e.objects.append(f)
+    e.objects.append(o)
+    e.objects.append(container1)
    
     p.enemy = enemy
 
-    # projectiles pre-added
-    e.projectiles = p.bullets
+    # any objects to be created on the fly
+    p.items = e.dynamic_instances
+    enemy.hazards = p.items
+    p.interactables.add(container1)
 
     # extra rects to draw debug only ! (for now)
     e.extra_rect_drawables.append((p.rect, (255, 0, 0)))
     e.extra_rect_drawables.append((p.collider.rect, (0, 255, 0)))
     e.extra_rect_drawables.append((enemy.rect, (0, 0, 255)))
+    e.extra_rect_drawables.append((container1.rect, (128, 60, 200)))
 
     for test in enemy.tests:
         e.drawables.add(test)
@@ -58,6 +67,7 @@ def main() :
     e.drawables.add(enemy)
     e.drawables.add(l)
     e.drawables.add(f)
+    e.drawables.add(container1)
 
     mapRenderer.renderForeGround()
 
@@ -79,10 +89,12 @@ def main() :
     e.key_events[pygame.K_d] = p.move_right
     e.key_events[pygame.K_w] = p.move_up
     e.key_events[pygame.K_s] = p.move_down
+    e.key_events[pygame.K_e] = p.interact
     e.key_events[pygame.K_UP] = p.shoot_bullet_up
     e.key_events[pygame.K_DOWN] = p.shoot_bullet_down
     e.key_events[pygame.K_LEFT] = p.shoot_bullet_left
     e.key_events[pygame.K_RIGHT] = p.shoot_bullet_right
+    e.key_events[pygame.K_SPACE] = p.use_active_item
     e.events[pygame.QUIT] = e.stop
     e.run()
 

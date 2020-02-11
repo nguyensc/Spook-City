@@ -50,12 +50,17 @@ class Enemy(Character):
         self.image = pygame.image.load('../assets/skeleton-clothed-1.png').convert_alpha()
         self.image = pygame.transform.scale(self.image, (64, 64))
         
-        self.rect = pygame.Rect((0, 0, 32, 32))
+        self.rect = pygame.Rect((0, 0, 64, 64))
         self.rect.x = x; self.rect.y = y;
+
         # How big the world is, so we can check for boundries
         self.world_size = (Settings.width, Settings.height)
+        
         # What sprites am I not allowd to cross?
         self.blocks = pygame.sprite.Group()
+        self.hazards = None
+        self.hazard_blocks = pygame.sprite.Group()
+
         # Which collision detection function?
         self.collide_function = pygame.sprite.collide_rect
         self.collisions = []
@@ -227,6 +232,7 @@ class Enemy(Character):
         self.image.fill(255, 0, 0, 255)
 
     def update(self, time):
+
         if time != 0:
             # patrol state
             if self.state == 0:
@@ -237,12 +243,21 @@ class Enemy(Character):
             # chase state
             elif self.state == 2:
                 self.chase()
+            elif self.state == 3:
+                return
 
        
 
         self.collider.x = self.rect.x = self.x
         self.collider.y = self.rect.y = self.y
         self.collisions = []
+
+        for hazard in self.hazards:
+            if pygame.sprite.collide_rect(self, hazard):
+                hazard.triggered = 1
+                self.state = 3
+                return
+
 
         for sprite in self.blocks:
             self.collider.rect.x = sprite.x
