@@ -35,8 +35,8 @@ def main() :
     enemy = Enemy(2, 100, 150, p)
     p.enemy = enemy
 
-    container1 = Container(600, 300, 0, "lantern")
-    container2 = Container(600, 500, 0, "beartrap")
+    container1 = Container(200, 300, 0, "lantern")
+    container2 = Container(200, 500, 0, "beartrap")
 
     e.objects.append(p)
     e.objects.append(enemy)
