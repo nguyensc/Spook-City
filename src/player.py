@@ -183,9 +183,9 @@ class Player(Character):
             # line of sight runs into enemy
             if self.enemy.rect.collidepoint(xx, yy):
                 if not dirx:
-                    self.spotted_by_enemy(self.enemy, 0, copysign(-1, self.y - self.enemy.y)) # set enemy state
+                    self.spotted_by_enemy(self.enemy, 0, copysign(-1, self.enemy.y - self.y)) # set enemy state
                 else:
-                    self.spotted_by_enemy(self.enemy, copysign(1, self.x - self.enemy.x), 0)
+                    self.spotted_by_enemy(self.enemy, copysign(1, self.enemy.x - self.x), 0)
 
                 end_position = (xx, yy)
                 break

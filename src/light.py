@@ -9,19 +9,20 @@ class Light(DUGameObject):
         self.target = target
         self.x = target.x
         self.y = target.y
-        self.scale = int(256 / 64)
 
         self.image = pygame.image.load("../assets/light assets/Radial4.png").convert_alpha()
         self.image.fill((255, 255, 255, 100),None, pygame.BLEND_RGBA_MULT)
         self.image = pygame.transform.scale(self.image, (scale,scale))
+        self.rect = self.image.get_rect()
                   
-        self.world_size = (Settings.width, Settings.height)
         self.blocks = pygame.sprite.Group()
 
   
     def update(self, time):
-        self.x = self.target.rect.x - 70
-        self.y = self.target.rect.y - 70
+        self.x = self.target.x
+        self.y = self.target.y
+        self.rect.x = self.target.x - 60
+        self.rect.y = self.target.y - 65
 
     
     
