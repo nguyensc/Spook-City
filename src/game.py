@@ -19,7 +19,7 @@ def main() :
     mapRenderer = MapRenderer("first floor", e)
     world_size = mapRenderer.renderBackground()
     p.world_size = world_size
-
+    mapRenderer.renderForeGround()
     l = Light(20, 0, 0, p)
     f = Flashlight(200, 500, 2, p)
 
@@ -75,8 +75,6 @@ def main() :
 
     mapRenderer.renderForeGround()
 
-    c = league.LessDumbCamera(720, 720, p, e.drawables, world_size)
-    e.objects.append(c)
     #e.collisions[p] = (q, p.ouch)
   
     # draws the flashlight collision rectangle

@@ -42,6 +42,7 @@ class Engine:
         self.key_events[Settings.statistics_key] = self.toggle_statistics
         self.objects = []
         self.drawables = pygame.sprite.LayeredUpdates()
+        self.mapDrawables = pygame.sprite.LayeredUpdates()
         self.screen = None
         self.real_delta_time = 0
         self.visible_statistics = False
@@ -98,6 +99,7 @@ class Engine:
             for o in self.objects:
                 o.update(self.game_delta_time)          
 
+            self.mapDrawables.draw(self.screen)
             self.drawables.draw(self.screen)
             
             # Show statistics?

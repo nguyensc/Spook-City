@@ -114,10 +114,12 @@ class Tilemap:
                 num = int(j)
                     
                 if (num == skipVal):
-                    num = 0
                     base_sprite = defaultImg.sprites[25]
                 else:
-                    base_sprite = self.spritesheet.sprites[abs(num)]
+                    if num < 0:
+                        base_sprite = self.spritesheet.sprites[abs(num)]
+                    else:
+                        base_sprite = self.spritesheet.sprites[num]
                 
                 sprite = Drawable(self.layer)
                 sprite.image = base_sprite.image
@@ -129,9 +131,10 @@ class Tilemap:
                 sprite.x = x
                 sprite.y = y
                 sprite.rect = rect
-                self.passable.add(sprite)
                 if num < 0:
                     self.impassable.add(sprite)
+                else:
+                    self.passable.add(sprite)
                 b = b + 1
             a = a + 1
 
