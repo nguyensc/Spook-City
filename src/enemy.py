@@ -66,7 +66,7 @@ class Enemy(Character):
         self.collisions = []
         self.collider = Drawable()
         self.collider.image = pygame.Surface([Settings.tile_size, Settings.tile_size])
-        self.collider.rect = self.collider.image.get_rect()
+        self.collider.rect = pygame.Rect((0, 0, 48, 48))
 
         self.test = Drawable()
         self.test.image = pygame.Surface([Settings.tile_size, Settings.tile_size])
@@ -265,25 +265,5 @@ class Enemy(Character):
 
             if pygame.sprite.collide_rect(self, self.collider):
                 self.collisions.append(sprite)
-            '''
-            if time != 0 and self.sight_counter <= 0:
-                sight = self.line_of_sight(sprite, self.dirx, self.diry)
-                #print(sight)
-                if sight[0] == 1:
-                    self.move_speed = self.run_speed
-                    self.state = 0
-                    return
-                elif sight[1] == 1:
-                    self.move_speed = self.run_speed
-                    self.state = 1
-                elif sight[2] == 1:
-                    self.move_speed = self.run_speed
-                    self.state = 2
-                elif sight[3] == 1:
-                    self.move_speed = self.run_speed
-                    self.state = 3
-                self.sight_counter = self.sight
-
-            self.move_speed = self.walk_speed'''
 
         self.sight_counter-=1

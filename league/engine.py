@@ -31,6 +31,8 @@ class Engine:
         self.extra_line_drawables = []
         self.projectiles = []
         self.nospriteables = []
+        self.player = None
+        self.dynamic_instances = []
 
         self.title = title
         self.running = False
@@ -48,6 +50,8 @@ class Engine:
         self.overlay = None
         self.light_source = None
         self.flashlight = None
+
+        self.currangle = 0
 
     def init_pygame(self):
         """This function sets up the state of the pygame system,
@@ -71,6 +75,7 @@ class Engine:
         # Create statistics font
         self.statistics_font = pygame.font.Font(None,30)
 
+
     def run(self):
         """The main game loop.  As close to our book code as possible."""
         self.running = True
@@ -91,41 +96,75 @@ class Engine:
             # Each object must have an update(time) method
             self.check_collisions()
             for o in self.objects:
-                o.update(self.game_delta_time)
-
-            # Generate outputs
-            #d.update()            
+                o.update(self.game_delta_time)          
 
             self.drawables.draw(self.screen)
             
             # Show statistics?
             if self.visible_statistics:
                 self.show_statistics()
-            
-            # Show overlay?
-            if self.overlay:
-                self.show_overlay()
 
-            # draw projectiles
-            for p in self.projectiles:
-                
-                # otherwise see if the projectile is done
-                if p.alpha <= 0:
-                    self.projectiles.remove(p)
-                    p.delete() # destroy the projectile memory
-                    continue
 
-                self.screen.blit(p.surf, (p.x, p.y)) # display the bullet
-                p.update() # updates any values for the projectile to progress
-                new_alpha = p.alpha - p.delta_alpha # increase the transparency
-                p.set_colors((p.red, p.green - 5, 0, new_alpha)) # move colors towards white
+                '''
+            # new wave raycast lighting
+            lighting_surf = pygame.Surface([300, 300])
+            lighting_surf.fill((128,128,128,0))
+            img = pygame.image.load("../assets/projectiles/bullet.png").convert_alpha()
+            img = pygame.transform.scale(img, (300,5))
 
+            for i in range(0, 360, 30):
+                scale = (300, 5)
+                end_point = ()
+                for j in range(0, 300, 30):
+
+
+                rotated_image, origin = self.rotate_image_center(img, i)           
+                #self.currangle += 1
+                lighting_surf.blit(rotated_image, origin)
+            start_pos = (100, 150)
+            collider = self.player.cpoint
+            for i in range(100):
+                collider.rect.y = start_pos[1] + i
+
+                if pygame.sprite.spritecollideany(collider, self.player.blocks):
+                    new_scale = start_pos[1] - i
+                    img = pygame.transform.scale(img, (new_scale,5))
+                    break
+
+
+            rotated_image, origin = self.rotate_image_center(img, 90, start_pos)           
+            lighting_surf.blit(rotated_image, origin)
+
+
+            pixels = pygame.PixelArray(lighting_surf)
+            pixels.replace((255,236,0),(255,255,255, 255))
+            pixels.close()
+            '''
+
+            # set up fog-of-war
             fog = pygame.Surface((Settings.width, Settings.height))
             fog.fill(pygame.color.Color(60,60,60))
+
+            # draw any runtime instances created by the player
+            for i in self.dynamic_instances:
+                i.update()
+                # all item type objects must have an isLightSource attribute
+                if i.isLightSource:
+                        fog.blit(i.light, (i.x, i.y))
+                # render the actual physical item
+                self.screen.blit(i.image, (i.x, i.y))
+                pygame.draw.rect(self.screen, (255,255,128,255), i.rect, 5)
+
+
             fog.blit(self.light_source.image, self.light_source.rect)
             fog.blit(self.flashlight.image, self.flashlight.rect)
+           # fog.blit(lighting_surf, (self.player.rect.x - 150,self.player.rect.y - 150))
             
             self.screen.blit(fog,(0,0),special_flags=pygame.BLEND_RGBA_MULT)
+
+            # show display ontop of fog
+            if self.overlay:
+                self.show_overlay()
 
             for rect, color in self.nospriteables:
                 pygame.draw.rect(self.screen, color, rect, 3)
@@ -134,12 +173,32 @@ class Engine:
             for rect, color in self.extra_rect_drawables:
                 pygame.draw.rect(self.screen, color, rect, 3)
 
-
             # Could keep track of rectangles and update here, but eh.
             pygame.display.flip()
 
             # Frame limiting code
             self.clock.tick(Settings.fps)
+
+
+    def rotate_image_center(self, img, angle, pos):
+        w, h = img.get_size()
+
+        box = [pygame.math.Vector2(p) for p in [(0, 0), (w, 0), (w, -h), (0, -h)]]
+        box_rotate = [p.rotate(angle) for p in box]
+
+        min_box = (min(box_rotate, key=lambda p: p[0])[0], min(box_rotate, key=lambda p: p[1])[1])
+        max_box = (max(box_rotate, key=lambda p: p[0])[0], max(box_rotate, key=lambda p: p[1])[1])
+        
+
+        pivot = pygame.math.Vector2(w/5, -h/2)
+        pivot_rotate = pivot.rotate(angle)
+        pivot_move   = pivot_rotate - pivot
+
+        origin = (pos[0] + min_box[0] - pivot_move[0], pos[1] - max_box[1] + pivot_move[1])
+
+        rotated_image = pygame.transform.rotate(img, angle)
+        return (rotated_image, origin)
+
 
     def check_collisions(self):
         for i in self.collisions.keys():
@@ -159,7 +218,7 @@ class Engine:
         self.screen.blit(fps, (10, 10))
     
     def show_overlay(self):
-        self.screen.blit(self.overlay, Settings.overlay_location)
+        self.screen.blit(self.overlay.image, Settings.overlay_location)
 
     def stop(self, time):
         self.running = False

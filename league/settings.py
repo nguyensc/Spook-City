@@ -27,7 +27,7 @@ class Settings:
     statistics_color = (0, 0, 0)
     statistics_key = pygame.K_BACKQUOTE
     overlay_color = (0, 0, 0)
-    overlay_location = (50, 580)
+    overlay_location = (0, 0)
 
 from enum import IntEnum
 class State(IntEnum):

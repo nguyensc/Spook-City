@@ -32,7 +32,7 @@ def main() :
 
     #p.rect = p.image.get_rect()
 
-    enemy = Enemy(2, 100, 100)
+    enemy = Enemy(2, 100, 150, p)
     p.enemy = enemy
 
     container1 = Container(600, 300, 0, "lantern")

@@ -116,7 +116,6 @@ class Tilemap:
                 if (num == skipVal):
                     num = 0
                     base_sprite = defaultImg.sprites[25]
-
                 else:
                     base_sprite = self.spritesheet.sprites[abs(num)]
                 
@@ -176,5 +175,6 @@ class Spritesheet:
         x = self.tile_size * (num  % self.per_row)
         sprite = Drawable()
         sprite.image = pygame.Surface((self.tile_size, self.tile_size)).convert_alpha()
+        sprite.image.fill((128,128,128,0))
         sprite.image.blit(self.sheet, (0, 0), (x, y, x + self.tile_size, y + self.tile_size))
         return sprite
