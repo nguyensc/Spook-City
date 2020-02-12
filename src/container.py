@@ -2,16 +2,17 @@ from league import *
 import pygame
 
 class Container(Character):
-    def __init__(self, x=0, y=0, z=0, contents=None):
-        super().__init__(z, x, y)
+    def __init__(self, z=0, x=0, y=0, contents=None):
+        super().__init__(x, y, z)
         self.x = x; self.y = y;
 
         self.sheet = Spritesheet('../assets/map assets/container.png', 48, 1)
         self.sprites = self.sheet.sprites
         self.image = self.sprites[0].image
         self.image = pygame.transform.scale(self.image, (96, 96))
-
         self.rect = self.image.get_rect()
+        self.rect.x = self.x
+        self.rect.y = self.y
 
         self.contents = contents
 
