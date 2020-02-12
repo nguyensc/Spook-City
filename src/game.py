@@ -35,7 +35,8 @@ def main() :
     enemy = Enemy(2, 100, 100)
     p.enemy = enemy
 
-    container1 = Container(600, 300, 0, "beartrap")
+    container1 = Container(600, 300, 0, "lantern")
+    container2 = Container(600, 500, 0, "beartrap")
 
     e.objects.append(p)
     e.objects.append(enemy)
@@ -43,19 +44,20 @@ def main() :
     e.objects.append(f)
     e.objects.append(o)
     e.objects.append(container1)
+    e.objects.append(container2)
    
     p.enemy = enemy
 
     # any objects to be created on the fly
     p.items = e.dynamic_instances
-    enemy.hazards = p.items
+    enemy.hazards = p.hazards
     p.interactables.add(container1)
+    p.interactables.add(container2)
 
     # extra rects to draw debug only ! (for now)
     e.extra_rect_drawables.append((p.rect, (255, 0, 0)))
     e.extra_rect_drawables.append((p.collider.rect, (0, 255, 0)))
     e.extra_rect_drawables.append((enemy.rect, (0, 0, 255)))
-    e.extra_rect_drawables.append((container1.rect, (128, 60, 200)))
 
     for test in enemy.tests:
         e.drawables.add(test)
@@ -68,6 +70,8 @@ def main() :
     e.drawables.add(l)
     e.drawables.add(f)
     e.drawables.add(container1)
+    e.drawables.add(container2)
+
 
     mapRenderer.renderForeGround()
 

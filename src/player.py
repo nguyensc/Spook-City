@@ -2,6 +2,7 @@ from league import *
 from math import radians, cos, sin, copysign
 import pygame
 from beartrap import BearTrap
+from lantern import Lantern
 from bullet import Bullet
 
 
@@ -19,6 +20,7 @@ class Player(Character):
         self.heart_rate = 10 # lower = faster heart animation speed
         self.bullets = []
         self.interactables = pygame.sprite.Group()
+        self.hazards = [] # similar to interactables but dangerous!
 
         self.last_hit = pygame.time.get_ticks()
         self.delta = 512
@@ -43,6 +45,8 @@ class Player(Character):
         self.shoot_counter = self.shoot_timer
         self.spotted_timer = 30
         self.spotted_counter = self.spotted_timer
+        self.interaction_timer = 20
+        self.interaction_counter = self.interaction_timer
 
         self.rect = pygame.Rect((8, 8, 20, 20)) # the players collision mask, this determines when the player collides with things
         self.enemy = enemy;
@@ -228,43 +232,70 @@ class Player(Character):
 
 
     def interact(self, time):
-        # loop through the interactable sprite group
-        for sprite in self.interactables:
-            #self.collider.rect.x = sprite.x
-            #self.collider.rect.y = sprite.y
-            '''
-            self.cpoint.rect.x = self.rect.x
-            self.cpoint.rect.y = self.rect.y - 64
-            '''
-            if pygame.sprite.collide_rect(self, sprite):
-                print("interaction triggered!  ", sprite.contents)
-                self.inventory[self.active_item] = sprite.contents
+        # check for interaction buffer
+        if self.interaction_counter > self.interaction_timer:
+            return # player must wait before another action
+
+        # set the interaction timer, must be held to complete action
+        if self.interaction_counter <= 0:
+            self.interaction_counter = self.interaction_timer + 10 # reset interaction timer
+            print("hit")
+            # loop through the interactable sprite group
+            for sprite in self.interactables:
+                if pygame.sprite.collide_rect(self, sprite):
+                    print("interaction triggered!  ", sprite.contents)
+                    self.inventory[self.active_item] = sprite.contents
+        else:
+            # decrement timer
+            self.interaction_counter -= 1
+
 
 
 
     def use_active_item(self, time):
+        # beartrap use code
         if self.inventory[self.active_item] == "beartrap":
-            self.create_physical_item(0, BearTrap(self.x, self.y))
-            self.inventory[self.active_item] = "None" # empty out the current inventory slot
+            self.create_physical_item(0, 1, BearTrap(self.x, self.y))
 
-    def create_physical_item(self, impassable, item):
+        # lantern use code
+        elif self.inventory[self.active_item] == "lantern":
+            self.create_physical_item(0, 0, Lantern(self.x, self.y))
+
+        self.inventory[self.active_item] = "None" # empty out the current inventory slot
+
+
+    def create_physical_item(self, impassable, hazard, item):
         if impassable:
             self.blocks.append(item)
+        
+        if hazard:
+            self.hazards.append(item)
         # add a new object to the list of entities created from user input
         self.items.append(item) 
 
     def update(self, time):      
-        self.lineofsight_raycast(100, 90)
+        print(self.interaction_counter)
+
+        # events which should not occur on every update call
         if time != 0:
             self.shoot_counter -= 1
             self.spotted_counter -= 1
             if self.spotted_counter <= 0:
                 self.heart_rate = 10
+            # necessary counter buffer so the player can't spam interactions
+            # all other interaction updates occur in the interaction function
+            if self.interaction_counter > self.interaction_timer:
+                self.interaction_counter -= 1
 
             self.lineofsight_right(400)
             self.lineofsight_left(400)
             self.lineofsight_up(200)
             self.lineofsight_down(200)
+        else:
+            self.interaction_counter_prev = self.interaction_counter
+            # check for redundant action meter display
+            if self.interaction_counter_prev == self.interaction_counter and self.interaction_counter != self.interaction_timer:
+                self.interaction_counter = self.interaction_timer + 10
 
         self.collisions = []
         prevrect = (self.get_x(), self.get_y())

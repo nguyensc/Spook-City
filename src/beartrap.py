@@ -1,8 +1,10 @@
 from league import *
 import pygame
 
+''' the first active (usable) item '''
 class BearTrap():
-    def __init__(self, x=0, y=0):        
+    def __init__(self, x=0, y=0):    
+
         self.sheet = Spritesheet('../assets/beartrap.png', 32, 2)
         self.sprites = self.sheet.sprites
         self.image_index = 0
@@ -17,6 +19,7 @@ class BearTrap():
         self.rect.y = self.y
 
         self.triggered = 0
+        self.isLightSource = 0
 
         self.sprite_speed = 3
         self.sprite_speed_counter = 0
