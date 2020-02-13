@@ -4,6 +4,7 @@ import pygame
 from beartrap import BearTrap
 from lantern import Lantern
 from bullet import Bullet
+import time as sleeper
 
 
 class Player(Character):
@@ -245,6 +246,7 @@ class Player(Character):
                 if pygame.sprite.collide_rect(self, sprite):
                     print("interaction triggered!  ", sprite.contents)
                     self.inventory[self.active_item] = sprite.contents
+                    sprite.makeEmpty()
         else:
             # decrement timer
             self.interaction_counter -= 1
