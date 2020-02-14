@@ -4,6 +4,7 @@ import pygame
 from beartrap import BearTrap
 from lantern import Lantern
 from bullet import Bullet
+from rancidmeat import RancidMeat
 
 
 class Player(Character):
@@ -47,6 +48,8 @@ class Player(Character):
         self.spotted_counter = self.spotted_timer
         self.interaction_timer = 20
         self.interaction_counter = self.interaction_timer
+        self.interaction_counter_prev = -1
+        self.interaction_timeout = 10
 
         self.rect = pygame.Rect((8, 8, 20, 20)) # the players collision mask, this determines when the player collides with things
         self.enemy = enemy;
@@ -239,7 +242,8 @@ class Player(Character):
         # set the interaction timer, must be held to complete action
         if self.interaction_counter <= 0:
             self.interaction_counter = self.interaction_timer + 10 # reset interaction timer
-            print("hit")
+            self.interaction_timeout = 10
+            
             # loop through the interactable sprite group
             for sprite in self.interactables:
                 if pygame.sprite.collide_rect(self, sprite):
@@ -251,7 +255,6 @@ class Player(Character):
 
 
 
-
     def use_active_item(self, time):
         # beartrap use code
         if self.inventory[self.active_item] == "beartrap":
@@ -259,7 +262,11 @@ class Player(Character):
 
         # lantern use code
         elif self.inventory[self.active_item] == "lantern":
-            self.create_physical_item(0, 0, Lantern(self.x, self.y))
+            self.create_physical_item(0, 0, Lantern(self.rect.x, self.rect.y))
+        
+        # rancid meat
+        elif self.inventory[self.active_item] == "rancidmeat":
+            self.create_physical_item(0, 1, RancidMeat(self.rect.x, self.rect.y))
 
         self.inventory[self.active_item] = "None" # empty out the current inventory slot
 
@@ -274,7 +281,6 @@ class Player(Character):
         self.items.append(item) 
 
     def update(self, time):      
-        print(self.interaction_counter)
 
         # events which should not occur on every update call
         if time != 0:
@@ -291,10 +297,14 @@ class Player(Character):
             self.lineofsight_left(400)
             self.lineofsight_up(200)
             self.lineofsight_down(200)
-        else:
-            self.interaction_counter_prev = self.interaction_counter
-            # check for redundant action meter display
-            if self.interaction_counter_prev == self.interaction_counter and self.interaction_counter != self.interaction_timer:
+
+        # check for redundant action meter display
+        if self.interaction_counter < self.interaction_timer:
+            keys_pressed = pygame.key.get_pressed() # get all pressed keys
+            # check to make sure the player is still pressing the interact button
+            if keys_pressed[pygame.K_e] != 1:
+                # if the action meter is display (meaning the player pressed e) but has stopped pressing the interact button
+                # change the counter values so that the overlay stops showing the action meter
                 self.interaction_counter = self.interaction_timer + 10
 
         self.collisions = []
