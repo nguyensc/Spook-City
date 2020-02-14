@@ -9,6 +9,7 @@ from light import Light
 from flashlight import Flashlight
 from overlay import Overlay
 from container import Container
+from enemySpawner import EnemySpawner
 
 def getSpawnCoords(play): #CoordX, coordY, some indicator for progress through the game, 
     left = 16
@@ -95,17 +96,7 @@ def main() :
 
     mapRenderer.renderForeGround()
 
-    e.zombie = getSpawnCoords(p)
-    def createEnemy(self):
-        temp = getSpawnCoords(p)
-        e.drawables.add(temp)
-        e.objects.append(temp)
-        p.enemy = temp
-        temp.hazards = p.hazards
-        #p.interactables.add(temp)
-        temp.blocks.add(impassable)
-
-    e.makeZombie = createEnemy
+    spawner = EnemySpawner(100, 100, 0, e, p, p.blocks)
   
     # draws the flashlight collision rectangle
     e.nospriteables.append((f, (255, 0, 0, 255)))
