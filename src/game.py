@@ -36,7 +36,7 @@ def main() :
     timer = pygame.time.set_timer(pygame.USEREVENT + 1, 1000 // league.Settings.gameTimeFactor)
     count = 0
     p = Player(1, 240, 100)
-    mapRenderer = MapRenderer("second room", e)
+    mapRenderer = MapRenderer("third room", e)
     world_size = mapRenderer.renderBackground()
     p.world_size = world_size
     mapRenderer.renderForeGround()
