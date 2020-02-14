@@ -19,11 +19,11 @@ class MapRenderer():
     def __init__(self, mapName, engine):
         self.engine = engine
         self.mapName = mapName
-        self.all_impassables = [] # needed for collisions currently - xam
+        self.all_impassables = []  # needed for collisions currently - xam
 
         mapDict = {
-            "first floor": 1,
-            "second floor": 2
+            "first room": 1,
+            "second room": 2
         }
 
         selector = mapDict.get(self.mapName)
@@ -32,23 +32,30 @@ class MapRenderer():
             self.map = MapParams(
                 '../assets/map assets/sprite sheets/Hospital Tiles/TileA5_PHC_Interior-Hospital.png', 8, '../assets/map assets/level 1/floors.lvl',
                 '../assets/map assets/sprite sheets/Hospital Tiles/TileA4_PHC_Interior-Hospital.png', 23, '../assets/map assets/level 1/walls.lvl',
-                '../assets/map assets/sprite sheets/Hospital Tiles/TileB_PHC_Interior-Hospital.png', 16, '../assets/map assets/level 1/level1_decoration 1.lvl',
-                '../assets/map assets/sprite sheets/Hospital Tiles/TileB_PHC_Interior-Hospital.png', 16, '../assets/map assets/level 1/level1_decoration 2.lvl',
-                '../assets/map assets/sprite sheets/Hospital Tiles/TileA4_PHC_Interior-Hospital.png', 23, '../assets/map assets/level 1/level1_ceiling.lvl')
+                '../assets/map assets/sprite sheets/Hospital Tiles/TileB_PHC_Interior-Hospital.png', 16, '../assets/map assets/level 1/decoration 1.lvl',
+                '../assets/map assets/sprite sheets/Hospital Tiles/TileB_PHC_Interior-Hospital.png', 16, '../assets/map assets/level 1/decoration 2.lvl',
+                '../assets/map assets/sprite sheets/Hospital Tiles/TileA4_PHC_Interior-Hospital.png', 23, '../assets/map assets/level 1/ceiling.lvl')
+
+        if selector == 2:
+            self.map = MapParams(
+                '../assets/map assets/sprite sheets/Hospital Tiles/TileA5_PHC_Interior-Hospital.png', 8, '../assets/map assets/level 2/floors.lvl',
+                '../assets/map assets/sprite sheets/Hospital Tiles/TileA4_PHC_Interior-Hospital.png', 23, '../assets/map assets/level 2/walls.lvl',
+                '../assets/map assets/sprite sheets/Hospital Tiles/TileB_PHC_Interior-Hospital.png', 16, '../assets/map assets/level 2/decoration 1.lvl',
+                '../assets/map assets/sprite sheets/Hospital Tiles/TileB_PHC_Interior-Hospital.png', 16, '../assets/map assets/level 2/decoration 2.lvl',
+                '../assets/map assets/sprite sheets/Hospital Tiles/TileA4_PHC_Interior-Hospital.png', 23, '../assets/map assets/level 2/ceiling.lvl')
 
         else:
             self.map = MapParams(
-                '../assets/map assets/sprite sheets/Hospital Tiles/TileA5_PHC_Interior-Hospital.png', 8, '../assets/map assets/level 1/floors.lvl',
-                '../assets/map assets/sprite sheets/Hospital Tiles/TileA4_PHC_Interior-Hospital.png', 23, '../assets/map assets/level 1/walls.lvl',
-                '../assets/map assets/sprite sheets/Hospital Tiles/TileA4_PHC_Interior-Hospital.png', 23, '../assets/map assets/level 1/walls.lvl',
-                '../assets/map assets/sprite sheets/Hospital Tiles/TileA4_PHC_Interior-Hospital.png', 23, '../assets/map assets/level 1/walls.lvl',
-                '../assets/map assets/sprite sheets/Hospital Tiles/TileA4_PHC_Interior-Hospital.png', 23, '../assets/map assets/level 1/walls.lvl')
+                '../assets/map assets/sprite sheets/Hospital Tiles/TileA5_PHC_Interior-Hospital.png', 8, '../assets/map assets/level 3/floors.lvl',
+                '../assets/map assets/sprite sheets/Hospital Tiles/TileA4_PHC_Interior-Hospital.png', 23, '../assets/map assets/level 3/walls.lvl',
+                '../assets/map assets/sprite sheets/Hospital Tiles/TileB_PHC_Interior-Hospital.png', 16, '../assets/map assets/level 3/decoration 1.lvl',
+                '../assets/map assets/sprite sheets/Hospital Tiles/TileB_PHC_Interior-Hospital.png', 16, '../assets/map assets/level 3/decoration 2.lvl',
+                '../assets/map assets/sprite sheets/Hospital Tiles/TileA4_PHC_Interior-Hospital.png', 23, '../assets/map assets/level 3/ceiling.lvl')
 
-
+            
     def getAllImpassables(self):
         # returns all impassable sprites, this function is only used in game.py -xam
         return self.all_impassables
-
 
     def renderBackground(self):
         floor = league.Spritesheet(self.map.floor[0], 16, self.map.floor[1])
@@ -73,14 +80,13 @@ class MapRenderer():
         self.engine.mapDrawables.add(deco2Layer.impassable.sprites())
 
         # list of all impassable objects that are only used in game.py for collisions
-       
+
         return world_size
 
-
     def renderForeGround(self):
-        ceiling = league.Spritesheet(self.map.ceiling[0], 16, self.map.ceiling[1])
+        ceiling = league.Spritesheet(
+            self.map.ceiling[0], 16, self.map.ceiling[1])
         ceilingLayer = league.Tilemap(self.map.ceiling[2], ceiling, layer=4)
 
         self.engine.mapDrawables.add(ceilingLayer.impassable.sprites())
         self.all_impassables.append(ceilingLayer.impassable.sprites())
-
