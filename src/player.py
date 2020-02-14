@@ -235,6 +235,10 @@ class Player(Character):
 
 
     def interact(self, time):
+        # check to make sure the player is in range of an interactable object
+        if not pygame.sprite.spritecollideany(self, self.interactables):
+            return
+
         # check for interaction buffer
         if self.interaction_counter > self.interaction_timer:
             return # player must wait before another action
@@ -249,7 +253,6 @@ class Player(Character):
                 if pygame.sprite.collide_rect(self, sprite):
                     print("interaction triggered!  ", sprite.contents)
                     self.inventory[self.active_item] = sprite.contents
-                    sprite.makeEmpty()
         else:
             # decrement timer
             self.interaction_counter -= 1
