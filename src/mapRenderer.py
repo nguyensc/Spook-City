@@ -79,9 +79,6 @@ class MapRenderer():
         self.engine.mapDrawables.add(decoLayer.impassable.sprites())
         self.engine.mapDrawables.add(deco2Layer.impassable.sprites())
 
-        self.all_impassables.append(decoLayer.impassable.sprites())
-        self.all_impassables.append(deco2Layer.impassable.sprites())
-
         # list of all impassable objects that are only used in game.py for collisions
 
         return world_size
