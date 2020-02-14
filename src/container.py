@@ -2,7 +2,7 @@ from league import *
 import pygame
 
 class Container(Character):
-    def __init__(self, x=0, y=0, z=0, contents=None):
+    def __init__(self, z=0, x=0, y=0, contents=None):
         super().__init__(z, x, y)
         self.x = x; self.y = y;
 

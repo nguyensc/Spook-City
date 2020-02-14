@@ -59,6 +59,7 @@ def main() :
     container1 = Container(2, 100, 64, "lantern")
     container2 = Container(2, 300, 64, "beartrap")
 
+
     e.objects.append(p)
     e.objects.append(enemy)
     e.objects.append(l)
