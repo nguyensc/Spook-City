@@ -32,17 +32,17 @@ class MapRenderer():
             self.map = MapParams(
                 '../assets/map assets/sprite sheets/Hospital Tiles/TileA5_PHC_Interior-Hospital.png', 8, '../assets/map assets/level 1/floors.lvl',
                 '../assets/map assets/sprite sheets/Hospital Tiles/TileA4_PHC_Interior-Hospital.png', 23, '../assets/map assets/level 1/walls.lvl',
-                '../assets/map assets/sprite sheets/Hospital Tiles/TileB_PHC_Interior-Hospital.png', 16, '../assets/map assets/level 1/level1_decoration 1.lvl',
-                '../assets/map assets/sprite sheets/Hospital Tiles/TileB_PHC_Interior-Hospital.png', 16, '../assets/map assets/level 1/level1_decoration 2.lvl',
-                '../assets/map assets/sprite sheets/Hospital Tiles/TileA4_PHC_Interior-Hospital.png', 23, '../assets/map assets/level 1/level1_ceiling.lvl')
+                '../assets/map assets/sprite sheets/Hospital Tiles/TileB_PHC_Interior-Hospital.png', 16, '../assets/map assets/level 1/decoration 1.lvl',
+                '../assets/map assets/sprite sheets/Hospital Tiles/TileB_PHC_Interior-Hospital.png', 16, '../assets/map assets/level 1/decoration 2.lvl',
+                '../assets/map assets/sprite sheets/Hospital Tiles/TileA4_PHC_Interior-Hospital.png', 23, '../assets/map assets/level 1/ceiling.lvl')
 
         else:
             self.map = MapParams(
-                '../assets/map assets/sprite sheets/Hospital Tiles/TileA5_PHC_Interior-Hospital.png', 8, '../assets/map assets/level 1/floors.lvl',
-                '../assets/map assets/sprite sheets/Hospital Tiles/TileA4_PHC_Interior-Hospital.png', 23, '../assets/map assets/level 1/walls.lvl',
-                '../assets/map assets/sprite sheets/Hospital Tiles/TileA4_PHC_Interior-Hospital.png', 23, '../assets/map assets/level 1/walls.lvl',
-                '../assets/map assets/sprite sheets/Hospital Tiles/TileA4_PHC_Interior-Hospital.png', 23, '../assets/map assets/level 1/walls.lvl',
-                '../assets/map assets/sprite sheets/Hospital Tiles/TileA4_PHC_Interior-Hospital.png', 23, '../assets/map assets/level 1/walls.lvl')
+                '../assets/map assets/sprite sheets/Hospital Tiles/TileA5_PHC_Interior-Hospital.png', 8, '../assets/map assets/level 2/floors.lvl',
+                '../assets/map assets/sprite sheets/Hospital Tiles/TileA4_PHC_Interior-Hospital.png', 23, '../assets/map assets/level 2/walls.lvl',
+                '../assets/map assets/sprite sheets/Hospital Tiles/TileB_PHC_Interior-Hospital.png', 16, '../assets/map assets/level 2/decoration 1.lvl',
+                '../assets/map assets/sprite sheets/Hospital Tiles/TileB_PHC_Interior-Hospital.png', 16, '../assets/map assets/level 2/decoration 2.lvl',
+                '../assets/map assets/sprite sheets/Hospital Tiles/TileA4_PHC_Interior-Hospital.png', 23, '../assets/map assets/level 2/ceiling.lvl')
 
 
     def getAllImpassables(self):
