@@ -50,18 +50,23 @@ class Enemy(Character):
         self.image = pygame.image.load('../assets/skeleton-clothed-1.png').convert_alpha()
         self.image = pygame.transform.scale(self.image, (64, 64))
         
-        self.rect = pygame.Rect((0, 0, 32, 32))
+        self.rect = pygame.Rect((0, 0, 64, 64))
         self.rect.x = x; self.rect.y = y;
+
         # How big the world is, so we can check for boundries
         self.world_size = (Settings.width, Settings.height)
+        
         # What sprites am I not allowd to cross?
         self.blocks = pygame.sprite.Group()
+        self.hazards = None
+        self.hazard_blocks = pygame.sprite.Group()
+
         # Which collision detection function?
         self.collide_function = pygame.sprite.collide_rect
         self.collisions = []
         self.collider = Drawable()
         self.collider.image = pygame.Surface([Settings.tile_size, Settings.tile_size])
-        self.collider.rect = self.collider.image.get_rect()
+        self.collider.rect = pygame.Rect((0, 0, 48, 48))
 
         self.test = Drawable()
         self.test.image = pygame.Surface([Settings.tile_size, Settings.tile_size])
@@ -227,6 +232,7 @@ class Enemy(Character):
         self.image.fill(255, 0, 0, 255)
 
     def update(self, time):
+
         if time != 0:
             # patrol state
             if self.state == 0:
@@ -237,6 +243,8 @@ class Enemy(Character):
             # chase state
             elif self.state == 2:
                 self.chase()
+            elif self.state == 3:
+                return
 
        
 
@@ -244,31 +252,18 @@ class Enemy(Character):
         self.collider.y = self.rect.y = self.y
         self.collisions = []
 
+        for hazard in self.hazards:
+            if pygame.sprite.collide_rect(self, hazard):
+                hazard.triggered = 1
+                self.state = 3
+                return
+
+
         for sprite in self.blocks:
             self.collider.rect.x = sprite.x
             self.collider.rect.y = sprite.y
 
             if pygame.sprite.collide_rect(self, self.collider):
                 self.collisions.append(sprite)
-            '''
-            if time != 0 and self.sight_counter <= 0:
-                sight = self.line_of_sight(sprite, self.dirx, self.diry)
-                #print(sight)
-                if sight[0] == 1:
-                    self.move_speed = self.run_speed
-                    self.state = 0
-                    return
-                elif sight[1] == 1:
-                    self.move_speed = self.run_speed
-                    self.state = 1
-                elif sight[2] == 1:
-                    self.move_speed = self.run_speed
-                    self.state = 2
-                elif sight[3] == 1:
-                    self.move_speed = self.run_speed
-                    self.state = 3
-                self.sight_counter = self.sight
-
-            self.move_speed = self.walk_speed'''
 
         self.sight_counter-=1
