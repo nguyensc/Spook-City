@@ -19,7 +19,6 @@ def main() :
     mapRenderer = MapRenderer("first floor", e)
     world_size = mapRenderer.renderBackground()
     p.world_size = world_size
-    mapRenderer.renderForeGround()
     l = Light(20, 0, 0, p)
     f = Flashlight(200, 500, 2, p)
     e.flashlight = f
