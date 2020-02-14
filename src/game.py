@@ -10,7 +10,7 @@ from flashlight import Flashlight
 from overlay import Overlay
 from container import Container
 
-def getSpawnCoords(play):
+def getSpawnCoords(play): #CoordX, coordY, some indicator for progress through the game, 
     left = 16
     right = 656
     up = 16
@@ -102,7 +102,7 @@ def main() :
         e.objects.append(temp)
         p.enemy = temp
         temp.hazards = p.hazards
-        p.interactables.add(temp)
+        #p.interactables.add(temp)
         temp.blocks.add(impassable)
 
     e.makeZombie = createEnemy
