@@ -9,8 +9,9 @@ from light import Light
 from flashlight import Flashlight
 from overlay import Overlay
 from container import Container
+from enemySpawner import EnemySpawner
 
-def getSpawnCoords(play):
+def getSpawnCoords(play): #CoordX, coordY, some indicator for progress through the game, 
     left = 16
     right = 656
     up = 16
@@ -36,7 +37,7 @@ def main() :
     timer = pygame.time.set_timer(pygame.USEREVENT + 1, 1000 // league.Settings.gameTimeFactor)
     count = 0
     p = Player(1, 240, 100)
-    mapRenderer = MapRenderer("third room", e)
+    mapRenderer = MapRenderer("first floor", e)
     world_size = mapRenderer.renderBackground()
     p.world_size = world_size
     mapRenderer.renderForeGround()
@@ -57,6 +58,7 @@ def main() :
 
     container1 = Container(2, 100, 64, "lantern")
     container2 = Container(2, 300, 64, "beartrap")
+
 
     e.objects.append(p)
     e.objects.append(enemy)
@@ -95,17 +97,7 @@ def main() :
 
     mapRenderer.renderForeGround()
 
-    e.zombie = getSpawnCoords(p)
-    def createEnemy(self):
-        temp = getSpawnCoords(p)
-        e.drawables.add(temp)
-        e.objects.append(temp)
-        p.enemy = temp
-        temp.hazards = p.hazards
-        p.interactables.add(temp)
-        temp.blocks.add(impassable)
-
-    e.makeZombie = createEnemy
+    spawner = EnemySpawner(100, 100, 0, e, p, p.blocks)
   
     # draws the flashlight collision rectangle
     e.nospriteables.append((f, (255, 0, 0, 255)))
@@ -116,7 +108,9 @@ def main() :
         enemy.blocks.add(impassable)
         f.blocks.add(impassable)
 
-    pygame.time.set_timer(pygame.USEREVENT + 1, 1000 // league.Settings.gameTimeFactor)
+    zombieTimer = 60000 #Change this to change spawn rate of the zombie
+    pygame.time.set_timer(pygame.USEREVENT, zombieTimer // league.Settings.gameTimeFactor)
+
     e.key_events[pygame.K_a] = p.move_left
     e.key_events[pygame.K_d] = p.move_right
     e.key_events[pygame.K_w] = p.move_up
@@ -127,7 +121,7 @@ def main() :
     e.key_events[pygame.K_LEFT] = p.shoot_bullet_left
     e.key_events[pygame.K_RIGHT] = p.shoot_bullet_right
     e.key_events[pygame.K_SPACE] = p.use_active_item
-    e.key_events[pygame.K_f] = e.makeZombie
+    e.events[pygame.USEREVENT] = e.makeZombie
     e.events[pygame.QUIT] = e.stop
     e.run()
 
