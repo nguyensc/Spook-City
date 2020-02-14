@@ -52,6 +52,7 @@ class Enemy(Character):
         
         self.rect = pygame.Rect((0, 0, 64, 64))
         self.rect.x = x; self.rect.y = y;
+        self.mask = pygame.mask.from_surface(self.image)
 
         # How big the world is, so we can check for boundries
         self.world_size = (Settings.width, Settings.height)

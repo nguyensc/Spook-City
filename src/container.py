@@ -13,6 +13,8 @@ class Container(Character):
         self.rect = self.image.get_rect()
         self.rect.x = self.x
         self.rect.y = self.y
+        self.mask = pygame.mask.from_surface(self.image)
+        
 
         self.contents = contents
 

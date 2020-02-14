@@ -14,6 +14,7 @@ class Light(DUGameObject):
         self.image.fill((255, 255, 255, 100),None, pygame.BLEND_RGBA_MULT)
         self.image = pygame.transform.scale(self.image, (scale,scale))
         self.rect = self.image.get_rect()
+        self.mask = pygame.mask.from_surface(self.image)
                   
         self.blocks = pygame.sprite.Group()
 

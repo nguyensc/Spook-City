@@ -6,7 +6,7 @@ class Overlay(league.DUGameObject):
         super().__init__(self)
         self._layer = 1000
         self.player = player
-        self.image = pygame.Surface([720, 720]).convert_alpha()
+        self.image = pygame.Surface([480, 480]).convert_alpha()
         self.image.fill((255,255,255,0))
         self.rect = self.image.get_rect()
         self.x = 100
@@ -18,7 +18,7 @@ class Overlay(league.DUGameObject):
 
         # set up any text display stuffs
         self.font = pygame.font.Font('freesansbold.ttf',32)
-        self.text = self.font.render(str(self.player.health) + "        4 lives", True, (0,0,0))
+        self.text = self.font.render(str(self.player.health) + "        4 lives", True, (255,255,255))
 
         # set up action meter for user interaction
         self.action_meter_sheet = league.Spritesheet("../assets/player/action_meter.png", 16, 3)
@@ -40,7 +40,7 @@ class Overlay(league.DUGameObject):
     def action_meter_updater(self):
         # if the player is attempting to interact, draw the action meter
         self.action_meter_image = self.action_meter_sprites[self.action_meter_index].image.convert_alpha()
-        self.action_meter_image = pygame.transform.scale(self.action_meter_image, (64, 64))
+        self.action_meter_image = pygame.transform.scale(self.action_meter_image, (32, 32))
         self.image.blit(self.action_meter_image, (self.player.x, self.player.y))
         
         # check when to animate next sprite
@@ -51,24 +51,24 @@ class Overlay(league.DUGameObject):
 
         
     def update(self, deltaTime):
-        self.image = pygame.Surface([720, 720]).convert_alpha()
+        self.image = pygame.Surface([480, 480]).convert_alpha()
         self.image.fill((255,255,255,0))
         
-        self.text = self.font.render(str(self.player.health) + "        4 lives", True, (0,0,0))
+        self.text = self.font.render(str(self.player.health) + "        4 lives", True, (255,255,255))
         
         # draw ui box
         self.ui_box = pygame.image.load("../assets/overlay assets/ui_box.png")
-        self.ui_box = pygame.transform.scale(self.ui_box, (64, 64))
+        self.ui_box = pygame.transform.scale(self.ui_box, (48, 48))
         
         # draw selected active 
         # beartrap case
         if self.player.inventory[self.player.active_item] == "beartrap":
             selected_item = self.item_icons[0]
-            self.ui_box.blit(pygame.transform.scale(selected_item, (64, 64)).convert_alpha(), (0, 4))
+            self.ui_box.blit(pygame.transform.scale(selected_item, (48, 48)).convert_alpha(), (0, 4))
         # lantern case
         elif self.player.inventory[self.player.active_item] == "lantern":
             selected_item = self.item_icons[1]
-            self.ui_box.blit(pygame.transform.scale(selected_item, (64, 64)).convert_alpha(), (0, 4))
+            self.ui_box.blit(pygame.transform.scale(selected_item, (48, 48)).convert_alpha(), (0, 4))
 
 
         # when the user is performing an interaction,. show the action meter
