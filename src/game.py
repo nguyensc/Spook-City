@@ -102,7 +102,6 @@ def main() :
         e.objects.append(temp)
         p.enemy = temp
         temp.hazards = p.hazards
-        #p.interactables.add(temp)
         temp.blocks.add(impassable)
 
     e.makeZombie = createEnemy
