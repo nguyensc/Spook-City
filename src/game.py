@@ -10,6 +10,26 @@ from flashlight import Flashlight
 from overlay import Overlay
 from container import Container
 
+def getSpawnCoords(play):
+    left = 16
+    right = 656
+    up = 16
+    down = 656
+
+    coordx = left   
+    coordy = up
+
+    xdiffLeft = abs(left - play.getX())
+    xdiffRight = abs(right - play.getX())
+    if(xdiffRight > xdiffLeft) :
+        coordx = right
+    ydiffUp = abs(up - play.getY())
+    ydiffDown = abs(down - play.getY())
+    if(ydiffDown > ydiffUp) :
+        coordy = down
+
+    return Enemy(2, 100, 100, play)
+
 def main() :
     e = league.Engine("Survive")
     e.init_pygame()
@@ -75,7 +95,17 @@ def main() :
 
     mapRenderer.renderForeGround()
 
-    #e.collisions[p] = (q, p.ouch)
+    e.zombie = getSpawnCoords(p)
+    def createEnemy(self):
+        temp = getSpawnCoords(p)
+        e.drawables.add(temp)
+        e.objects.append(temp)
+        p.enemy = temp
+        temp.hazards = p.hazards
+        p.interactables.add(temp)
+        temp.blocks.add(impassable)
+
+    e.makeZombie = createEnemy
   
     # draws the flashlight collision rectangle
     e.nospriteables.append((f, (255, 0, 0, 255)))
@@ -86,7 +116,9 @@ def main() :
         enemy.blocks.add(impassable)
         f.blocks.add(impassable)
 
-    pygame.time.set_timer(pygame.USEREVENT + 1, 1000 // league.Settings.gameTimeFactor)
+    zombieTimer = 60000 #Change this to change spawn rate of the zombie
+    pygame.time.set_timer(pygame.USEREVENT, zombieTimer // league.Settings.gameTimeFactor)
+
     e.key_events[pygame.K_a] = p.move_left
     e.key_events[pygame.K_d] = p.move_right
     e.key_events[pygame.K_w] = p.move_up
@@ -97,6 +129,7 @@ def main() :
     e.key_events[pygame.K_LEFT] = p.shoot_bullet_left
     e.key_events[pygame.K_RIGHT] = p.shoot_bullet_right
     e.key_events[pygame.K_SPACE] = p.use_active_item
+    e.events[pygame.USEREVENT] = e.makeZombie
     e.events[pygame.QUIT] = e.stop
     e.run()
 
