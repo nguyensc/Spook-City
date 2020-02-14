@@ -22,8 +22,8 @@ class MapRenderer():
         self.all_impassables = [] # needed for collisions currently - xam
 
         mapDict = {
-            "first floor": 1,
-            "second floor": 2
+            "first room": 1,
+            "second room": 2
         }
 
         selector = mapDict.get(self.mapName)
