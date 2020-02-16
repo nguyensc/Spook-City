@@ -5,7 +5,6 @@ os.environ['PYGAME_HIDE_SUPPORT_PROMPT'] = "hide"
 import pygame
 from .settings import *
 
-
 class Engine:
     """Engine is the definition of our game engine.  We want it to
     be as game agnostic as possible, and will try to emulate code
@@ -33,6 +32,7 @@ class Engine:
         self.nospriteables = []
         self.player = None
         self.dynamic_instances = []
+        self.light_points = [] # used for raycasting light 
 
         self.title = title
         self.running = False
@@ -106,46 +106,20 @@ class Engine:
             if self.visible_statistics:
                 self.show_statistics()
 
-
-                '''
-            # new wave raycast lighting
-            lighting_surf = pygame.Surface([300, 300])
-            lighting_surf.fill((128,128,128,0))
-            img = pygame.image.load("../assets/projectiles/bullet.png").convert_alpha()
-            img = pygame.transform.scale(img, (300,5))
-
-            for i in range(0, 360, 30):
-                scale = (300, 5)
-                end_point = ()
-                for j in range(0, 300, 30):
-
-
-                rotated_image, origin = self.rotate_image_center(img, i)           
-                #self.currangle += 1
-                lighting_surf.blit(rotated_image, origin)
-            start_pos = (100, 150)
-            collider = self.player.cpoint
-            for i in range(100):
-                collider.rect.y = start_pos[1] + i
-
-                if pygame.sprite.spritecollideany(collider, self.player.blocks):
-                    new_scale = start_pos[1] - i
-                    img = pygame.transform.scale(img, (new_scale,5))
-                    break
-
-
-            rotated_image, origin = self.rotate_image_center(img, 90, start_pos)           
-            lighting_surf.blit(rotated_image, origin)
-
-
-            pixels = pygame.PixelArray(lighting_surf)
-            pixels.replace((255,236,0),(255,255,255, 255))
-            pixels.close()
-            '''
-
             # set up fog-of-war
             fog = pygame.Surface((Settings.width, Settings.height))
             fog.fill(pygame.color.Color(60,60,60))
+
+            # draw player light onto 
+            light = pygame.Surface((480, 480)).convert_alpha()
+            light.fill((255,255,255,0))
+            light_polygon = []
+            for coords in self.light_points:
+                light_polygon.append(coords)
+            # must convert list -> typle for use in draw_polygon
+            print(light_polygon)
+            pygame.draw.polygon(light, (255,196,128,96), tuple(light_polygon))
+            fog.blit(light,(0,0))
 
             # draw any runtime instances created by the player
             for i in self.dynamic_instances:
@@ -160,8 +134,6 @@ class Engine:
 
             fog.blit(self.light_source.image, self.light_source.rect)
             fog.blit(self.flashlight.image, self.flashlight.rect)
-           # fog.blit(lighting_surf, (self.player.rect.x - 150,self.player.rect.y - 150))
-            
             self.screen.blit(fog,(0,0),special_flags=pygame.BLEND_RGBA_MULT)
 
             # show display ontop of fog
@@ -174,6 +146,7 @@ class Engine:
             # debug drawings (like collision rectangles)
             for rect, color in self.extra_rect_drawables:
                 pygame.draw.rect(self.screen, color, rect, 3)
+
 
             # Could keep track of rectangles and update here, but eh.
             pygame.display.flip()

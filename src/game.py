@@ -44,6 +44,8 @@ def main() :
     l = Light(20, 0, 0, p)
     f = Flashlight(200, 500, 2, p)
 
+    e.light_points = p.raycast_points
+
     e.flashlight = f
     e.light_source = l
     e.player = p
@@ -54,11 +56,11 @@ def main() :
     #p.rect = p.image.get_rect()
 
     enemy = Enemy(2, 100, 150, p)
-    p.enemy = enemy
+    p.enemies.add(enemy)
 
     container1 = Container(2, 100, 64, "lantern")
     container2 = Container(2, 300, 64, "beartrap")
-
+    container2 = Container(2, 200, 300, "beartrap")
 
     e.objects.append(p)
     e.objects.append(enemy)
@@ -68,7 +70,7 @@ def main() :
     e.objects.append(container1)
     e.objects.append(container2)
    
-    p.enemy = enemy
+    p.enemies.add(enemy)
 
     # any objects to be created on the fly
     p.items = e.dynamic_instances
