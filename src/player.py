@@ -20,8 +20,10 @@ class Player(Character):
         self.health = 100
         self.heart_rate = 10 # lower = faster heart animation speed
         self.bullets = []
+        self.blocks = pygame.sprite.Group() # What sprites am I not allowd to cross?
         self.interactables = pygame.sprite.Group()
         self.hazards = [] # similar to interactables but dangerous!
+        self.enemies = pygame.sprite.Group()
 
         self.last_hit = pygame.time.get_ticks()
         self.delta = 512
@@ -51,12 +53,14 @@ class Player(Character):
         self.interaction_counter_prev = -1
         self.interaction_timeout = 10
 
+        self.raycast_increments = 15
+        self.raycast_points = [0 for i in range(360 // self.raycast_increments)]
+        self.sight_coords = [(-1, -1), (-1, -1), (-1, -1), (-1, -1)]
+
         self.rect = pygame.Rect((8, 8, 20, 20)) # the players collision mask, this determines when the player collides with things
-        self.enemy = enemy;
         # How big the world is, so we can check for boundries
         self.world_size = (Settings.width, Settings.height)
-        # What sprites am I not allowd to cross?
-        self.blocks = pygame.sprite.Group()
+        
         # Which collision detection function?
         self.collide_function = pygame.sprite.collide_rect
         self.collisions = []
@@ -77,8 +81,6 @@ class Player(Character):
         # Overlay
         self.font = pygame.font.Font('freesansbold.ttf',32)
         self.overlay = self.font.render(str(self.health) + "        4 lives", True, (0,0,0))
-
-        self.sight_coords = [(-1, -1), (-1, -1), (-1, -1), (-1, -1)]
 
 
     def get_x(self):
@@ -172,32 +174,46 @@ class Player(Character):
         self.shoot_bullet(time, 0)
 
 
-    def lineofsight_raycast(self, length, direction):
+    def lineofsight_raycast(self, length, direction, precise=0):
         xx = int(self.rect.x); yy = int(self.rect.y)
         r = radians(direction)
         dirx = int(cos(r))
         diry = int(sin(r))
-        end_position = (xx + dirx * length, yy + diry * length)
 
-        for i in range(length):
-            self.cpoint.x = self.cpoint.rect.x = xx
-            self.cpoint.y = self.cpoint.rect.y = yy
+        # necessary for light raycasting
+        if precise:
+            dirx = cos(r)
+            diry = sin(r)
+        
+        end_position = (xx + dirx * length, yy + diry * length)
+        tempx = xx; tempy = yy;
+
+        for i in range(0, length, 8):
+            self.cpoint.x = self.cpoint.rect.x = tempx
+            self.cpoint.y = self.cpoint.rect.y = tempy
+
+            # line of sight runs into wall
+            if pygame.sprite.spritecollideany(self.cpoint, self.blocks) != None:
+                end_position = (tempx, tempy)
+                break   
 
             # line of sight runs into enemy
-            if self.enemy.rect.collidepoint(xx, yy):
-                if not dirx:
-                    self.spotted_by_enemy(self.enemy, 0, copysign(-1, self.enemy.y - self.y)) # set enemy state
-                else:
-                    self.spotted_by_enemy(self.enemy, copysign(1, self.enemy.x - self.x), 0)
+            elif pygame.sprite.spritecollideany(self.cpoint, self.enemies) != None and not precise:
+                # find the specific enemy that has spotted the player
+                for enemy in self.enemies:
+                    # check if the correct enemy has been found
+                    if pygame.sprite.collide_rect(self.cpoint, enemy):
+                        if not dirx:
+                            self.spotted_by_enemy(enemy, 0, copysign(-1, enemy.y - self.y)) # set enemy state
+                        else:
+                            self.spotted_by_enemy(enemy, copysign(1, enemy.x - self.x), 0)
 
                 end_position = (xx, yy)
                 break
-            # line of sight runs into wall
-            elif pygame.sprite.spritecollideany(self.cpoint, self.blocks) != None:
-                end_position = (xx, yy)
-                break     
-            xx += dirx * 2
-            yy += diry * 2
+
+            tempx = xx + dirx * i
+            tempy = yy + diry * i
+
         return end_position  
 
     def lineofsight_right(self, length):
@@ -284,7 +300,13 @@ class Player(Character):
         # add a new object to the list of entities created from user input
         self.items.append(item) 
 
-    def update(self, time):      
+    def update(self, time):     
+        if (self.sight_coords[0][0] < 0):
+            # light raycasts stuff (drawing happens in engine!)
+            for i in range(0, 360, self.raycast_increments):
+                direction = i 
+                ray = self.lineofsight_raycast(50, direction, 1)
+                self.raycast_points[i // self.raycast_increments] = ray
 
         # events which should not occur on every update call
         if time != 0:
@@ -302,6 +324,12 @@ class Player(Character):
             self.lineofsight_up(200)
             self.lineofsight_down(200)
 
+            # light raycasts stuff (drawing happens in engine!)
+            for i in range(0, 360, self.raycast_increments):
+                direction = i 
+                ray = self.lineofsight_raycast(50, direction, 1)
+                self.raycast_points[i // self.raycast_increments] = ray
+
         # check for redundant action meter display
         if self.interaction_counter < self.interaction_timer:
             keys_pressed = pygame.key.get_pressed() # get all pressed keys
@@ -311,10 +339,12 @@ class Player(Character):
                 # change the counter values so that the overlay stops showing the action meter
                 self.interaction_counter = self.interaction_timer + 10
 
+
+        # collision stuffs
         self.collisions = []
         prevrect = (self.get_x(), self.get_y())
         self.collider.x = self.collider.rect.x = self.rect.x = self.x;
-        self.collider.y = self.collider.rect.y = self.rect.y = self.y;            
+        self.collider.y = self.collider.rect.y = self.rect.y = self.y;
 
         for sprite in self.blocks:
             self.collider.rect.x = sprite.x
