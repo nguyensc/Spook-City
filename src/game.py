@@ -10,6 +10,7 @@ from flashlight import Flashlight
 from overlay import Overlay
 from container import Container
 from enemySpawner import EnemySpawner
+from door import Door
 
 def getSpawnCoords(play): #CoordX, coordY, some indicator for progress through the game, 
     left = 16
@@ -36,13 +37,17 @@ def main() :
     e.init_pygame()
     timer = pygame.time.set_timer(pygame.USEREVENT + 1, 1000 // league.Settings.gameTimeFactor)
     count = 0
+
     p = Player(1, 240, 100)
+    
     mapRenderer = MapRenderer("first floor", e)
     world_size = mapRenderer.renderBackground()
     p.world_size = world_size
     mapRenderer.renderForeGround()
     l = Light(20, 0, 0, p)
     f = Flashlight(200, 500, 2, p)
+
+    d = Door(2, 300, 64, e)
 
     e.light_points = p.raycast_points
 
@@ -52,8 +57,6 @@ def main() :
 
     o = Overlay(p)
     e.overlay = o
-
-    #p.rect = p.image.get_rect()
 
     enemy = Enemy(2, 100, 150, p)
     p.enemies.add(enemy)
@@ -69,6 +72,7 @@ def main() :
     e.objects.append(o)
     e.objects.append(container1)
     e.objects.append(container2)
+    e.objects.append(d)
    
     p.enemies.add(enemy)
 
@@ -77,6 +81,7 @@ def main() :
     enemy.hazards = p.hazards
     p.interactables.add(container1)
     p.interactables.add(container2)
+    p.interactables.add(d)
 
     # extra rects to draw debug only ! (for now)
     e.extra_rect_drawables.append((p.rect, (255, 0, 0)))
@@ -95,6 +100,8 @@ def main() :
     e.drawables.add(f)
     e.drawables.add(container1)
     e.drawables.add(container2)
+    e.drawables.add(d)
+
 
 
     mapRenderer.renderForeGround()

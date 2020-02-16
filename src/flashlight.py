@@ -19,8 +19,6 @@ class Flashlight(DUGameObject):
         self.currentWidth = self.width
 
         self.image = pygame.Surface([self.originalWidth , self.pic.get_height()]).convert_alpha()
-
-        
         self.rect = self.image.get_rect(center=(target.x, target.y))
         self.rect.x = self.width
         self.mask = pygame.mask.from_surface(self.image)
@@ -56,11 +54,6 @@ class Flashlight(DUGameObject):
         wallx = 0
         overlap = 0
         newWidth = self.originalWidth
-
-        if(pygame.sprite.collide_mask(self, self.target.enemy)):
-            overlap_mask = self.mask.overlap_mask(self.target.enemy.mask, (0,0))
-            print("collide")
-
 
         for sprite in self.blocks:
             self.collide.rect.x = sprite.x

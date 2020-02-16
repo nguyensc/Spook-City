@@ -267,7 +267,9 @@ class Player(Character):
             # loop through the interactable sprite group
             for sprite in self.interactables:
                 if pygame.sprite.collide_rect(self, sprite):
-                    print("interaction triggered!  ", sprite.contents)
+                    if sprite.isDoor == 1:
+                        sprite.changeRoom()
+                        return
                     self.inventory[self.active_item] = sprite.contents
         else:
             # decrement timer

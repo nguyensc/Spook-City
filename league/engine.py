@@ -33,6 +33,8 @@ class Engine:
         self.player = None
         self.dynamic_instances = []
         self.light_points = [] # used for raycasting light 
+        self.room = 0
+        self.curr_room = self.room
 
         self.title = title
         self.running = False
@@ -75,7 +77,11 @@ class Engine:
         pygame.key.set_repeat(Settings.key_repeat)
         # Create statistics font
         self.statistics_font = pygame.font.Font(None,30)
-
+    
+    def changeRoom(self):
+        self.drawables.empty()
+        self.mapDrawables.empty()
+        self.objects = []
 
     def run(self):
         """The main game loop.  As close to our book code as possible."""
@@ -117,7 +123,7 @@ class Engine:
             for coords in self.light_points:
                 light_polygon.append(coords)
             # must convert list -> typle for use in draw_polygon
-            print(light_polygon)
+
             pygame.draw.polygon(light, (255,196,128,96), tuple(light_polygon))
             fog.blit(light,(0,0))
 
