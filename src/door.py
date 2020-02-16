@@ -1,5 +1,6 @@
 from league import *
 import pygame
+from mapRenderer import MapRenderer
 
 class Door(Character):
     def __init__(self, z=0, x=0, y=0, engine = None):
@@ -23,7 +24,9 @@ class Door(Character):
     
     def changeRoom(self):
         self.engine.changeRoom()
-
+        map = MapRenderer("second room", self.engine)
+        map.renderBackground()
+        map.renderForeGround()
 
     def makeEmpty(self):
         isEmpty = True
