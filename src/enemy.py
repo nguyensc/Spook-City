@@ -254,7 +254,7 @@ class Enemy(Character):
         self.collisions = []
 
         for hazard in self.hazards:
-            if pygame.sprite.collide_rect(self, hazard):
+            if pygame.sprite.collide_rect(self, hazard) and not hazard.triggered:
                 hazard.triggered = 1
                 self.state = 3
                 return
