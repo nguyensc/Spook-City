@@ -7,33 +7,46 @@ class Door(Character):
         super().__init__(z, x, y)
         self.x = x; self.y = y;
 
-        self.sheet = Spritesheet('../assets/map assets/container.png', 48, 1)
+        self.sheet = Spritesheet_Ext('../assets/map assets/sprite sheets/Hospital Tiles/!$Elevator Doors-Alt.png', 48, 32, 2)
         self.emptyImage = pygame.image.load('../assets/map assets/containerEmpty.png').convert_alpha()
         self.sprites = self.sheet.sprites
-        self.image = self.sprites[0].image
-        self.image = pygame.transform.scale(self.image, (192, 192))
-        self.emptyImage = pygame.transform.scale(self.emptyImage, (192, 192))
+        self.image_index = 0
+        self.image = self.sprites[self.image_index].image
+        self.image = pygame.transform.scale(self.image, (64, 64))
 
         self.rect = self.image.get_rect()
         self.rect.x = self.x
         self.rect.y = self.y
 
+        self.animation_timer = 3
+        self.animation_counter = self.animation_timer
+
         self.isDoor = 1
-        self.isEmpty = False
+        self.open = 0
         self.engine = engine
     
     def changeRoom(self):
-        self.engine.changeRoom()
-        map = MapRenderer("second room", self.engine)
-        map.renderBackground()
-        map.renderForeGround()
-
-    def makeEmpty(self):
-        isEmpty = True
-        self.contents = 0
-        self.image = self.emptyImage
-        return isEmpty
-
+        # begin the animation process of opening the door
+        self.open = 1
 
     def update(self, time):
+        # must be animated all the way
+        if self.open:
+            if self.image_index >= 5:
+                self.engine.changeRoom()
+                map = MapRenderer("second room", self.engine)
+                map.renderBackground()
+                map.renderForeGround()
+                return
+            # will only hit if the full animation has played (thanks modulo operator %)
+            elif self.animation_counter <= 0:
+                self.image_index = min(self.image_index + 1, 5)
+                self.animation_counter = self.animation_timer
+            print(self.animation_counter)
+            self.animation_counter -= 1
+
+        # display updated image
+        self.image = self.sprites[self.image_index].image
+        self.image = pygame.transform.scale(self.image, (64, 64))
+
         return

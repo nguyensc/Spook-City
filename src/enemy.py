@@ -26,7 +26,8 @@ class Enemy(Character):
         # state 2 -> CHASE
         self.state = 0
         
-        self.target = player
+        self.player = player
+        self.target = self.player
         self.dirx = 0
         self.diry = 1
 
@@ -254,7 +255,12 @@ class Enemy(Character):
         self.collisions = []
 
         for hazard in self.hazards:
-            if pygame.sprite.collide_rect(self, hazard) and not hazard.triggered:
+            # check if hazard has an area of effect
+            if hasattr(hazard, "aoe_rect"):
+                # run aoe code
+                hazard.aoe(self)
+
+            elif pygame.sprite.collide_rect(self, hazard) and not hazard.triggered:
                 hazard.triggered = 1
                 self.state = 3
                 return

@@ -267,8 +267,9 @@ class Player(Character):
             # loop through the interactable sprite group
             for sprite in self.interactables:
                 if pygame.sprite.collide_rect(self, sprite):
+                    # check for door opening case
                     if sprite.isDoor == 1:
-                        sprite.changeRoom()
+                        sprite.changeRoom() # run the door opening code
                         return
                     self.inventory[self.active_item] = sprite.contents
         else:
@@ -301,6 +302,14 @@ class Player(Character):
             self.hazards.append(item)
         # add a new object to the list of entities created from user input
         self.items.append(item) 
+
+
+    def reset_all_timers(self):
+        self.shoot_counter = self.shoot_timer
+        self.spotted_counter = self.spotted_timer
+        self.interaction_counter = self.interaction_timer
+
+
 
     def update(self, time):     
         if (self.sight_coords[0][0] < 0):
