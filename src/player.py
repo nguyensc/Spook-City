@@ -24,7 +24,7 @@ class Player(Character):
         self.interactables = pygame.sprite.Group()
         self.hazards = [] # similar to interactables but dangerous!
         self.enemies = pygame.sprite.Group()
-
+        self.direction = 0
         self.last_hit = pygame.time.get_ticks()
         self.delta = 512
         self.screen = None
@@ -52,12 +52,15 @@ class Player(Character):
         self.interaction_counter = self.interaction_timer
         self.interaction_counter_prev = -1
         self.interaction_timeout = 10
-
+        # raycast init
         self.raycast_increments = 15
         self.raycast_points = [0 for i in range(360 // self.raycast_increments)]
         self.sight_coords = [(-1, -1), (-1, -1), (-1, -1), (-1, -1)]
 
-        self.rect = pygame.Rect((8, 8, 20, 20)) # the players collision mask, this determines when the player collides with things
+        self.rect = self.image.get_rect(center=(self.x,self.y)) # the players collision mask, this determines when the player collides with things
+        self.rect.width = self.rect.width // 2
+        self.rect.height = self.rect.height // 2
+
         # How big the world is, so we can check for boundries
         self.world_size = (Settings.width, Settings.height)
         
@@ -92,6 +95,7 @@ class Player(Character):
 
 
     def move_left(self, time):
+        self.direction = 180
         amount = self.delta * time
         try:
             if self.x - amount < 0:
@@ -106,6 +110,7 @@ class Player(Character):
             pass
 
     def move_right(self, time):
+        self.direction = 0
         self.collisions = []
         amount = self.delta * time
         try:
@@ -121,6 +126,7 @@ class Player(Character):
             pass
 
     def move_up(self, time):
+        self.direction = 270
         self.collisions = []
         amount = self.delta * time
         try:
@@ -138,6 +144,8 @@ class Player(Character):
 
 
     def move_down(self, time):
+        self.direction = 90
+        self.collisions = []
         amount = self.delta * time
         try:
             if self.y + amount > self.world_size[1] - Settings.tile_size:
@@ -160,16 +168,12 @@ class Player(Character):
 
         bullet = Bullet((self.x - 32, self.y + 64), dir, 10, self.blocks)
         self.bullets.append(bullet)
-
     def shoot_bullet_up(self, time):
         self.shoot_bullet(time, 90)
-
     def shoot_bullet_down(self, time):
         self.shoot_bullet(time, 270)
-
     def shoot_bullet_left(self, time):
         self.shoot_bullet(time, 180)
-
     def shoot_bullet_right(self, time):
         self.shoot_bullet(time, 0)
 
@@ -179,24 +183,21 @@ class Player(Character):
         r = radians(direction)
         dirx = int(cos(r))
         diry = int(sin(r))
-
         # necessary for light raycasting
         if precise:
             dirx = cos(r)
             diry = sin(r)
-        
+        # find where the raycast SHOULD end up assuming nothing blocking it
         end_position = (xx + dirx * length, yy + diry * length)
         tempx = xx; tempy = yy;
-
+        # loop through all positions in range
         for i in range(0, length, 8):
             self.cpoint.x = self.cpoint.rect.x = tempx
             self.cpoint.y = self.cpoint.rect.y = tempy
-
             # line of sight runs into wall
             if pygame.sprite.spritecollideany(self.cpoint, self.blocks) != None:
                 end_position = (tempx, tempy)
                 break   
-
             # line of sight runs into enemy
             elif pygame.sprite.spritecollideany(self.cpoint, self.enemies) != None and not precise:
                 # find the specific enemy that has spotted the player
@@ -211,10 +212,26 @@ class Player(Character):
                 end_position = (xx, yy)
                 break
 
+
             tempx = xx + dirx * i
             tempy = yy + diry * i
 
         return end_position  
+
+    def light_raycast(self, length):
+        for i in range(0, 360, self.raycast_increments):
+            direction = i
+            condition0 = (self.direction == 0 and (i == 345 or i == 15 or i == 0))
+            condition90 = (self.direction == 90 and (i == 105 or i == 75 or i == 90))
+            condition180 = (self.direction == 180 and (i == 195 or i == 165 or i == 180))
+            condition270 = (self.direction == 270 and (i == 285 or i == 255 or i == 270))
+            # extend the raycast if near player movement direction
+            if condition0 or condition90 or condition180 or condition270:
+                ray = self.lineofsight_raycast(length * 5, direction, 1)
+                self.raycast_points[i // self.raycast_increments] = ray
+            else:
+                ray = self.lineofsight_raycast(length, direction, 1)
+                self.raycast_points[i // self.raycast_increments] = ray
 
     def lineofsight_right(self, length):
         self.sight_coords[0] = self.lineofsight_raycast(length, 0)
@@ -309,15 +326,10 @@ class Player(Character):
         self.spotted_counter = self.spotted_timer
         self.interaction_counter = self.interaction_timer
 
-
-
     def update(self, time):     
         if (self.sight_coords[0][0] < 0):
             # light raycasts stuff (drawing happens in engine!)
-            for i in range(0, 360, self.raycast_increments):
-                direction = i 
-                ray = self.lineofsight_raycast(50, direction, 1)
-                self.raycast_points[i // self.raycast_increments] = ray
+            self.light_raycast(50)
 
         # events which should not occur on every update call
         if time != 0:
@@ -329,20 +341,15 @@ class Player(Character):
             # all other interaction updates occur in the interaction function
             if self.interaction_counter > self.interaction_timer:
                 self.interaction_counter -= 1
-
-            self.lineofsight_right(400)
-            self.lineofsight_left(400)
+            # run all line of sight raycasts
+            self.lineofsight_right(200)
+            self.lineofsight_left(200)
             self.lineofsight_up(200)
             self.lineofsight_down(200)
-
             # light raycasts stuff (drawing happens in engine!)
-            for i in range(0, 360, self.raycast_increments):
-                direction = i 
-                ray = self.lineofsight_raycast(50, direction, 1)
-                self.raycast_points[i // self.raycast_increments] = ray
-
+            self.light_raycast(50)
         # check for redundant action meter display
-        if self.interaction_counter < self.interaction_timer:
+        elif self.interaction_counter < self.interaction_timer:
             keys_pressed = pygame.key.get_pressed() # get all pressed keys
             # check to make sure the player is still pressing the interact button
             if keys_pressed[pygame.K_e] != 1:
@@ -354,9 +361,8 @@ class Player(Character):
         # collision stuffs
         self.collisions = []
         prevrect = (self.get_x(), self.get_y())
-        self.collider.x = self.collider.rect.x = self.rect.x = self.x;
-        self.collider.y = self.collider.rect.y = self.rect.y = self.y;
-
+        self.collider.x = self.collider.rect.x = self.rect.x = self.x
+        self.collider.y = self.collider.rect.y = self.rect.y = self.y
         for sprite in self.blocks:
             self.collider.rect.x = sprite.x
             self.collider.rect.y = sprite.y

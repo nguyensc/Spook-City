@@ -37,6 +37,7 @@ class RancidMeat():
         # check end condition (target is at the core rect)
         if pygame.sprite.collide_rect(self, target):
             target.state = 3 # render the target useless
+            self.fortitude -= 5
         # attract target inside of aoe_rect toward core rect
         else:
             target.target = self

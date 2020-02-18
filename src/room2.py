@@ -9,6 +9,12 @@ def main(self, player = None, engine = None, overlay = None):
     self.overlay = overlay
 
     
-    map = MapRenderer("first floor", self.engine)
+    map = MapRenderer("second floor", self.engine)
     map.renderBackground()
+    d = Door(2, 300, 4, engine)
+    engine.objects.append(d)
+    player.interactables.add(d)
+    engine.drawables.add(d)
+
+
     map.renderForeGround()
