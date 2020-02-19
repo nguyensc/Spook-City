@@ -11,6 +11,8 @@ from overlay import Overlay
 from container import Container
 from enemySpawner import EnemySpawner
 from door import Door
+from spooks import spooks
+from gremlin import gremlin
 
 def getSpawnCoords(play): #CoordX, coordY, some indicator for progress through the game, 
     left = 16
@@ -46,6 +48,7 @@ def main() :
     mapRenderer.renderForeGround()
     l = Light(20, 0, 0, p)
     f = Flashlight(200, 500, 2, p)
+    
 
     d = Door(2, 300, 64, e)
 
@@ -61,6 +64,10 @@ def main() :
     enemy = Enemy(2, 100, 150, p)
     p.enemies.add(enemy)
 
+    sp = spooks(1,220,50,p)
+    grem = gremlin(1,230,50,p)
+
+
     container1 = Container(2, 100, 64, "lantern")
     container2 = Container(2, 300, 64, "beartrap")
     container2 = Container(2, 200, 300, "beartrap")
@@ -73,6 +80,8 @@ def main() :
     e.objects.append(container1)
     e.objects.append(container2)
     e.objects.append(d)
+    e.objects.append(sp)
+    e.objects.append(grem)
    
     p.enemies.add(enemy)
 
@@ -101,7 +110,8 @@ def main() :
     e.drawables.add(container1)
     e.drawables.add(container2)
     e.drawables.add(d)
-
+    e.drawables.add(sp)
+    e.drawables.add(grem)
 
 
     mapRenderer.renderForeGround()
