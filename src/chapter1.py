@@ -19,15 +19,4 @@ def main(self, player = None, engine = None, overlay = None):
 
     map.renderForeGround()
 
-
-
-
-
-
-
-    
-    
-
-    
-
     return None

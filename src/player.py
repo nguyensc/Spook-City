@@ -24,7 +24,7 @@ class Player(Character):
         self.interactables = pygame.sprite.Group()
         self.hazards = [] # similar to interactables but dangerous!
         self.enemies = pygame.sprite.Group()
-
+        self.stepTile = 0
         self.last_hit = pygame.time.get_ticks()
         self.delta = 512
         self.screen = None
@@ -39,9 +39,9 @@ class Player(Character):
         }
         self.active_item = 0
         
-        self.sheet = Spritesheet('../assets/player/Black/player_idle.png', 48, 1)
+        self.sheet = Spritesheet('../assets/map assets/sprite sheets/Horror City - Frankenstein MV/Characters/$Dr Frankenstien.png', 64, 3)
         self.sprites = self.sheet.sprites
-        self.image = self.sprites[0].image
+        self.image = self.sprites[self.stepTile].image
 
         # timers
         self.shoot_timer = 20
@@ -89,7 +89,6 @@ class Player(Character):
 
     def get_y(self):
         return self.rect.y
-
 
     def move_left(self, time):
         amount = self.delta * time
@@ -139,6 +138,8 @@ class Player(Character):
 
     def move_down(self, time):
         amount = self.delta * time
+        self.stepTile = (self.stepTile + 1) % 4
+        self.image = self.sprites[self.stepTile].image
         try:
             if self.y + amount > self.world_size[1] - Settings.tile_size:
                 raise OffScreenBottomException
