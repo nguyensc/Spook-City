@@ -17,16 +17,16 @@ class Enemy(Character):
         super().__init__(z, x, y)
         # This unit's attributes
         self.health = 100
-        self.walk_speed = 2
-        self.run_speed = 4
+        self.walk_speed = 1
+        self.run_speed = 2
         self.move_speed = self.walk_speed # the current movement speed
 
         # state 0 -> PATROL
         # state 1 -> DECIDE DIRECTION
         # state 2 -> CHASE
         self.state = 0
-        
-        self.target = player
+        self.player = player
+        self.target = self.player
         self.dirx = 0
         self.diry = 1
 
@@ -49,9 +49,8 @@ class Enemy(Character):
         # in an animated Player class.
         self.image = pygame.image.load('../assets/skeleton-clothed-1.png').convert_alpha()
         self.image = pygame.transform.scale(self.image, (64, 64))
-        
-        self.rect = pygame.Rect((0, 0, 64, 64))
-        self.rect.x = x; self.rect.y = y;
+        self.rect = self.image.get_rect(center=(self.x, self.y))
+        self.rect.width *= 1 / 2; self.rect.height *= 1 / 2;
         self.mask = pygame.mask.from_surface(self.image)
 
         # How big the world is, so we can check for boundries
@@ -205,8 +204,8 @@ class Enemy(Character):
         dirx = self.dirx; diry = self.diry;
 
         self.collider.x = tarx; self.collider.y = tary;
-        if (pygame.sprite.spritecollideany(self.collider, self.blocks) != None):
-            if not self.dirx:
+        if pygame.sprite.spritecollideany(self.collider, self.blocks) != None:
+            if self.dirx < self.diry:
                 dirx = copysign(1, self.target.x - self.x)
                 diry *= -1
             else:
@@ -232,8 +231,8 @@ class Enemy(Character):
 
         self.image.fill(255, 0, 0, 255)
 
-    def update(self, time):
 
+    def update(self, time):
         if time != 0:
             # patrol state
             if self.state == 0:
@@ -244,9 +243,6 @@ class Enemy(Character):
             # chase state
             elif self.state == 2:
                 self.chase()
-            elif self.state == 3:
-                return
-
        
 
         self.collider.x = self.rect.x = self.x
@@ -254,7 +250,16 @@ class Enemy(Character):
         self.collisions = []
 
         for hazard in self.hazards:
-            if pygame.sprite.collide_rect(self, hazard):
+            # check if hazard has an area of effect
+            if hasattr(hazard, "aoe_rect"):
+                # run aoe code
+                hazard.aoe(self)
+                print(hazard.fortitude)
+                if hazard.fortitude <= 0:
+                    self.target = self.player
+                    del hazard
+
+            elif pygame.sprite.collide_rect(self, hazard) and not hazard.triggered:
                 hazard.triggered = 1
                 self.state = 3
                 return

@@ -32,7 +32,8 @@ class Overlay(league.DUGameObject):
         self.ui_box = pygame.image.load("../assets/overlay assets/ui_box.png")
         self.item_icons = [
             pygame.image.load('../assets/icons/beartrap.png').convert_alpha(),
-            pygame.image.load('../assets/lantern.png').convert_alpha()
+            pygame.image.load('../assets/lantern.png').convert_alpha(),
+            pygame.image.load('../assets/rancidmeat.png').convert_alpha()
         ]
 
 
@@ -48,10 +49,8 @@ class Overlay(league.DUGameObject):
             self.action_meter_index = min(self.action_meter_len, self.action_meter_index + 1) # increment the current image index to get next sprite
             self.action_meter_animation_counter = self.action_meter_animation_speed
         else: self.action_meter_animation_counter -= 1
-
         
     def update(self, deltaTime):
-        self.image = pygame.Surface([480, 480]).convert_alpha()
         self.image.fill((255,255,255,0))
         
         self.text = self.font.render(str(self.player.health) + "        4 lives", True, (255,255,255))
@@ -68,6 +67,10 @@ class Overlay(league.DUGameObject):
         # lantern case
         elif self.player.inventory[self.player.active_item] == "lantern":
             selected_item = self.item_icons[1]
+            self.ui_box.blit(pygame.transform.scale(selected_item, (48, 48)).convert_alpha(), (0, 4))
+        # rancid meat case
+        elif self.player.inventory[self.player.active_item] == "rancidmeat":
+            selected_item = self.item_icons[2]
             self.ui_box.blit(pygame.transform.scale(selected_item, (48, 48)).convert_alpha(), (0, 4))
 
 
