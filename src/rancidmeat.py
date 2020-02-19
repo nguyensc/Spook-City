@@ -1,7 +1,6 @@
 from league import *
 import pygame
 
-''' the first active (usable) item '''
 class RancidMeat():
     def __init__(self, x=0, y=0):    
 

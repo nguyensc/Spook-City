@@ -233,7 +233,6 @@ class Enemy(Character):
 
 
     def update(self, time):
-
         if time != 0:
             # patrol state
             if self.state == 0:

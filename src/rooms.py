@@ -35,11 +35,20 @@ class Room:
     def room2(self):
         m = MapRenderer("second room", self.engine)
         m.renderBackground()
-
+        # set up doors
         d = Door(2, 300, 432, 300, 4, "first room", self.engine)
         self.engine.objects.append(d)
         self.player.interactables.add(d)
         self.engine.drawables.add(d)
+        # set up lootable containers
+        containers = [
+            Container(2, 100, 16, "lantern"),
+            Container(2, 316, 264, "beartrap"),
+            ]
+        for container in containers:
+            self.engine.objects.append(container)
+            self.player.interactables.add(container)
+            self.engine.drawables.add(container)
 
         m.renderForeGround()
 

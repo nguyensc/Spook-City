@@ -3,7 +3,6 @@ from math import radians, cos, sin, copysign
 import pygame
 from beartrap import BearTrap
 from lantern import Lantern
-from bullet import Bullet
 from rancidmeat import RancidMeat
 
 
@@ -179,7 +178,7 @@ class Player(Character):
 
 
     def lineofsight_raycast(self, length, direction, precise=0):
-        xx = int(self.rect.x); yy = int(self.rect.y)
+        xx = int(self.rect.x + 16); yy = int(self.rect.y + 16)
         r = radians(direction)
         dirx = int(cos(r))
         diry = int(sin(r))
@@ -221,10 +220,10 @@ class Player(Character):
     def light_raycast(self, length):
         for i in range(0, 360, self.raycast_increments):
             direction = i
-            condition0 = (self.direction == 0 and (i == 345 or i == 15 or i == 0))
-            condition90 = (self.direction == 90 and (i == 105 or i == 75 or i == 90))
-            condition180 = (self.direction == 180 and (i == 195 or i == 165 or i == 180))
-            condition270 = (self.direction == 270 and (i == 285 or i == 255 or i == 270))
+            condition0 = (self.direction == 0 and (i >= 330 or i <= 30))
+            condition90 = (self.direction == 90 and (i <= 120 and i >= 60))
+            condition180 = (self.direction == 180 and (i <= 210 and i >= 150))
+            condition270 = (self.direction == 270 and (i <= 300 and i >= 240))
             # extend the raycast if near player movement direction
             if condition0 or condition90 or condition180 or condition270:
                 ray = self.lineofsight_raycast(length * 5, direction, 1)
@@ -296,17 +295,22 @@ class Player(Character):
 
 
     def use_active_item(self, time):
+        # get direction player is facing, important for placing items
+        r = radians(self.direction)
+        tarx = self.rect.x + int(cos(r)) * 3
+        tary = self.rect.y + int(sin(r)) * 3
+
         # beartrap use code
         if self.inventory[self.active_item] == "beartrap":
-            self.create_physical_item(0, 1, BearTrap(self.x, self.y))
+            self.create_physical_item(0, 1, BearTrap(tarx, tary))
 
         # lantern use code
         elif self.inventory[self.active_item] == "lantern":
-            self.create_physical_item(0, 0, Lantern(self.rect.x, self.rect.y))
+            self.create_physical_item(0, 0, Lantern(tarx - 96, tary - 96))
         
         # rancid meat
         elif self.inventory[self.active_item] == "rancidmeat":
-            self.create_physical_item(0, 1, RancidMeat(self.rect.x, self.rect.y))
+            self.create_physical_item(0, 1, RancidMeat(tarx, tary))
 
         self.inventory[self.active_item] = "None" # empty out the current inventory slot
 
