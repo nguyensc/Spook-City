@@ -181,3 +181,48 @@ class Spritesheet:
         sprite.image.fill((128,128,128,0))
         sprite.image.blit(self.sheet, (0, 0), (x, y, x + self.tile_size, y + self.tile_size))
         return sprite
+
+class Spritesheet_Ext:
+    """An object that represents a spritesheet and provides
+    methods to access individual sprites from it.
+
+    There are better ways to create spritesheets.  This code does
+    not allow for packed sprites for instance.  Instead, it forces
+    sprites to be in nice, tiled squares.
+
+    Fields:
+    path - The path to the spritesheet file.
+    tile_size - The number of pixels wide and high the sprites are.  We are forcing square tiles for this engine.
+    per_row - The number of sprites per row on the spritesheet.
+    width - Number of pixels wide of the spritesheet image.
+    height - Number of pixels high of the spritesheet image.
+    sprites - A single-dimensional list of the sprites from the sheet.
+    """
+    def __init__(self, path, tile_width, tile_height, per_row):
+        self.path = path
+        self.sheet = pygame.image.load(self.path).convert_alpha()
+        self.tile_width = tile_width
+        self.tile_height = tile_height
+        self.per_row = per_row
+        self.width, self.height = self.sheet.get_size()
+        self.sprites = self.__split_up()
+
+    def __split_up(self):
+        # This function splits the sheet up into equal-sized chunks,
+        # and returns a list of the chunks.
+        sprites = []
+        for i in range((self.tile_width * self.tile_height) // (Settings.tile_size * Settings.tile_size)):
+                image = self.__get_image_num(i)
+                sprites.append(image)
+        return sprites
+
+    def __get_image_num(self, num):
+        # This function copies an MxM image from x, y
+        # to a new Sprite and returns it.
+        y = self.tile_height * (num  // self.per_row)
+        x = self.tile_width * (num  % self.per_row)
+        sprite = Drawable()
+        sprite.image = pygame.Surface((self.tile_width, self.tile_height)).convert_alpha()
+        sprite.image.fill((128,128,128,0))
+        sprite.image.blit(self.sheet, (0, 0), (x, y, x + self.tile_width, y + self.tile_height))
+        return sprite

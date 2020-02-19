@@ -33,8 +33,7 @@ class Engine:
         self.player = None
         self.dynamic_instances = []
         self.light_points = [] # used for raycasting light 
-        self.room = 0
-        self.curr_room = self.room
+        self.room = None
 
         self.title = title
         self.running = False
@@ -78,10 +77,25 @@ class Engine:
         # Create statistics font
         self.statistics_font = pygame.font.Font(None,30)
     
-    def changeRoom(self):
+    def changeRoom(self, room_num):
         self.drawables.empty()
         self.mapDrawables.empty()
         self.objects = []
+        self.dynamic_instances = []
+        # resetup player
+        self.drawables.add(self.player)
+        self.objects.append(self.player)
+        self.player.reset_all_timers()
+        self.player.blocks.empty()
+        self.player.interactables.empty()
+        self.player.items = self.dynamic_instances
+        # resetup overlay
+        self.objects.append(self.overlay)
+        # init room
+        if room_num == 1:
+            self.room.room1()
+        elif room_num == 2:
+            self.room.room2()
 
     def run(self):
         """The main game loop.  As close to our book code as possible."""
@@ -114,7 +128,7 @@ class Engine:
 
             # set up fog-of-war
             fog = pygame.Surface((Settings.width, Settings.height))
-            fog.fill(pygame.color.Color(60,60,60))
+            fog.fill(pygame.color.Color(30,30,30))
 
             # draw player light onto 
             light = pygame.Surface((480, 480)).convert_alpha()
@@ -124,7 +138,7 @@ class Engine:
                 light_polygon.append(coords)
             # must convert list -> typle for use in draw_polygon
 
-            pygame.draw.polygon(light, (255,196,128,96), tuple(light_polygon))
+            pygame.draw.polygon(light, (255,255,196,128), tuple(light_polygon))
             fog.blit(light,(0,0))
 
             # draw any runtime instances created by the player
@@ -133,13 +147,15 @@ class Engine:
                 # all item type objects must have an isLightSource attribute
                 if i.isLightSource:
                         fog.blit(i.light, (i.x, i.y))
+                if hasattr(i, "aoe_rect"):
+                    pygame.draw.rect(self.screen, (255,255,128,255), i.aoe_rect, 5)
                 # render the actual physical item
                 self.screen.blit(i.image, (i.x, i.y))
                 pygame.draw.rect(self.screen, (255,255,128,255), i.rect, 5)
 
 
-            fog.blit(self.light_source.image, self.light_source.rect)
-            fog.blit(self.flashlight.image, self.flashlight.rect)
+            #fog.blit(self.light_source.image, self.light_source.rect)
+            #fog.blit(self.flashlight.image, self.flashlight.rect)
             self.screen.blit(fog,(0,0),special_flags=pygame.BLEND_RGBA_MULT)
 
             # show display ontop of fog
