@@ -3,18 +3,19 @@ from datetime import datetime
 
 from league import *
 import pygame
-from math import copysign
+from math import copysign, radians, cos, sin
 from random import seed, randint
 
 class gremlin(Character):
-    def __init__(self, z=0, x=0, y=0, player = None):
+    def __init__(self, z=0, x=0, y=0, player = None, owner = None):
         super().__init__(z=z, x=x, y=y)
         self.target = player
         self.walk_speed = 2
         self.run_speed = 5
         self.move_speed = self.walk_speed
         self.state = 0
-
+        self.owner = owner
+        self.direction = 0
         self.dirx = 0
         self.diry = 1
 
@@ -147,7 +148,7 @@ class gremlin(Character):
         else:
             self.timeout_counter-=1
 
-
+    '''
     def move(self):
         # state machine -> updates self.dirx and self.diry (the direction of movement)
         self.x += self.move_speed * self.dirx
@@ -165,6 +166,12 @@ class gremlin(Character):
             # set state to new direction
             self.state = 1
         return
+    '''
+    def move(self):
+        self.x = self.owner.x + 16 + cos(radians(self.direction)) * 40
+        self.y = self.owner.y + 16 + sin(radians(self.direction)) * 40
+        self.direction = (self.direction + 2) % 360
+
 
     def chase(self):
         # when to stop chasing and give up back to patrolling

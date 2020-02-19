@@ -64,8 +64,8 @@ def main() :
     enemy = Enemy(2, 100, 150, p)
     p.enemies.add(enemy)
 
-    sp = spooks(1,220,50,p)
-    grem = gremlin(1,230,50,p)
+    sp = spooks(2,250,200,p,e)
+   
 
 
     container1 = Container(2, 100, 64, "lantern")
@@ -81,7 +81,7 @@ def main() :
     e.objects.append(container2)
     e.objects.append(d)
     e.objects.append(sp)
-    e.objects.append(grem)
+    
    
     p.enemies.add(enemy)
 
@@ -111,8 +111,7 @@ def main() :
     e.drawables.add(container2)
     e.drawables.add(d)
     e.drawables.add(sp)
-    e.drawables.add(grem)
-
+  
 
     mapRenderer.renderForeGround()
 
@@ -140,8 +139,8 @@ def main() :
     e.key_events[pygame.K_LEFT] = p.shoot_bullet_left
     e.key_events[pygame.K_RIGHT] = p.shoot_bullet_right
     e.key_events[pygame.K_SPACE] = p.use_active_item
-    e.events[pygame.USEREVENT] = e.makeZombie
     e.events[pygame.QUIT] = e.stop
+    e.events[pygame.K_ESCAPE] = e.stop
     e.run()
 
 if __name__=='__main__':

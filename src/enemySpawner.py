@@ -4,27 +4,35 @@
 import league
 from player import Player
 from enemy import Enemy
-class EnemySpawner() :
+from gremlin import gremlin
+class EnemySpawner:
     def __init__ (self, coordX, coordY, progress, engine, player, blocks) :
-        self.X = coordX
+        self.x = coordX
         self.y = coordY
         self.state = progress
         self.e = engine
         self.p = player
         self.blocks = blocks
         
-        def spawnEnemy(coordX, coordY, player, state):
-            return Enemy(coordX, coordY, player)
+    def spawnEnemy(self, coordX, coordY, player, state):
+        return Enemy(coordX, coordY, player)
 
-        def createEnemy(self):
-            temp = Enemy(z=2, x=coordX, y=coordY, player=player)
-            #temp = spawnEnemy(coordX,coordY,player,progress)
-            engine.drawables.add(temp)
-            engine.objects.append(temp)
-            player.enemy = temp
-            temp.hazards = player.hazards
-            temp.blocks.add(blocks)
+    def createEnemy(self):
+        self.temp = Enemy(2, self.x, self.y, self.p)
+        self.e.drawables.add(self.temp)
+        self.e.objects.append(self.temp)
+        self.p.enemies.add(self.temp)
+        self.temp.hazards = self.p.hazards
+        self.temp.blocks.add(self.blocks)
 
-        self.e.makeZombie = createEnemy
+    def createGremlin(self, creator):
+        self.temp = gremlin(2, self.x, self.y, self.p, creator)
+        self.e.drawables.add(self.temp)
+        self.e.objects.append(self.temp)
+        self.p.enemies.add(self.temp)
+        self.temp.hazards = self.p.hazards
+        self.temp.blocks.add(self.blocks)
+
+        
 
     

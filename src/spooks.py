@@ -3,31 +3,35 @@ from datetime import datetime
 
 from league import *
 import pygame
-from math import copysign
+from enemySpawner import EnemySpawner
+from math import copysign, radians, cos, sin
 from random import seed, randint
 
 class spooks(Character):
-    def __init__(self, z=0, x=0, y=0, player = None):
+    def __init__(self, z=0, x=0, y=0, player = None, engine = None):
         super().__init__(z=z, x=x, y=y)
-        self.targert = player
-        self.grems = None
+        self.target = player
         self.walk_speed = 1
         self.run_speed = 3
         self.move_speed = self.walk_speed
+        self.engine = engine
 
-        # state 0 => ROAM
+        # state 0 => IDLE moves in circle
         # state 1 => SPAWN GREMLIN
-        # state 2 => RUN LIKE A BITCH
+        # state 2 => CAUGHT
+        # state 3 => RUN
         self.state = 0
 
         self.dirx = 0
         self.diry = 0
-        self.timeout = 5
-        self.timeout_counter = self.timeout
-        self.timeout_position = (self.rect.x, self.rect.y)
+        self.direction = 0
+        self.idle_speed = 10
+
+        self.spawntimer = 50
+        self.spawncounter = self.spawntimer
         self.sight_timeout = 30
         self.sight_counter = self.sight_timeout
-
+        self.delta = 512
         # image only a place holder
         self.image = pygame.image.load('../assets/skeleton-clothed-4.png')
         # animation for spooks goes here
@@ -45,27 +49,7 @@ class spooks(Character):
         self.collider.image = pygame.Surface([Settings.tile_size, Settings.tile_size])
         self.collider.rect = pygame.Rect((0, 0, 48, 48))
 
-        self.test = Drawable()
-        self.test.image = pygame.Surface([Settings.tile_size, Settings.tile_size])
-        self.test.rect = self.image.get_rect()
-
-        self.test1 = Drawable()
-        self.test1.image = pygame.Surface([Settings.tile_size, Settings.tile_size])
-        self.test1.rect = self.image.get_rect()
-
-        self.test2 = Drawable()
-        self.test2.image = pygame.Surface([Settings.tile_size, Settings.tile_size])
-        self.test2.rect = self.image.get_rect()
-
-        self.test3 = Drawable()
-        self.test3.image = pygame.Surface([Settings.tile_size, Settings.tile_size])
-        self.test3.rect = self.image.get_rect()
-
-        self.tests = [self.test, self.test1, self.test2, self.test3]
-
-
-        # SEED SET HERE MIGHT NEED TO CHANGE LATER
-        seed(datetime.now())
+        self.spawner = EnemySpawner(self.x, self.y, 0, self.engine, self.target, self.target.blocks)
 
 
     def set_directions(self, new_dirx, new_diry):
@@ -148,24 +132,32 @@ class spooks(Character):
         else:
             self.timeout_counter-=1
 
+    def spawn_kids(self):
+        self.spawner.createGremlin(self)
+        self.state = 0
 
-    def move(self):
-        # state machine -> updates self.dirx and self.diry (the direction of movement)
-        self.x += self.move_speed * self.dirx
-        self.y += self.move_speed * self.diry 
-
-        # collision handling
-        while len(self.collisions) != 0:
-            # move in opposite x/y directions
-            # will not be moved if direction if 0
-            self.x -= self.dirx * 20
-            self.y -= self.diry * 20 # move in opposite y direction
-
-            self.update(0) # update to recheck collisions
-            
-            # set state to new direction
+    def idle(self):
+        # check for spawn timer
+        if self.spawncounter <= 0:
+            self.spawncounter = self.spawntimer
             self.state = 1
-        return
+            return
+        self.spawncounter -= 1
+
+        # determine if the current speed is high enough to change direction
+        if self.move_speed > self.idle_speed:
+            self.move_speed = 0
+            self.direction = (self.direction + 90) % 360 # turn direction to the left
+
+        rads = radians(self.direction)
+        dirx = int(cos(rads))
+        diry = int(sin(rads))
+
+        self.x += dirx * self.move_speed
+        self.y += diry * self.move_speed
+        self.move_speed += 0.5
+
+
 
     def chase(self):
         # when to stop chasing and give up back to patrolling
@@ -209,14 +201,13 @@ class spooks(Character):
         self.image.fill(255, 0, 0, 255)
 
     def update(self, time):
-
         if time != 0:
             # patrol state
             if self.state == 0:
-                self.move()
+                self.idle()
             # new direction state
             elif self.state == 1:
-                self.new_direction()
+                self.spawn_kids()
             # chase state
             elif self.state == 2:
                 self.chase()
