@@ -94,6 +94,7 @@ class Player(Character):
         return self.rect.y
 
     def move_left(self, time):
+        self.get_animation(3)
         self.direction = 1
         amount = self.delta * time
         try:
@@ -109,6 +110,7 @@ class Player(Character):
             pass
 
     def move_right(self, time):
+        self.get_animation(1)
         self.direction = 3
         self.collisions = []
         amount = self.delta * time
@@ -125,6 +127,7 @@ class Player(Character):
             pass
 
     def move_up(self, time):
+        self.get_animation(0)
         self.direction = 0
         self.collisions = []
         amount = self.delta * time
@@ -142,9 +145,7 @@ class Player(Character):
             pass
 
     def move_down(self, time):
-        if self.direction != 2:
-            self.direction = 2
-            self.stepTile =
+        self.get_animation(2)
         self.collisions = []
         amount = self.delta * time
         self.stepTile = (self.stepTile + 1) % 4
@@ -162,7 +163,15 @@ class Player(Character):
         except:
             pass
 
+    def get_animation(self, dir):
+        if self.direction != dir:
+            self.direction = dir
+            self.stepTile = 0
 
+        self.stepTile = ((self.stepTile + 1) % 3) + (self.direction * 3)
+        self.image = self.sprites[self.stepTile].image
+
+        
     def shoot_bullet(self, time, dir):
         if (self.shoot_counter > 0):
             return
@@ -191,7 +200,7 @@ class Player(Character):
             diry = sin(r)
         # find where the raycast SHOULD end up assuming nothing blocking it
         end_position = (xx + dirx * length, yy + diry * length)
-        tempx = xx; tempy = yy;
+        tempx = xx; tempy = yy
         # loop through all positions in range
         for i in range(0, length, 8):
             self.cpoint.x = self.cpoint.rect.x = tempx
