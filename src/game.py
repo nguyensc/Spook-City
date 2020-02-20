@@ -13,26 +13,7 @@ from enemySpawner import EnemySpawner
 from door import Door
 from spooks import spooks
 from gremlin import gremlin
-
-def getSpawnCoords(play): #CoordX, coordY, some indicator for progress through the game, 
-    left = 16
-    right = 656
-    up = 16
-    down = 656
-
-    coordx = left   
-    coordy = up
-
-    xdiffLeft = abs(left - play.getX())
-    xdiffRight = abs(right - play.getX())
-    if(xdiffRight > xdiffLeft) :
-        coordx = right
-    ydiffUp = abs(up - play.getY())
-    ydiffDown = abs(down - play.getY())
-    if(ydiffDown > ydiffUp) :
-        coordy = down
-
-    return Enemy(2, 100, 100, play)
+from abbot import abbot
 
 def main() :
     e = league.Engine("Survive")
@@ -61,13 +42,11 @@ def main() :
     o = Overlay(p)
     e.overlay = o
 
-    enemy = Enemy(2, 100, 150, p)
+    enemy = abbot(2, 100, 150, p)
     p.enemies.add(enemy)
 
-    sp = spooks(2,250,200,p,e)
+    #sp = spooks(2,250,200,p,e)
    
-
-
     container1 = Container(2, 100, 64, "lantern")
     container2 = Container(2, 300, 64, "beartrap")
     container2 = Container(2, 200, 300, "beartrap")
@@ -80,7 +59,7 @@ def main() :
     e.objects.append(container1)
     e.objects.append(container2)
     e.objects.append(d)
-    e.objects.append(sp)
+    #e.objects.append(sp)
     
    
     p.enemies.add(enemy)
@@ -110,12 +89,9 @@ def main() :
     e.drawables.add(container1)
     e.drawables.add(container2)
     e.drawables.add(d)
-    e.drawables.add(sp)
-  
+    #e.drawables.add(sp)
 
     mapRenderer.renderForeGround()
-
-    spawner = EnemySpawner(100, 100, 0, e, p, p.blocks)
   
     # draws the flashlight collision rectangle
     e.nospriteables.append((f, (255, 0, 0, 255)))
@@ -125,9 +101,6 @@ def main() :
         p.blocks.add(impassable)
         enemy.blocks.add(impassable)
         f.blocks.add(impassable)
-
-    zombieTimer = 60000 #Change this to change spawn rate of the zombie
-    pygame.time.set_timer(pygame.USEREVENT, zombieTimer // league.Settings.gameTimeFactor)
 
     e.key_events[pygame.K_a] = p.move_left
     e.key_events[pygame.K_d] = p.move_right
