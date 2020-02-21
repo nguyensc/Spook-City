@@ -4,7 +4,7 @@ import pygame
 class RancidMeat():
     def __init__(self, x=0, y=0):    
 
-        self.sheet = Spritesheet('../assets/rancidmeat.png', 32, 1)
+        self.sheet = Spritesheet('../assets/game objects/rancidmeat.png', 32, 1)
         self.sprites = self.sheet.sprites
         self.image_index = 0
         self.image = self.sprites[self.image_index].image.convert_alpha()

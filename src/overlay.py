@@ -57,7 +57,7 @@ class Overlay(league.DUGameObject):
         
         # draw ui box
         self.ui_box = pygame.image.load("../assets/overlay assets/ui_box.png")
-        self.ui_box = pygame.transform.scale(self.ui_box, (1200, 48))
+        self.ui_box = pygame.transform.scale(self.ui_box, (480, 48))
         
         # draw selected active 
         # beartrap case

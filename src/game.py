@@ -120,7 +120,7 @@ def main() :
 
     # create room object in engine
     e.room = Room(p, e, overlay)
-
+    
     e.key_events[pygame.K_a] = p.move_left
     e.key_events[pygame.K_d] = p.move_right
     e.key_events[pygame.K_w] = p.move_up
