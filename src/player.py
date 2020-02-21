@@ -1,4 +1,5 @@
 from league import *
+from audio import Sound
 from math import radians, cos, sin, copysign
 import pygame
 from beartrap import BearTrap
@@ -23,10 +24,15 @@ class Player(Character):
         self.interactables = pygame.sprite.Group()
         self.hazards = [] # similar to interactables but dangerous!
         self.enemies = pygame.sprite.Group()
+        self.stepTile = 0
         self.direction = 0
+        self.angle = 0
         self.last_hit = pygame.time.get_ticks()
+        self.move_timer = pygame.time.get_ticks()
+        self.moveSpeed = 150
         self.delta = 512
         self.screen = None
+        self.sounds = Sound()
         # Where the player is positioned
         self.x = x
         self.y = y
@@ -38,9 +44,9 @@ class Player(Character):
         }
         self.active_item = 0
         
-        self.sheet = Spritesheet('../assets/player/Black/player_idle.png', 48, 1)
+        self.sheet = Spritesheet_Ext('../assets/map assets/sprite sheets/Horror City - Frankenstein MV/Characters/$Dr Frankenstien.png', 32, 48, 3, 4, 4, [96, 188], .5)
         self.sprites = self.sheet.sprites
-        self.image = self.sprites[0].image
+        self.image = self.sprites[self.stepTile].image
 
         # timers
         self.shoot_timer = 20
@@ -92,9 +98,13 @@ class Player(Character):
     def get_y(self):
         return self.rect.y
 
-
     def move_left(self, time):
-        self.direction = 180
+        self.angle = 180
+        now = pygame.time.get_ticks()
+        if now - self.move_timer < self.moveSpeed:
+            return
+
+        self.get_animation(1)
         amount = self.delta * time
         try:
             if self.x - amount < 0:
@@ -109,7 +119,12 @@ class Player(Character):
             pass
 
     def move_right(self, time):
-        self.direction = 0
+        self.angle = 0
+        now = pygame.time.get_ticks()
+        if now - self.move_timer < self.moveSpeed:
+            return
+
+        self.get_animation(2)
         self.collisions = []
         amount = self.delta * time
         try:
@@ -125,7 +140,12 @@ class Player(Character):
             pass
 
     def move_up(self, time):
-        self.direction = 270
+        self.angle = 270
+        now = pygame.time.get_ticks()
+        if now - self.move_timer < self.moveSpeed:
+            return
+
+        self.get_animation(3)
         self.collisions = []
         amount = self.delta * time
         try:
@@ -141,9 +161,13 @@ class Player(Character):
         except:
             pass
 
-
     def move_down(self, time):
-        self.direction = 90
+        self.angle = 90
+        now = pygame.time.get_ticks()
+        if now - self.move_timer < self.moveSpeed:
+            return
+
+        self.get_animation(0)
         self.collisions = []
         amount = self.delta * time
         try:
@@ -159,22 +183,16 @@ class Player(Character):
         except:
             pass
 
+    def get_animation(self, dir):     
+        self.move_timer = pygame.time.get_ticks()
+        if self.direction != dir:
+            self.direction = dir
+            self.stepTile = 0 + (3 * dir)
 
-    def shoot_bullet(self, time, dir):
-        if (self.shoot_counter > 0):
-            return
-        self.shoot_counter = self.shoot_timer
+        else :
+            self.stepTile = ((self.stepTile + 1) % 3) + (3 * dir)
 
-        bullet = Bullet((self.x - 32, self.y + 64), dir, 10, self.blocks)
-        self.bullets.append(bullet)
-    def shoot_bullet_up(self, time):
-        self.shoot_bullet(time, 90)
-    def shoot_bullet_down(self, time):
-        self.shoot_bullet(time, 270)
-    def shoot_bullet_left(self, time):
-        self.shoot_bullet(time, 180)
-    def shoot_bullet_right(self, time):
-        self.shoot_bullet(time, 0)
+        self.image = self.sprites[self.stepTile].image
 
 
     def lineofsight_raycast(self, length, direction, precise=0):
@@ -188,7 +206,7 @@ class Player(Character):
             diry = sin(r)
         # find where the raycast SHOULD end up assuming nothing blocking it
         end_position = (xx + dirx * length, yy + diry * length)
-        tempx = xx; tempy = yy;
+        tempx = xx; tempy = yy
         # loop through all positions in range
         for i in range(0, length, 8):
             self.cpoint.x = self.cpoint.rect.x = tempx
@@ -220,10 +238,10 @@ class Player(Character):
     def light_raycast(self, length):
         for i in range(0, 360, self.raycast_increments):
             direction = i
-            condition0 = (self.direction == 0 and (i >= 330 or i <= 30))
-            condition90 = (self.direction == 90 and (i <= 120 and i >= 60))
-            condition180 = (self.direction == 180 and (i <= 210 and i >= 150))
-            condition270 = (self.direction == 270 and (i <= 300 and i >= 240))
+            condition0 = (self.angle == 0 and (i >= 330 or i <= 30))
+            condition90 = (self.angle == 90 and (i <= 120 and i >= 60))
+            condition180 = (self.angle == 180 and (i <= 210 and i >= 150))
+            condition270 = (self.angle == 270 and (i <= 300 and i >= 240))
             # extend the raycast if near player movement direction
             if condition0 or condition90 or condition180 or condition270:
                 ray = self.lineofsight_raycast(length * 3, direction, 1)
@@ -285,9 +303,11 @@ class Player(Character):
                 if pygame.sprite.collide_rect(self, sprite):
                     # check for door opening case
                     if sprite.isDoor == 1:
+                        self.sounds.play_door_sound()
                         sprite.changeRoom() # run the door opening code
                         return
                     self.inventory[self.active_item] = sprite.contents
+
         else:
             # decrement timer
             self.interaction_counter -= 1

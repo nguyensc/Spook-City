@@ -5,7 +5,7 @@ import pygame
 class Lantern():
     def __init__(self, x=0, y=0):    
 
-        self.sheet = Spritesheet('../assets/lantern.png', 48, 1)
+        self.sheet = Spritesheet('../assets/game objects/lantern.png', 48, 1)
         self.sprites = self.sheet.sprites
         self.image_index = 0
         self.image = self.sprites[self.image_index].image.convert_alpha()

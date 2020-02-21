@@ -12,6 +12,7 @@ from container import Container
 from enemySpawner import EnemySpawner
 from door import Door
 from rooms import Room
+from audio import BackgroundMusic
 
 def getSpawnCoords(play): #CoordX, coordY, some indicator for progress through the game, 
     left = 16
@@ -34,7 +35,7 @@ def getSpawnCoords(play): #CoordX, coordY, some indicator for progress through t
     return Enemy(2, 100, 100, play)
 
 def main() :
-    e = league.Engine("Mr.Bone's Wild Ride")
+    e = league.Engine("Survive")
     e.init_pygame()
     timer = pygame.time.set_timer(pygame.USEREVENT + 1, 1000 // league.Settings.gameTimeFactor)
     count = 0
@@ -54,8 +55,8 @@ def main() :
     e.light_source = l
     e.player = p
 
-    o = Overlay(p)
-    e.overlay = o
+    overlay = Overlay(p)
+    e.overlay = overlay
 
     enemy = Enemy(2, 100, 150, p)
     p.enemies.add(enemy)
@@ -68,7 +69,7 @@ def main() :
     e.objects.append(enemy)
     e.objects.append(l)
     #e.objects.append(f)
-    e.objects.append(o)
+    e.objects.append(overlay)
     e.objects.append(container1)
     e.objects.append(container2)
     e.objects.append(container3)
@@ -86,7 +87,7 @@ def main() :
     e.extra_rect_drawables.append((p.rect, (255, 0, 0)))
     e.extra_rect_drawables.append((p.collider.rect, (0, 255, 0)))
     e.extra_rect_drawables.append((enemy.rect, (0, 0, 255)))
-    for test in enemy.tests:
+    for test in enemy.tests: 
         e.drawables.add(test)
         e.extra_rect_drawables.append((test.rect, (255, 0, 255)))
     e.extra_rect_drawables.append(((p.x, p.y, 32, 32), (200, 255, 150)))
@@ -104,8 +105,10 @@ def main() :
     mapRenderer.renderForeGround()
 
     spawner = EnemySpawner(100, 100, 0, e, p, p.blocks)
-  
 
+    #bgm = BackgroundMusic("lavender city")
+    #bgm.start_music()
+  
     # add all impassable sprites to classes which need them
     for impassable in mapRenderer.getAllImpassables():
         p.blocks.add(impassable)
@@ -116,17 +119,13 @@ def main() :
     pygame.time.set_timer(pygame.USEREVENT, zombieTimer // league.Settings.gameTimeFactor)
 
     # create room object in engine
-    e.room = Room(p, e, o)
-
+    e.room = Room(p, e, overlay)
+    
     e.key_events[pygame.K_a] = p.move_left
     e.key_events[pygame.K_d] = p.move_right
     e.key_events[pygame.K_w] = p.move_up
     e.key_events[pygame.K_s] = p.move_down
     e.key_events[pygame.K_e] = p.interact
-    e.key_events[pygame.K_UP] = p.shoot_bullet_up
-    e.key_events[pygame.K_DOWN] = p.shoot_bullet_down
-    e.key_events[pygame.K_LEFT] = p.shoot_bullet_left
-    e.key_events[pygame.K_RIGHT] = p.shoot_bullet_right
     e.key_events[pygame.K_SPACE] = p.use_active_item
     e.events[pygame.USEREVENT] = e.makeZombie
     e.events[pygame.QUIT] = e.stop

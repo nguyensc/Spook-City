@@ -72,6 +72,7 @@ class Engine:
         # For each joystick we find, initialize the stick
         for i in range(pygame.joystick.get_count()):
             pygame.joystick.Joystick(i).init()
+        print("controllers connected: " + str(pygame.joystick.get_count()))
         # Set the repeat delay for key presses
         pygame.key.set_repeat(Settings.key_repeat)
         # Create statistics font
@@ -233,7 +234,6 @@ class Engine:
             if event.type == pygame.KEYDOWN:
                 if event.key in self.key_events.keys():
                     self.key_events[event.key](self.game_delta_time) 
-
 
 # [1 0 0 0
 #  0 cos -sin 0

@@ -5,7 +5,7 @@ import pygame
 class BearTrap():
     def __init__(self, x=0, y=0):    
 
-        self.sheet = Spritesheet('../assets/beartrap.png', 32, 2)
+        self.sheet = Spritesheet('../assets/game objects/beartrap.png', 32, 2)
         self.sprites = self.sheet.sprites
         self.image_index = 0
         self.image = self.sprites[self.image_index].image.convert_alpha()

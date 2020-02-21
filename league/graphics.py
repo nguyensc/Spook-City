@@ -198,20 +198,31 @@ class Spritesheet_Ext:
     height - Number of pixels high of the spritesheet image.
     sprites - A single-dimensional list of the sprites from the sheet.
     """
-    def __init__(self, path, tile_width, tile_height, per_row):
+    def __init__(self, path, tile_width, tile_height, per_row, paddingX = 0, paddingY = 0, scaleResolution = [-1, -1], scale = 1):
         self.path = path
-        self.sheet = pygame.image.load(self.path).convert_alpha()
+
+        if scaleResolution != [-1, -1]:
+            image = pygame.image.load(self.path)
+            image = pygame.transform.scale(image, (scaleResolution[0], scaleResolution[1]))
+        else:
+            image = pygame.image.load(self.path)
+            
+        self.sheet = image.convert_alpha()
         self.tile_width = tile_width
         self.tile_height = tile_height
         self.per_row = per_row
         self.width, self.height = self.sheet.get_size()
+        self.paddingX = paddingX
+        self.paddingY = paddingY
+        self.scale = scale
+        self.scaleResolution = scaleResolution
         self.sprites = self.__split_up()
 
     def __split_up(self):
         # This function splits the sheet up into equal-sized chunks,
         # and returns a list of the chunks.
         sprites = []
-        for i in range((self.tile_width * self.tile_height) // (Settings.tile_size * Settings.tile_size)):
+        for i in range((self.tile_width * self.tile_height) // int((self.scale * (Settings.tile_size * Settings.tile_size)))):
                 image = self.__get_image_num(i)
                 sprites.append(image)
         return sprites
@@ -219,8 +230,8 @@ class Spritesheet_Ext:
     def __get_image_num(self, num):
         # This function copies an MxM image from x, y
         # to a new Sprite and returns it.
-        y = self.tile_height * (num  // self.per_row)
-        x = self.tile_width * (num  % self.per_row)
+        y = (self.tile_height * (num  // self.per_row)) + self.paddingY
+        x = (self.tile_width * (num  % self.per_row)) + self.paddingX
         sprite = Drawable()
         sprite.image = pygame.Surface((self.tile_width, self.tile_height)).convert_alpha()
         sprite.image.fill((128,128,128,0))

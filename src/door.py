@@ -5,8 +5,8 @@ from mapRenderer import MapRenderer
 class Door(Character):
     def __init__(self, z=0, x=0, y=0, warpx=0, warpy=0, connected_room=None, engine=None):
         super().__init__(z, x, y)
-        self.x = x; self.y = y;
-        self.warpx = warpx; self.warpy = warpy;
+        self.x = x; self.y = y
+        self.warpx = warpx; self.warpy = warpy
         self.sheet = Spritesheet_Ext('../assets/map assets/sprite sheets/Hospital Tiles/!$Elevator Doors-Alt.png', 48, 32, 2)
         self.emptyImage = pygame.image.load('../assets/map assets/containerEmpty.png').convert_alpha()
         self.sprites = self.sheet.sprites
