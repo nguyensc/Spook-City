@@ -23,13 +23,14 @@ class Player(Character):
         self.blocks = pygame.sprite.Group() # What sprites am I not allowd to cross?
         self.interactables = pygame.sprite.Group()
         self.hazards = [] # similar to interactables but dangerous!
+        self.lanterns = [] #used for maintaing lantern positions persistance in rooms.py
         self.enemies = pygame.sprite.Group()
         self.stepTile = 0
         self.direction = 0
         self.angle = 0
         self.last_hit = pygame.time.get_ticks()
         self.move_timer = pygame.time.get_ticks()
-        self.moveSpeed = 150
+        self.moveSpeed = 50
         self.delta = 512
         self.screen = None
         self.sounds = Sound()
@@ -195,7 +196,7 @@ class Player(Character):
         self.image = self.sprites[self.stepTile].image
 
 
-    def lineofsight_raycast(self, length, direction, precise=0):
+    def lineofsight_raycast(self, length, direction, precise=0, stepValue=8):
         xx = int(self.rect.x + 16); yy = int(self.rect.y + 16)
         r = radians(direction)
         dirx = int(cos(r))
@@ -208,7 +209,7 @@ class Player(Character):
         end_position = (xx + dirx * length, yy + diry * length)
         tempx = xx; tempy = yy
         # loop through all positions in range
-        for i in range(0, length, 8):
+        for i in range(0, length, stepValue):
             self.cpoint.x = self.cpoint.rect.x = tempx
             self.cpoint.y = self.cpoint.rect.y = tempy
             # line of sight runs into wall
@@ -251,19 +252,19 @@ class Player(Character):
                 self.raycast_points[i // self.raycast_increments] = ray
 
     def lineofsight_right(self, length):
-        self.sight_coords[0] = self.lineofsight_raycast(length, 0)
+        self.sight_coords[0] = self.lineofsight_raycast(length, 0, 0, 16)
         return self.sight_coords[0]
 
     def lineofsight_left(self, length):
-        self.sight_coords[1] = self.lineofsight_raycast(length, 180)
+        self.sight_coords[1] = self.lineofsight_raycast(length, 180, 0, 16)
         return self.sight_coords[1]
 
     def lineofsight_up(self, length):
-        self.sight_coords[2] = self.lineofsight_raycast(length, 90)
+        self.sight_coords[2] = self.lineofsight_raycast(length, 90, 0, 16)
         return self.sight_coords[2]
 
     def lineofsight_down(self, length):
-        self.sight_coords[3] = self.lineofsight_raycast(length, 270)
+        self.sight_coords[3] = self.lineofsight_raycast(length, 270, 0, 16)
         return self.sight_coords[3]
 
 
@@ -295,8 +296,7 @@ class Player(Character):
 
         # set the interaction timer, must be held to complete action
         if self.interaction_counter <= 0:
-            self.interaction_counter = self.interaction_timer + 10 # reset interaction timer
-            self.interaction_timeout = 10
+            self.interaction_counter = self.interaction_timer + 30 # reset interaction timer
             
             # loop through the interactable sprite group
             for sprite in self.interactables:
@@ -326,7 +326,9 @@ class Player(Character):
 
         # lantern use code
         elif self.inventory[self.active_item] == "lantern":
-            self.create_physical_item(0, 0, Lantern(tarx - 64, tary - 64))
+            lantern = Lantern(tarx - 64, tary - 64)
+            self.create_physical_item(0, 0, lantern)
+            self.lanterns.append(lantern)
         
         # rancid meat
         elif self.inventory[self.active_item] == "rancidmeat":
@@ -366,10 +368,10 @@ class Player(Character):
             if self.interaction_counter > self.interaction_timer:
                 self.interaction_counter -= 1
             # run all line of sight raycasts
-            self.lineofsight_right(200)
-            self.lineofsight_left(200)
-            self.lineofsight_up(200)
-            self.lineofsight_down(200)
+            self.lineofsight_right(400)
+            self.lineofsight_left(400)
+            self.lineofsight_up(400)
+            self.lineofsight_down(400)
             # light raycasts stuff (drawing happens in engine!)
             self.light_raycast(50)
         # check for redundant action meter display
