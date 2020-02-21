@@ -27,7 +27,6 @@ class MapRenderer():
         }
 
         selector = mapDict.get(self.mapName)
-        print(selector)
 
         if selector == 1:
             self.map = MapParams(

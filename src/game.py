@@ -34,7 +34,7 @@ def getSpawnCoords(play): #CoordX, coordY, some indicator for progress through t
     return Enemy(2, 100, 100, play)
 
 def main() :
-    e = league.Engine("Mr.Bone's Wild Ride")
+    e = league.Engine("Survive")
     e.init_pygame()
     timer = pygame.time.set_timer(pygame.USEREVENT + 1, 1000 // league.Settings.gameTimeFactor)
     count = 0
@@ -86,7 +86,7 @@ def main() :
     e.extra_rect_drawables.append((p.rect, (255, 0, 0)))
     e.extra_rect_drawables.append((p.collider.rect, (0, 255, 0)))
     e.extra_rect_drawables.append((enemy.rect, (0, 0, 255)))
-    for test in enemy.tests:
+    for test in enemy.tests: 
         e.drawables.add(test)
         e.extra_rect_drawables.append((test.rect, (255, 0, 255)))
     e.extra_rect_drawables.append(((p.x, p.y, 32, 32), (200, 255, 150)))
@@ -105,7 +105,6 @@ def main() :
 
     spawner = EnemySpawner(100, 100, 0, e, p, p.blocks)
   
-
     # add all impassable sprites to classes which need them
     for impassable in mapRenderer.getAllImpassables():
         p.blocks.add(impassable)

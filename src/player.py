@@ -26,6 +26,8 @@ class Player(Character):
         self.stepTile = 0
         self.direction = 0
         self.last_hit = pygame.time.get_ticks()
+        self.move_timer = pygame.time.get_ticks()
+        self.moveSpeed = 150
         self.delta = 512
         self.screen = None
         # Where the player is positioned
@@ -39,7 +41,7 @@ class Player(Character):
         }
         self.active_item = 0
         
-        self.sheet = Spritesheet('../assets/map assets/sprite sheets/Horror City - Frankenstein MV/Characters/$Dr Frankenstien.png', 64, 3)
+        self.sheet = Spritesheet_Ext('../assets/map assets/sprite sheets/Horror City - Frankenstein MV/Characters/$Dr Frankenstien.png', 32, 48, 3, 4, 4, [96, 188], .5)
         self.sprites = self.sheet.sprites
         self.image = self.sprites[self.stepTile].image
 
@@ -94,8 +96,11 @@ class Player(Character):
         return self.rect.y
 
     def move_left(self, time):
-        self.get_animation(3)
-        self.direction = 1
+        now = pygame.time.get_ticks()
+        if now - self.move_timer < self.moveSpeed:
+            return
+
+        self.get_animation(1)
         amount = self.delta * time
         try:
             if self.x - amount < 0:
@@ -110,8 +115,11 @@ class Player(Character):
             pass
 
     def move_right(self, time):
-        self.get_animation(1)
-        self.direction = 3
+        now = pygame.time.get_ticks()
+        if now - self.move_timer < self.moveSpeed:
+            return
+
+        self.get_animation(2)
         self.collisions = []
         amount = self.delta * time
         try:
@@ -127,8 +135,11 @@ class Player(Character):
             pass
 
     def move_up(self, time):
-        self.get_animation(0)
-        self.direction = 0
+        now = pygame.time.get_ticks()
+        if now - self.move_timer < self.moveSpeed:
+            return
+
+        self.get_animation(3)
         self.collisions = []
         amount = self.delta * time
         try:
@@ -145,11 +156,13 @@ class Player(Character):
             pass
 
     def move_down(self, time):
-        self.get_animation(2)
+        now = pygame.time.get_ticks()
+        if now - self.move_timer < self.moveSpeed:
+            return
+
+        self.get_animation(0)
         self.collisions = []
         amount = self.delta * time
-        self.stepTile = (self.stepTile + 1) % 4
-        self.image = self.sprites[self.stepTile].image
         try:
             if self.y + amount > self.world_size[1] - Settings.tile_size:
                 raise OffScreenBottomException
@@ -163,12 +176,15 @@ class Player(Character):
         except:
             pass
 
-    def get_animation(self, dir):
+    def get_animation(self, dir):     
+        self.move_timer = pygame.time.get_ticks()
         if self.direction != dir:
             self.direction = dir
-            self.stepTile = 0
+            self.stepTile = 0 + (3 * dir)
 
-        self.stepTile = ((self.stepTile + 1) % 3) + (self.direction * 3)
+        else :
+            self.stepTile = ((self.stepTile + 1) % 3) + (3 * dir)
+
         self.image = self.sprites[self.stepTile].image
 
         
