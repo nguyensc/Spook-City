@@ -19,7 +19,7 @@ class Lantern():
         self.triggered = 0
         self.isLightSource = 1
         self.light = pygame.image.load('../assets/light assets/Radial4.png').convert_alpha()
-        self.light = pygame.transform.scale(self.light, (196, 196))
+        self.light = pygame.transform.scale(self.light, (256, 256))
 
     def update(self):
         self.image = pygame.Surface([256, 256]).convert_alpha()
@@ -29,7 +29,6 @@ class Lantern():
         self.lantern = pygame.transform.scale(self.lantern, (48, 48))
 
         # the actual light source image is rendered on the engine
-
         self.image.blit(self.lantern, (64, 64))
 
         return

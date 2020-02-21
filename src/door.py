@@ -37,8 +37,8 @@ class Door(Character):
         if self.open:
             if self.image_index >= 5:
                 # invoke engine's change room capabilities 
-                self.engine.player.x = self.engine.player.rect.x = self.warpx
-                self.engine.player.y = self.engine.player.rect.y = self.warpy
+                self.engine.player.x = self.warpx
+                self.engine.player.y = self.warpy
                 self.engine.changeRoom(self.room_num)
                 del self
                 return

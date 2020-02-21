@@ -15,7 +15,6 @@ class Overlay(league.DUGameObject):
         self.rect.y = 10
         self.static = True
 
-
         # set up any text display stuffs
         self.font = pygame.font.Font('freesansbold.ttf',32)
         self.text = self.font.render(str(self.player.health) + "        4 lives", True, (255,255,255))
