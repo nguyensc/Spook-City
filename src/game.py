@@ -12,6 +12,7 @@ from container import Container
 from enemySpawner import EnemySpawner
 from door import Door
 from rooms import Room
+from audio import BackgroundMusic
 
 def getSpawnCoords(play): #CoordX, coordY, some indicator for progress through the game, 
     left = 16
@@ -104,6 +105,9 @@ def main() :
     mapRenderer.renderForeGround()
 
     spawner = EnemySpawner(100, 100, 0, e, p, p.blocks)
+
+    bgm = BackgroundMusic("lavender town")
+    bgm.start_music()
   
     # add all impassable sprites to classes which need them
     for impassable in mapRenderer.getAllImpassables():

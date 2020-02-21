@@ -1,4 +1,5 @@
 from league import *
+from audio import Sound
 from math import radians, cos, sin, copysign
 import pygame
 from beartrap import BearTrap
@@ -30,6 +31,7 @@ class Player(Character):
         self.moveSpeed = 150
         self.delta = 512
         self.screen = None
+        self.sounds = Sound()
         # Where the player is positioned
         self.x = x
         self.y = y
@@ -313,9 +315,11 @@ class Player(Character):
                 if pygame.sprite.collide_rect(self, sprite):
                     # check for door opening case
                     if sprite.isDoor == 1:
+                        self.sounds.play_door_sound()
                         sprite.changeRoom() # run the door opening code
                         return
                     self.inventory[self.active_item] = sprite.contents
+
         else:
             # decrement timer
             self.interaction_counter -= 1
