@@ -92,7 +92,10 @@ class Engine:
         self.player.items = self.dynamic_instances
         # resetup overlay
         self.objects.append(self.overlay)
-        # init room
+
+        self.room.room_lanterns[str(self.room.current_room)] = self.player.lanterns
+        # self.player.lanterns is updated/reset in rooms.py
+
         if room_num == 1:
             self.room.room1()
         elif room_num == 2:

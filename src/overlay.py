@@ -75,11 +75,17 @@ class Overlay(league.DUGameObject):
 
         # when the user is performing an interaction,. show the action meter
         if self.player.interaction_counter < self.player.interaction_timer:
-            self.action_meter_updater()
+            keys = pygame.key.get_pressed()
+            if keys[pygame.K_e]:
+                # only display the meter when the E key is still pressed
+                self.action_meter_updater()
+            else:
+                self.player.interaction_counter = self.player.interaction_timer
         else:
             # reset the action meter image index when no interaction occuring
             self.action_meter_index = 0
             self.action_meter_animation_counter = self.action_meter_animation_speed
+            
 
         # render all constant gui elements
         self.image.blit(self.text, (0, 0))
