@@ -120,7 +120,6 @@ class Engine:
                 o.update(self.game_delta_time)          
 
             self.mapDrawables.draw(self.screen)
-            self.drawables.draw(self.screen)
             
             # Show statistics?
             if self.visible_statistics:
@@ -146,13 +145,17 @@ class Engine:
                 i.update()
                 # all item type objects must have an isLightSource attribute
                 if i.isLightSource:
-                        fog.blit(i.light, (i.x, i.y))
+                        fog.blit(i.light, (i.x - 24, i.y - 24))
+                # run area of effect code if the dynamic instance has an aoe
                 if hasattr(i, "aoe_rect"):
                     pygame.draw.rect(self.screen, (255,255,128,255), i.aoe_rect, 5)
                 # render the actual physical item
                 self.screen.blit(i.image, (i.x, i.y))
                 pygame.draw.rect(self.screen, (255,255,128,255), i.rect, 5)
 
+
+            # drawables all go ontop of dynamic instances
+            self.drawables.draw(self.screen)
 
             #fog.blit(self.light_source.image, self.light_source.rect)
             #fog.blit(self.flashlight.image, self.flashlight.rect)

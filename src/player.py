@@ -226,7 +226,7 @@ class Player(Character):
             condition270 = (self.direction == 270 and (i <= 300 and i >= 240))
             # extend the raycast if near player movement direction
             if condition0 or condition90 or condition180 or condition270:
-                ray = self.lineofsight_raycast(length * 5, direction, 1)
+                ray = self.lineofsight_raycast(length * 3, direction, 1)
                 self.raycast_points[i // self.raycast_increments] = ray
             else:
                 ray = self.lineofsight_raycast(length, direction, 1)
@@ -306,7 +306,7 @@ class Player(Character):
 
         # lantern use code
         elif self.inventory[self.active_item] == "lantern":
-            self.create_physical_item(0, 0, Lantern(tarx - 96, tary - 96))
+            self.create_physical_item(0, 0, Lantern(tarx - 64, tary - 64))
         
         # rancid meat
         elif self.inventory[self.active_item] == "rancidmeat":

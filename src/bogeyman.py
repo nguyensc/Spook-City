@@ -98,9 +98,9 @@ class Enemy(Character):
         prev_dir = (self.dirx, self.diry)
         possible_dirs = [
             (-1, 0),
+            (0, -1),
             (0, 1),
             (1, 0),
-            (0, -1),
         ]
         valid_dirs = []
         length_dirs = len(possible_dirs) - 1
@@ -138,13 +138,13 @@ class Enemy(Character):
         i = randint(0, length_dirs)
         for valid_dir in valid_dirs:
             if possible_dirs[i] == prev_dir:
-                i = (i + 1) % length_dirs
+                i = (i + randint(1, 2)) % length_dirs
                 continue
             elif valid_dir != None:
                 self.dirx = possible_dirs[i][0]
                 self.diry = possible_dirs[i][1]
                 break
-            i = (i + 1) % length_dirs
+            i = (i + randint(1, 2)) % length_dirs
 
         # reset state to patrol
         self.state = 0
@@ -179,11 +179,10 @@ class Enemy(Character):
 
         # collision handling
         while len(self.collisions) != 0:
-            print("hit")
             # move in opposite x/y directions
             # will not be moved if direction if 0
-            self.x -= self.dirx * 3
-            self.y -= self.diry * 3 # move in opposite y direction
+            self.x -= self.dirx * 20
+            self.y -= self.diry * 20 # move in opposite y direction
 
             self.update(0) # update to recheck collisions
             
@@ -206,7 +205,6 @@ class Enemy(Character):
 
         self.collider.x = tarx; self.collider.y = tary;
         if pygame.sprite.spritecollideany(self.collider, self.blocks) != None:
-            print("hit")
             if self.dirx < self.diry:
                 dirx = copysign(1, self.target.x - self.x)
                 diry *= -1
@@ -245,29 +243,27 @@ class Enemy(Character):
             # chase state
             elif self.state == 2:
                 self.chase()
-
-            for hazard in self.hazards:
-                # check if hazard has an area of effect
-                if hasattr(hazard, "aoe_rect"):
-                    # run aoe code
-                    hazard.aoe(self)
-                    print("x: ", self.rect.x, " hazard x: ", hazard.rect.x)
-                    if hazard.fortitude <= 0:
-                        self.hazards.remove(hazard)
-                        self.player.items.remove(hazard)
-                        self.target = self.player
-                        self.state = 0
-
-                elif pygame.sprite.collide_rect(self, hazard) and not hazard.triggered:
-                    hazard.triggered = 1
-                    self.state = 3
-                    return
-
        
 
         self.collider.x = self.rect.x = self.x
         self.collider.y = self.rect.y = self.y
         self.collisions = []
+
+        for hazard in self.hazards:
+            # check if hazard has an area of effect
+            if hasattr(hazard, "aoe_rect"):
+                # run aoe code
+                hazard.aoe(self)
+                print(hazard.fortitude)
+                if hazard.fortitude <= 0:
+                    self.target = self.player
+                    del hazard
+
+            elif pygame.sprite.collide_rect(self, hazard) and not hazard.triggered:
+                hazard.triggered = 1
+                self.state = 3
+                return
+
 
         for sprite in self.blocks:
             self.collider.rect.x = sprite.x
