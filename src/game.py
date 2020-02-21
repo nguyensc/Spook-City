@@ -126,10 +126,6 @@ def main() :
     e.key_events[pygame.K_w] = p.move_up
     e.key_events[pygame.K_s] = p.move_down
     e.key_events[pygame.K_e] = p.interact
-    e.key_events[pygame.K_UP] = p.shoot_bullet_up
-    e.key_events[pygame.K_DOWN] = p.shoot_bullet_down
-    e.key_events[pygame.K_LEFT] = p.shoot_bullet_left
-    e.key_events[pygame.K_RIGHT] = p.shoot_bullet_right
     e.key_events[pygame.K_SPACE] = p.use_active_item
     e.events[pygame.USEREVENT] = e.makeZombie
     e.events[pygame.QUIT] = e.stop
