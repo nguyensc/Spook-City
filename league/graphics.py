@@ -202,7 +202,6 @@ class Spritesheet_Ext:
         self.path = path
 
         if scaleResolution != [-1, -1]:
-            print("i'm inside")
             image = pygame.image.load(self.path)
             image = pygame.transform.scale(image, (scaleResolution[0], scaleResolution[1]))
         else:
@@ -226,8 +225,6 @@ class Spritesheet_Ext:
         for i in range((self.tile_width * self.tile_height) // int((self.scale * (Settings.tile_size * Settings.tile_size)))):
                 image = self.__get_image_num(i)
                 sprites.append(image)
-        if self.scaleResolution != [1, 1]:
-            print(str(sprites.__len__()))
         return sprites
 
     def __get_image_num(self, num):

@@ -47,7 +47,7 @@ class Enemy(Character):
         self.y = y
         # The image to use.  This will change frequently
         # in an animated Player class.
-        self.image = pygame.image.load('../assets/skeleton-clothed-1.png').convert_alpha()
+        self.image = pygame.image.load('../assets/enemy/zombie/skeleton-clothed-1.png').convert_alpha()
         self.image = pygame.transform.scale(self.image, (64, 64))
         self.rect = self.image.get_rect(center=(self.x, self.y))
         self.rect.width *= 1 / 2; self.rect.height *= 1 / 2;

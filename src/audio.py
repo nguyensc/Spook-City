@@ -5,6 +5,8 @@ class BackgroundMusic():
     def __init__(self, name):
         if name == "lavender town":
             self.name = "../assets/music assets/Lavender Town.mp3"
+        if name == "dream fatigue":
+            self.name = "../assets/music assets/Dream Fatigue.mp3"
         
         pygame.mixer.music.load(self.name)
     

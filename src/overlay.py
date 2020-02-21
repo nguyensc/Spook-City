@@ -31,9 +31,9 @@ class Overlay(league.DUGameObject):
         # set up inventory gui stuffs
         self.ui_box = pygame.image.load("../assets/overlay assets/ui_box.png")
         self.item_icons = [
-            pygame.image.load('../assets/icons/beartrap.png').convert_alpha(),
-            pygame.image.load('../assets/lantern.png').convert_alpha(),
-            pygame.image.load('../assets/rancidmeat.png').convert_alpha()
+            pygame.image.load('../assets/game objects/beartrap.png').convert_alpha(),
+            pygame.image.load('../assets/game objects/lantern.png').convert_alpha(),
+            pygame.image.load('../assets/game objects/rancidmeat.png').convert_alpha()
         ]
 
 
@@ -57,7 +57,7 @@ class Overlay(league.DUGameObject):
         
         # draw ui box
         self.ui_box = pygame.image.load("../assets/overlay assets/ui_box.png")
-        self.ui_box = pygame.transform.scale(self.ui_box, (48, 48))
+        self.ui_box = pygame.transform.scale(self.ui_box, (1200, 48))
         
         # draw selected active 
         # beartrap case

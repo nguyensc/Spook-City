@@ -55,8 +55,8 @@ def main() :
     e.light_source = l
     e.player = p
 
-    o = Overlay(p)
-    e.overlay = o
+    overlay = Overlay(p)
+    e.overlay = overlay
 
     enemy = Enemy(2, 100, 150, p)
     p.enemies.add(enemy)
@@ -69,7 +69,7 @@ def main() :
     e.objects.append(enemy)
     e.objects.append(l)
     #e.objects.append(f)
-    e.objects.append(o)
+    e.objects.append(overlay)
     e.objects.append(container1)
     e.objects.append(container2)
     e.objects.append(container3)
@@ -106,8 +106,8 @@ def main() :
 
     spawner = EnemySpawner(100, 100, 0, e, p, p.blocks)
 
-    bgm = BackgroundMusic("lavender town")
-    bgm.start_music()
+    #bgm = BackgroundMusic("lavender city")
+    #bgm.start_music()
   
     # add all impassable sprites to classes which need them
     for impassable in mapRenderer.getAllImpassables():
@@ -119,7 +119,7 @@ def main() :
     pygame.time.set_timer(pygame.USEREVENT, zombieTimer // league.Settings.gameTimeFactor)
 
     # create room object in engine
-    e.room = Room(p, e, o)
+    e.room = Room(p, e, overlay)
 
     e.key_events[pygame.K_a] = p.move_left
     e.key_events[pygame.K_d] = p.move_right
