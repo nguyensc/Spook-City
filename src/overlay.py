@@ -30,9 +30,9 @@ class Overlay(league.DUGameObject):
         # set up inventory gui stuffs
         self.ui_box = pygame.image.load("../assets/overlay assets/ui_box.png")
         self.item_icons = [
-            pygame.image.load('../assets/game objects/beartrap.png').convert_alpha(),
+            pygame.image.load('../assets/icons/beartrap.png').convert_alpha(),
             pygame.image.load('../assets/game objects/lantern.png').convert_alpha(),
-            pygame.image.load('../assets/game objects/rancidmeat.png').convert_alpha()
+            pygame.image.load('../assets/icons/rancidmeat.png').convert_alpha()
         ]
 
 
