@@ -125,7 +125,7 @@ class Room:
 
         # set up container and enemy
         self.crate.createBeartrapContainer(2,259,334)
-        self.spawner.createSpooks(2,226,148)
+        self.spawner.createSpooks(2,226,130)
 
         
         m.renderForeGround()

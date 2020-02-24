@@ -194,8 +194,8 @@ class Spooks(Character):
                 diry = copysign(1, self.target.y - self.y)
 
         # move toward specified direction
-        self.x += self.move_speed * dirx
-        self.y += self.move_speed * diry
+        self.x -= self.move_speed * dirx
+        self.y -= self.move_speed * diry
 
         # lower the sight counter, determines when enemy loses interest
         self.sight_counter -= 1
