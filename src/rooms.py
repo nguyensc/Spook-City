@@ -23,10 +23,10 @@ class Room:
         self.engine.objects.append(d)
         self.player.interactables.add(d)
         self.engine.drawables.add(d)
-        # set up lootable containers
-        self.crate.createBeartrapContainer(2,100,16)
-        self.crate.createLanternContainer(2,364,16)
-        self.crate.createRandcidMeatContaier(2,316,264)
+
+        # set up enemy and lootable container
+        self.spawner.createEnemy(2,42,96)
+        self.crate.createLanternContainer(2,160,340)
     
         m.renderForeGround()
 
@@ -44,12 +44,90 @@ class Room:
         self.engine.objects.append(d)
         self.player.interactables.add(d)
         self.engine.drawables.add(d)
-        # set up lootable containers
-        self.crate.createLanternContainer(2,100,16)
-        self.crate.createBeartrapContainer(2,316,264)
-        # set up enemies
-        self.spawner.createEnemy(2,100,200)
 
+        # set up container and enemy
+        self.crate.createLanternContainer(2,387,328)
+        self.crate.createRandcidMeatContaier(2,244,332)
+        self.spawner.createEnemy(2,386,183)
+        self.spawner.createEnemy(2,41,71)
+
+        # door to next room
+        d2 = Door(2,61,189,413,65,"third room", self.engine)
+        self.engine.drawables.add(d2)
+        self.engine.objects.append(d2)
+        self.player.interactables.add(d2)
+        m.renderForeGround()
+
+        # add all impassable sprites to classes which need them
+        for impassable in m.getAllImpassables():
+            self.player.blocks.add(impassable)
+
+    def room3(self):
+        m = MapRenderer("third room", self.engine)
+        m.renderBackground()
+        
+        # set up doors
+        d = Door(2, 413, 65, 300, 16, "second room", self.engine)
+        self.engine.objects.append(d)
+        self.player.interactables.add(d)
+        self.engine.drawables.add(d)
+
+        # set up container and enemy
+        self.spawner.createAbbot(2,82,399)
+        self.crate.createBeartrapContainer(2,200,70)
+
+        d2 = Door(2,300,300,52,56,"fourth room", self.engine)
+        self.engine.drawables.add(d2)
+        self.engine.objects.append(d2)
+        self.player.interactables.add(d2)
+        
+        m.renderForeGround()
+
+        # add all impassable sprites to classes which need them
+        for impassable in m.getAllImpassables():
+            self.player.blocks.add(impassable)
+    
+    def room4(self):
+        m = MapRenderer("fourth room", self.engine)
+        m.renderBackground()
+        
+        # set up doors
+        d = Door(2, 52, 56, 300, 16, "third", self.engine)
+        self.engine.objects.append(d)
+        self.player.interactables.add(d)
+        self.engine.drawables.add(d)
+
+        # set up container and enemy
+        self.crate.createRandcidMeatContaier(2,234,66)
+        self.spawner.createAbbot(2,352,376)
+
+
+        d2 = Door(2,17,195,50,416,"fifth room", self.engine)
+        self.engine.drawables.add(d2)
+        self.engine.objects.append(d2)
+        self.player.interactables.add(d2)
+        
+        m.renderForeGround()
+
+        # add all impassable sprites to classes which need them
+        for impassable in m.getAllImpassables():
+            self.player.blocks.add(impassable)
+    
+    def room5(self):
+        m = MapRenderer("fifth room", self.engine)
+        m.renderBackground()
+        
+        # set up doors
+        d = Door(2, 50, 416, 17, 195, "fourth room", self.engine)
+        self.engine.objects.append(d)
+        self.player.interactables.add(d)
+        self.engine.drawables.add(d)
+
+        # set up container and enemy
+        self.crate.createBeartrapContainer(2,259,334)
+        self.spawner.createSpooks(2,226,148)
+
+        
         m.renderForeGround()
 
         # add all impassable sprites to classes which need them

@@ -27,6 +27,13 @@ class Door(Character):
             self.room_num = 1
         elif connected_room == "second room":
             self.room_num = 2
+        elif connected_room == "third room":
+            self.room_num = 3
+        elif connected_room == "fourth room":
+            self.room_num = 4
+        elif connected_room == "fifth room":
+            self.room_num = 5
+        
     
     def changeRoom(self):
         # begin the animation process of opening the door

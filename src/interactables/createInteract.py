@@ -22,7 +22,7 @@ class createInteract():
         temp = Container(z,x,y,'rancidmeat')
         self.player.interactables.add(temp)
         self.engine.drawables.add(temp)
-        self.engine.objects.add(temp)
+        self.engine.objects.append(temp)
 
 
 

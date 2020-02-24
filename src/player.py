@@ -369,7 +369,10 @@ class Player(Character):
         self.spotted_counter = self.spotted_timer
         self.interaction_counter = self.interaction_timer
 
-    def update(self, time):     
+    def update(self, time):   
+
+        print(self.getX(), " ", self.getY())
+
         if (self.sight_coords[0][0] < 0):
             # light raycasts stuff (drawing happens in engine!)
             self.light_raycast(50)

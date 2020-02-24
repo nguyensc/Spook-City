@@ -12,13 +12,18 @@ from rooms import Room
 from audio import BackgroundMusic
 
 def main() :
-    e = league.Engine("Survive")
+    e = league.Engine("Spook City")
     e.init_pygame()
     timer = pygame.time.set_timer(pygame.USEREVENT + 1, 1000 // league.Settings.gameTimeFactor)
     count = 0
 
     p = Player(1, 400, 300)
-    
+    spawner = EnemySpawner(e,p)
+    crate = createInteract(e,p)
+
+    spawner.createEnemy(2,42,96)
+    crate.createLanternContainer(2,160,340)
+
     mapRenderer = MapRenderer("first room", e)
     world_size = mapRenderer.renderBackground()
     p.world_size = world_size
@@ -31,17 +36,6 @@ def main() :
     e.objects.append(p)
     e.objects.append(overlay)
     e.objects.append(d)
-
-    # creation of enemies
-    spawner = EnemySpawner(e,p)
-
-    # crate spawner
-    crate = createInteract(e,p)
-
-    spawner.createSpooks(2,100,120)
-    crate.createBeartrapContainer(2,250,300)
-    
-  
 
     # any objects to be created on the fly
     p.items = e.dynamic_instances
@@ -63,10 +57,6 @@ def main() :
     # add all impassable sprites to classes which need them
     for impassable in mapRenderer.getAllImpassables():
         p.blocks.add(impassable)
-   
-
-    zombieTimer = 60000 #Change this to change spawn rate of the zombie
-    pygame.time.set_timer(pygame.USEREVENT, zombieTimer // league.Settings.gameTimeFactor)
 
     # create room object in engine
     e.room = Room(p, e, overlay)

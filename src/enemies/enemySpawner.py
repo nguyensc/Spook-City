@@ -18,6 +18,7 @@ class EnemySpawner() :
         temp = Spooks(z, x, y, self.p, self.e)
         temp.blocks = self.blocks
         temp.hazards = self.p.hazards
+        self.p.enemies.add(temp)
         self.e.drawables.add(temp)
         self.e.objects.append(temp)
 
@@ -25,6 +26,7 @@ class EnemySpawner() :
         temp = abbot(z,x,y, self.p)
         temp.blocks = self.blocks
         temp.hazards = self.p.hazards
+        self.p.enemies.add(temp)
         self.e.drawables.add(temp)
         self.e.objects.append(temp)
 
@@ -32,13 +34,9 @@ class EnemySpawner() :
         temp = Enemy(z,x,y,self.p)
         temp.blocks = self.blocks
         temp.hazards = self.p.hazards
+        self.p.enemies.add(temp)
         self.e.drawables.add(temp)
-        self.e.objects.add(temp)
+        self.e.objects.append(temp)
 
-    def createGremlin(self, z,x,y,owner):
-        temp = Gremlin(z,x,y,owner)
-        temp.blocks = self.blocks
-        temp.hazards = self.p.hazards
-        self.e.drawables.add(temp)
-        self.e.objects.add(temp)
+
     

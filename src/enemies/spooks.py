@@ -36,7 +36,6 @@ class Spooks(Character):
         self.image = pygame.image.load('../assets/enemy/zombie/skeleton-clothed-4.png')
         # animation for spooks goes here
         self.rect = self.image.get_rect(center=(self.x,self.y))
-        self.mask = pygame.mask.from_surface(self.image)
         self.last_hit = pygame.time.get_ticks()
         self.aggro = pygame.mixer.Sound('../assets/enemy/zombie/spookagro.wav')
         self.spawn_grem = pygame.mixer.Sound('../assets/enemy/zombie/gremspawn.wav')
@@ -137,6 +136,7 @@ class Spooks(Character):
             temp = Gremlin(2, self.x, self.y, self.target, self)
             temp.blocks = self.blocks
             temp.hazards = self.hazards
+            self.target.enemies.add(temp)
             self.engine.drawables.add(temp)
             self.engine.objects.append(temp)
             self.spawncounter = 100
