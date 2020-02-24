@@ -17,13 +17,13 @@ def main() :
     timer = pygame.time.set_timer(pygame.USEREVENT + 1, 1000 // league.Settings.gameTimeFactor)
     count = 0
 
-    p = Player(1, 240, 300)
+    p = Player(1, 400, 300)
     
-    mapRenderer = MapRenderer("fifth room", e)
+    mapRenderer = MapRenderer("first room", e)
     world_size = mapRenderer.renderBackground()
     p.world_size = world_size
     mapRenderer.renderForeGround()
-    d = Door(2, 300, 4, 300, 416, "first room", e)
+    d = Door(2, 300, 4, 300, 416, "second room", e)
     e.light_points = p.raycast_points
     e.player = p
     overlay = Overlay(p)
