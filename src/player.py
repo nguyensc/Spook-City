@@ -26,8 +26,10 @@ class Player(Character):
         self.enemies = pygame.sprite.Group()
 
         self.last_hit = pygame.time.get_ticks()
+        self.walk_timer = pygame.time.get_ticks()
         self.delta = 512
         self.screen = None
+        self.walkSound = pygame.mixer.Sound('../assets/player/walk.wav')
         # Where the player is positioned
         self.x = x
         self.y = y
@@ -98,6 +100,10 @@ class Player(Character):
                 raise OffScreenLeftException
             else:
                 self.x = self.x - amount
+                now = pygame.time.get_ticks()
+                if now - self.walk_timer > 300:
+                    self.walkSound.play()
+                    self.walk_timer = now
                 self.update(0)
                 while(len(self.collisions) != 0):
                     self.x = self.x + amount
@@ -113,6 +119,10 @@ class Player(Character):
                 raise OffScreenRightException
             else:
                 self.x = self.x + amount
+                now = pygame.time.get_ticks()
+                if now - self.walk_timer > 300:
+                    self.walkSound.play()
+                    self.walk_timer = now
                 self.update(0)
                 while(len(self.collisions) != 0):
                     self.x = self.x - amount
@@ -128,6 +138,10 @@ class Player(Character):
                 raise OffScreenTopException
             else:
                 self.y = self.y - amount
+                now = pygame.time.get_ticks()
+                if now - self.walk_timer > 300:
+                    self.walkSound.play()
+                    self.walk_timer = now
                 self.update(0)
                 if len(self.collisions) != 0:
                     self.y = self.y + amount
@@ -144,6 +158,10 @@ class Player(Character):
                 raise OffScreenBottomException
             else:
                 self.y = self.y + amount
+                now = pygame.time.get_ticks()
+                if now - self.walk_timer > 300:
+                    self.walkSound.play()
+                    self.walk_timer = now
                 self.update(0)
                 if len(self.collisions) != 0:
                     self.y = self.y - amount
