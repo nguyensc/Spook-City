@@ -33,8 +33,11 @@ class Spooks(Character):
         self.sight_counter = self.sight_timeout
         self.delta = 512
         # image only a place holder
-        self.image = pygame.image.load('../assets/enemy/zombie/spook-6.png')
+        self.sheet = Spritesheet_Ext('../assets/enemy/zombie/spook.png', 160, 144, 6)
+        self.sprites = self.sheet.sprites
+        self.image = self.sprites[0].image
         self.image = pygame.transform.scale(self.image, (72, 72))
+        self.image_timer = pygame.time.get_ticks()
         # animation for spooks goes here
         self.rect = self.image.get_rect(center=(self.x,self.y))
         self.last_hit = pygame.time.get_ticks()
@@ -214,6 +217,11 @@ class Spooks(Character):
 
     def update(self, time):
         if time != 0:
+            now = pygame.time.get_ticks()
+            if(now - self.image_timer > 84) :
+                self.image = self.sprites[pygame.time.get_ticks() % 6].image
+                self.image = pygame.transform.scale(self.image, (72, 72))
+                self.image_timer = now
             # patrol state
             if self.state == 0:
                 self.idle()

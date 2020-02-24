@@ -29,8 +29,11 @@ class Gremlin(Character):
 
 
         # this image is only a place holder
-        self.image = pygame.image.load('../assets/enemy/zombie/fire-skull-1.png')
-        self.image = pygame.transform.scale(self.image, (16,16))
+        self.sheet = Spritesheet_Ext('../assets/enemy/zombie/fire-skull.png', 96, 112, 8)
+        self.sprites = self.sheet.sprites
+        self.image = self.sprites[0].image
+        self.image = pygame.transform.scale(self.image, (16, 16))
+        self.image_timer = pygame.time.get_ticks()
 
         self.rect = self.image.get_rect(center=(self.x, self.y))
         self.mask = pygame.mask.from_surface(self.image)
@@ -197,6 +200,11 @@ class Gremlin(Character):
     def update(self, time):
 
         if time != 0:
+            now = pygame.time.get_ticks()
+            if(now - self.image_timer > 84) :
+                self.image = self.sprites[pygame.time.get_ticks() % 8].image
+                self.image = pygame.transform.scale(self.image, (16, 16))
+                self.image_timer = now
             # patrol state
             if self.state == 0:
                 self.move()

@@ -47,8 +47,12 @@ class Enemy(Character):
         self.y = y
         # The image to use.  This will change frequently
         # in an animated Player class.
-        self.image = pygame.image.load('../assets/enemy/zombie/hell-beast-idle-1.png').convert_alpha()
+        self.sheet = Spritesheet_Ext('../assets/enemy/zombie/hell-beast-idle.png', 55, 67, 6)
+        self.sprites = self.sheet.sprites
+        self.image = self.sprites[0].image
         self.image = pygame.transform.scale(self.image, (64, 64))
+        self.image_timer = pygame.time.get_ticks()
+
         self.rect = self.image.get_rect(center=(self.x, self.y))
         self.rect.width *= 1 / 2; self.rect.height *= 1 / 2;
         self.mask = pygame.mask.from_surface(self.image)
@@ -234,6 +238,11 @@ class Enemy(Character):
 
     def update(self, time):
         if time != 0:
+            now = pygame.time.get_ticks()
+            if(now - self.image_timer > 84) :
+                self.image = self.sprites[pygame.time.get_ticks() % 6].image
+                self.image = pygame.transform.scale(self.image, (64, 64))
+                self.image_timer = now
             # patrol state
             if self.state == 0:
                 self.move()
