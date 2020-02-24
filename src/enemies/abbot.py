@@ -30,8 +30,13 @@ class abbot(Character):
 
 
         # this image is only a place holder
+<<<<<<< HEAD
         self.image = pygame.image.load('../assets/enemy/zombie/skeleton-clothed-2.png')
         #self.image = pygame.transform.scale(self.image, (16,16))
+=======
+        self.image = pygame.image.load('../assets/enemy/zombie/ghost-idel-5.png')
+        self.image = pygame.transform.scale(self.image, (64, 64))
+>>>>>>> 1c9ccf97db16c707b48cf1e1adadf14a0012bec4
 
         self.rect = self.image.get_rect(center=(self.x, self.y))
         self.mask = pygame.mask.from_surface(self.image)
