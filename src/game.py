@@ -21,8 +21,9 @@ def main() :
     spawner = EnemySpawner(e,p)
     crate = createInteract(e,p)
 
-    spawner.createEnemy(2,42,96)
-    crate.createLanternContainer(2,160,340)
+    spawner.createEnemy(2,128,128)
+    crate.createLanternContainer(2,128,300)
+    crate.createBeartrapContainer(2,256,300)
 
     mapRenderer = MapRenderer("first room", e)
     world_size = mapRenderer.renderBackground()
@@ -41,15 +42,13 @@ def main() :
     p.items = e.dynamic_instances
     p.interactables.add(d)
 
-    # extra rects to draw debug only ! (for now)
-    e.extra_rect_drawables.append((p.rect, (255, 0, 0)))
-    e.extra_rect_drawables.append((p.collider.rect, (0, 255, 0)))
-
     # add all drawables
     e.drawables.add(p)
     e.drawables.add(d)
     mapRenderer.renderForeGround()
 
+    p.resetx = 300
+    p.resety = 416
 
     bgm = BackgroundMusic("lavender town")
     bgm.start_music()
@@ -60,6 +59,7 @@ def main() :
 
     # create room object in engine
     e.room = Room(p, e, overlay)
+    p.room = e.room
 
     e.key_events[pygame.K_a] = p.move_left
     e.key_events[pygame.K_d] = p.move_right

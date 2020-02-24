@@ -37,6 +37,7 @@ class Player(Character):
         self.sounds = Sound()
         self.walk_sound = pygame.mixer.Sound('../assets/player/walk.wav')
         self.walk_timer = pygame.time.get_ticks()
+        self.room = None
         # Where the player is positioned
         self.x = x
         self.y = y
@@ -415,12 +416,20 @@ class Player(Character):
             if pygame.sprite.collide_rect(self, self.collider):
                 self.collisions.append(sprite)
 
+        if pygame.sprite.spritecollideany(self, self.enemies):
+            self.reset_room()
+
 
     def ouch(self):
         now = pygame.time.get_ticks()
         if now - self.last_hit > 1000:
             self.health = self.health - 10
             self.last_hit = now
+
+    def reset_room(self):
+        self.room.engine.changeRoom(self.room.current_room)
+        self.x = self.resetx
+        self.y = self.resety
 
     def getX(self):
         return self.x   

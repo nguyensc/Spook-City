@@ -35,7 +35,7 @@ class Enemy(Character):
         self.timeout_counter = self.timeout
         self.timeout_position = (self.rect.x, self.rect.y)
         # player spotted timeout (how long to chase for)
-        self.sight_timeout = 30
+        self.sight_timeout = 60
         self.sight_counter = self.sight_timeout
 
         # Last time I was hit

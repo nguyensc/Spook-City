@@ -87,6 +87,7 @@ class Engine:
         # resetup player
         self.drawables.add(self.player)
         self.objects.append(self.player)
+        self.player.enemies.empty()
         self.player.reset_all_timers()
         self.player.blocks.empty()
         self.player.interactables.empty()
@@ -147,13 +148,13 @@ class Engine:
                 i.update()
                 # all item type objects must have an isLightSource attribute
                 if i.isLightSource:
-                        fog.blit(i.light, (i.x - 24, i.y - 24))
+                        fog.blit(i.light, (i.x - i.light_offsetx, i.y - i.light_offsety))
                 # run area of effect code if the dynamic instance has an aoe
-                if hasattr(i, "aoe_rect"):
-                    pygame.draw.rect(self.screen, (255,255,128,255), i.aoe_rect, 5)
+                #if hasattr(i, "aoe_rect"):
+                    #pygame.draw.rect(self.screen, (255,255,128,255), i.aoe_rect, 5)
                 # render the actual physical item
                 self.screen.blit(i.image, (i.x,i.y))
-                pygame.draw.rect(self.screen, (255,255,128,255), i.rect, 5)
+                #pygame.draw.rect(self.screen, (255,255,128,255), i.rect, 5)
 
 
             # drawables all go ontop of dynamic instances
@@ -166,14 +167,6 @@ class Engine:
             # show display ontop of fog
             if self.overlay:
                 self.show_overlay()
-
-            for rect, color in self.nospriteables:
-                pygame.draw.rect(self.screen, color, rect, 3)
-
-            # debug drawings (like collision rectangles)
-            for rect, color in self.extra_rect_drawables:
-                pygame.draw.rect(self.screen, color, rect, 3)
-
 
             # Could keep track of rectangles and update here, but eh.
             pygame.display.flip()

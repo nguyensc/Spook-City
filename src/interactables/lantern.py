@@ -20,6 +20,18 @@ class Lantern():
         self.isLightSource = 1
         self.light = pygame.image.load('../assets/light assets/Radial4.png').convert_alpha()
         self.light = pygame.transform.scale(self.light, (256, 256))
+        self.light_offsetx = 24
+        self.light_offsety = 24
+        self.sprite_speed = 3
+        self.sprite_speed_counter = 0
+
+    def animate(self):
+        # check the timing and see if ready to switch to next image index
+        if self.sprite_speed_counter <= 0:
+            self.image_index = (self.image_index + 1) % 7 
+            self.sprite_speed_counter = self.sprite_speed
+        else:
+            self.sprite_speed_counter -= 1    
 
     def update(self):
         self.image = pygame.Surface([256, 256]).convert_alpha()
@@ -28,7 +40,6 @@ class Lantern():
         self.lantern = self.sprites[self.image_index].image.convert_alpha()
         self.lantern = pygame.transform.scale(self.lantern, (48, 48))
 
-        # the actual light source image is rendered on the engine
         self.image.blit(self.lantern, (64, 64))
 
         return

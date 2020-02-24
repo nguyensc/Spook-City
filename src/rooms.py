@@ -12,11 +12,15 @@ class Room:
         self.overlay = overlay
         self.crate = createInteract(engine, player)
         self.spawner = EnemySpawner(engine,player)
+        self.current_room = 1
 
 
     def room1(self):
         m = MapRenderer("first room", self.engine)
         m.renderBackground()
+        self.current_room = 1
+        self.player.resetx = 300
+        self.player.resety = 416
        
         # set up doors
         d = Door(2, 300, 4, 300, 416, "second room", self.engine)
@@ -25,8 +29,9 @@ class Room:
         self.engine.drawables.add(d)
 
         # set up enemy and lootable container
-        self.spawner.createEnemy(2,42,96)
+        self.spawner.createEnemy(2,128,128)
         self.crate.createLanternContainer(2,160,340)
+        self.crate.createBeartrapContainer(2,256,300)
     
         m.renderForeGround()
 
@@ -38,6 +43,10 @@ class Room:
     def room2(self):
         m = MapRenderer("second room", self.engine)
         m.renderBackground()
+        self.current_room = 2
+        self.player.resetx = 300
+        self.player.resety = 416
+
         
         # set up doors
         d = Door(2, 300, 432, 300, 16, "first room", self.engine)
@@ -47,9 +56,9 @@ class Room:
 
         # set up container and enemy
         self.crate.createLanternContainer(2,387,328)
-        self.crate.createRandcidMeatContaier(2,244,332)
+        self.crate.createBeartrapContainer(2,330,332)
         self.spawner.createEnemy(2,386,183)
-        self.spawner.createEnemy(2,41,71)
+        self.spawner.createEnemy(2,60,71)
 
         # door to next room
         d2 = Door(2,61,189,413,65,"third room", self.engine)
@@ -65,6 +74,8 @@ class Room:
     def room3(self):
         m = MapRenderer("third room", self.engine)
         m.renderBackground()
+        self.current_room = 3
+
         
         # set up doors
         d = Door(2, 413, 65, 300, 16, "second room", self.engine)
@@ -90,6 +101,8 @@ class Room:
     def room4(self):
         m = MapRenderer("fourth room", self.engine)
         m.renderBackground()
+        self.current_room = 4
+
         
         # set up doors
         d = Door(2, 52, 56, 300, 16, "third", self.engine)
@@ -98,7 +111,7 @@ class Room:
         self.engine.drawables.add(d)
 
         # set up container and enemy
-        self.crate.createRandcidMeatContaier(2,234,66)
+        self.crate.createRancidMeatContainer(2,234,66)
         self.spawner.createAbbot(2,352,376)
 
 
@@ -116,6 +129,8 @@ class Room:
     def room5(self):
         m = MapRenderer("fifth room", self.engine)
         m.renderBackground()
+        self.current_room = 5
+
         
         # set up doors
         d = Door(2, 50, 416, 17, 195, "fourth room", self.engine)

@@ -19,8 +19,16 @@ class Door(Character):
         self.animation_timer = 3
         self.animation_counter = self.animation_timer
         self.isDoor = 1
+        self.isLightSource = 1
+        self.light = pygame.image.load("../assets/light assets/orangelight.png").convert_alpha()
+        self.light = pygame.transform.scale(self.light, (128, 128))
+        self.light_offsetx = 24
+        self.light_offsety = 24
+        self.glow = -1
+        self.transform = (128, 128)
         self.open = 0
         self.engine = engine
+        self.engine.dynamic_instances.append(self)
         # parse connected room
         self.room_num = 0
         if connected_room == "first room":
@@ -33,13 +41,12 @@ class Door(Character):
             self.room_num = 4
         elif connected_room == "fifth room":
             self.room_num = 5
-        
     
     def changeRoom(self):
         # begin the animation process of opening the door
         self.open = 1
 
-    def update(self, time):
+    def update(self, time=0):
         # must be animated all the way
         if self.open:
             if self.image_index >= 5:
@@ -58,5 +65,8 @@ class Door(Character):
         # display updated image
         self.image = self.sprites[self.image_index].image
         self.image = pygame.transform.scale(self.image, (64, 64))
+
+        self.light = pygame.transform.scale(self.light, self.transform)
+
 
         return

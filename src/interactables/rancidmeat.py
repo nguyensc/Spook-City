@@ -4,7 +4,7 @@ import pygame
 class RancidMeat():
     def __init__(self, x=0, y=0):    
 
-        self.sheet = Spritesheet('../assets/game objects/rancidmeat.png', 32, 1)
+        self.sheet = Spritesheet('../assets/game objects/rancidmeat.png', 32, 4)
         self.sprites = self.sheet.sprites
         self.image_index = 0
         self.image = self.sprites[self.image_index].image.convert_alpha()
@@ -16,13 +16,15 @@ class RancidMeat():
         self.rect.y = self.y + self.rect.height // 3
         self.rect.width = self.rect.width // 5
         self.rect.height = self.rect.height // 5
-        self.light = pygame.image.load("../assets/redlight.png").convert_alpha()
-        self.light = pygame.transform.scale(self.light, (96, 96))
+        self.light = pygame.image.load("../assets/light assets/redlight.png").convert_alpha()
+        self.light = pygame.transform.scale(self.light, (96,96))
+        self.light_offsetx = 24
+        self.light_offsety = 24
 
         # a separate collision rectangle for the area of effect (think of this like strength of smell for attracting baddies)
         self.aoe_rect = self.image.get_rect(center=(self.rect.x, self.rect.y))
-        self.aoe_rect.width = 128
-        self.aoe_rect.height = 128
+        self.aoe_rect.width = 256
+        self.aoe_rect.height = 256
         self.aoe_rect.x -= self.aoe_rect.width // 3
         self.aoe_rect.y -= self.aoe_rect.height // 3
 
