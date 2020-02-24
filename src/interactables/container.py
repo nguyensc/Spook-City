@@ -21,16 +21,7 @@ class Container(Character):
         self.isDoor = 0
         self.isEmpty = False
 
-
-    '''
-    def animate(self):
-        # check the timing and see if ready to switch to next image index
-        if self.sprite_speed_counter <= 0:
-            self.image_index = min(self.image_index + 1, 3) 
-            self.sprite_speed_counter = self.sprite_speed
-        else:
-            self.sprite_speed_counter -= 1       
-    '''
+        
     def makeEmpty(self):
         isEmpty = True
         self.contents = 0

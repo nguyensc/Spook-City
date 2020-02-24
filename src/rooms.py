@@ -2,14 +2,16 @@ import pygame
 import league
 from mapRenderer import MapRenderer
 from door import Door
-from container import Container
-from bogey import Bogey
+from interactables.createInteract import createInteract
+from enemies.enemySpawner import EnemySpawner
 
 class Room:
     def __init__(self, player = None, engine = None, overlay = None):
         self.player = player
         self.engine = engine
-        self.overlay = overlay    
+        self.overlay = overlay
+        self.crate = createInteract(engine, player)
+        self.spawner = EnemySpawner(engine,player)
 
 
     def room1(self):
@@ -22,16 +24,10 @@ class Room:
         self.player.interactables.add(d)
         self.engine.drawables.add(d)
         # set up lootable containers
-        containers = [
-            Container(2, 100, 16, "lantern"),
-            Container(2, 364, 16, "beartrap"),
-            Container(2, 316, 264, "rancidmeat")
-            ]
-        for container in containers:
-            self.engine.objects.append(container)
-            self.player.interactables.add(container)
-            self.engine.drawables.add(container)
-
+        self.crate.createBeartrapContainer(2,100,16)
+        self.crate.createLanternContainer(2,364,16)
+        self.crate.createRandcidMeatContaier(2,316,264)
+    
         m.renderForeGround()
 
         # add all impassable sprites to classes which need them
@@ -49,19 +45,10 @@ class Room:
         self.player.interactables.add(d)
         self.engine.drawables.add(d)
         # set up lootable containers
-        containers = [
-            Container(2, 100, 16, "lantern"),
-            Container(2, 316, 264, "beartrap")
-            ]
-        for container in containers:
-            self.engine.objects.append(container)
-            self.player.interactables.add(container)
-            self.engine.drawables.add(container)
+        self.crate.createLanternContainer(2,100,16)
+        self.crate.createBeartrapContainer(2,316,264)
         # set up enemies
-        b = Bogey(2, 100, 150, self.player)
-        self.engine.objects.append(b)
-        self.player.enemies.add(b)
-        self.engine.drawables.add(b)
+        self.spawner.createEnemy(2,100,200)
 
         m.renderForeGround()
 

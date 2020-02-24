@@ -2,9 +2,11 @@ from league import *
 from audio import Sound
 from math import radians, cos, sin, copysign
 import pygame
-from beartrap import BearTrap
-from lantern import Lantern
-from rancidmeat import RancidMeat
+import interactables
+from interactables.beartrap import BearTrap
+from interactables.lantern import Lantern
+from interactables.rancidmeat import RancidMeat
+
 
 
 class Player(Character):
@@ -282,7 +284,6 @@ class Player(Character):
         self.heart_rate = 3
 
         return  
-
 
     def interact(self, time):
         # check to make sure the player is in range of an interactable object
