@@ -23,8 +23,6 @@ def main() :
     world_size = mapRenderer.renderBackground()
     p.world_size = world_size
     mapRenderer.renderForeGround()
-    l = Light(20, 0, 0, p)
-    #f = Flashlight(200, 500, 2, p)
     d = Door(2, 300, 4, 300, 416, "first room", e)
     e.light_points = p.raycast_points
     e.player = p
