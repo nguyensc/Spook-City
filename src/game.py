@@ -42,7 +42,7 @@ def main() :
 
     p = Player(1, 240, 300)
     
-    mapRenderer = MapRenderer("fourth room", e)
+    mapRenderer = MapRenderer("fifth room", e)
     world_size = mapRenderer.renderBackground()
     p.world_size = world_size
     mapRenderer.renderForeGround()

@@ -25,7 +25,8 @@ class MapRenderer():
             "first room": 1,
             "second room": 2,
             "third room": 3,
-            "fourth room": 4
+            "fourth room": 4,
+            "fifth room": 5
         }
 
         selector = mapDict.get(self.mapName)
@@ -61,6 +62,14 @@ class MapRenderer():
                 '../assets/map assets/sprite sheets/Hospital Tiles/TileB_PHC_Interior-Hospital.png', 16, '../assets/map assets/level 4/decoration 1.lvl',
                 '../assets/map assets/sprite sheets/Hospital Tiles/TileB_PHC_Interior-Hospital.png', 16, '../assets/map assets/level 4/decoration 2.lvl',
                 '../assets/map assets/sprite sheets/Hospital Tiles/TileA4_PHC_Interior-Hospital.png', 23, '../assets/map assets/level 4/ceiling.lvl')
+
+        if selector == 5:
+            self.map = MapParams(
+                '../assets/map assets/sprite sheets/Hospital Tiles/TileA5_PHC_Interior-Hospital.png', 8, '../assets/map assets/level 5/floors.lvl',
+                '../assets/map assets/sprite sheets/Hospital Tiles/TileA4_PHC_Interior-Hospital.png', 23, '../assets/map assets/level 5/walls.lvl',
+                '../assets/map assets/sprite sheets/Hospital Tiles/TileB_PHC_Interior-Hospital.png', 16, '../assets/map assets/level 5/decoration 1.lvl',
+                '../assets/map assets/sprite sheets/Hospital Tiles/TileB_PHC_Interior-Hospital.png', 16, '../assets/map assets/level 5/decoration 2.lvl',
+                '../assets/map assets/sprite sheets/Hospital Tiles/TileA4_PHC_Interior-Hospital.png', 23, '../assets/map assets/level 5/ceiling.lvl')
 
     def getAllImpassables(self):
         # returns all impassable sprites, this function is only used in game.py -xam
