@@ -29,7 +29,7 @@ class Gremlin(Character):
 
 
         # this image is only a place holder
-        self.image = pygame.image.load('../assets/enemy/zombie/skeleton-clothed-2.png')
+        self.image = pygame.image.load('../assets/enemy/zombie/fire-skull-1.png')
         self.image = pygame.transform.scale(self.image, (16,16))
 
         self.rect = self.image.get_rect(center=(self.x, self.y))
