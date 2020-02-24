@@ -372,8 +372,6 @@ class Player(Character):
 
     def update(self, time):   
 
-        print(self.getX(), " ", self.getY())
-
         if (self.sight_coords[0][0] < 0):
             # light raycasts stuff (drawing happens in engine!)
             self.light_raycast(50)

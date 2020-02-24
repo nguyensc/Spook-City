@@ -1,9 +1,10 @@
+from .settings import *
+import pygame
 import abc
 import os
 
 os.environ['PYGAME_HIDE_SUPPORT_PROMPT'] = "hide"
-import pygame
-from .settings import *
+
 
 class Engine:
     """Engine is the definition of our game engine.  We want it to
@@ -32,12 +33,12 @@ class Engine:
         self.nospriteables = []
         self.player = None
         self.dynamic_instances = []
-        self.light_points = [] # used for raycasting light 
+        self.light_points = []  # used for raycasting light
         self.room = None
 
         self.title = title
         self.running = False
-        self.clock = None 
+        self.clock = None
         self.events = {}
         self.key_events = {}
         self.key_events[Settings.statistics_key] = self.toggle_statistics
@@ -62,7 +63,8 @@ class Engine:
         # Startup the pygame system
         pygame.init()
         # Create our window
-        self.screen = pygame.display.set_mode((Settings.width, Settings.height))
+        self.screen = pygame.display.set_mode(
+            (Settings.width, Settings.height))
         # Set the title that will display at the top of the window.
         pygame.display.set_caption(self.title)
         # Create the clock
@@ -77,8 +79,8 @@ class Engine:
         # Set the repeat delay for key presses
         pygame.key.set_repeat(Settings.key_repeat)
         # Create statistics font
-        self.statistics_font = pygame.font.Font(None,30)
-    
+        self.statistics_font = pygame.font.Font(None, 30)
+
     def changeRoom(self, room_num):
         self.drawables.empty()
         self.mapDrawables.empty()
@@ -99,6 +101,12 @@ class Engine:
             self.room.room1()
         elif room_num == 2:
             self.room.room2()
+        elif room_num == 3:
+            self.room.room3()
+        elif room_num == 4:
+            self.room.room4()
+        elif room_num == 5:
+            self.room.room5()
 
     def run(self):
         """The main game loop.  As close to our book code as possible."""
@@ -108,11 +116,12 @@ class Engine:
             now = pygame.time.get_ticks()
             self.real_delta_time = now - self.last_checked_time
             self.last_checked_time = now
-            self.game_delta_time = self.real_delta_time * (0.001 * Settings.gameTimeFactor)
+            self.game_delta_time = self.real_delta_time * \
+                (0.001 * Settings.gameTimeFactor)
 
             # Wipe screen
             self.screen.fill(Settings.fill_color)
-            
+
             # Process inputs
             self.handle_inputs()
 
@@ -120,49 +129,50 @@ class Engine:
             # Each object must have an update(time) method
             self.check_collisions()
             for o in self.objects:
-                o.update(self.game_delta_time)          
+                o.update(self.game_delta_time)
 
             self.mapDrawables.draw(self.screen)
-            
+
             # Show statistics?
             if self.visible_statistics:
                 self.show_statistics()
 
             # set up fog-of-war
             fog = pygame.Surface((Settings.width, Settings.height))
-            fog.fill(pygame.color.Color(30,30,30))
+            fog.fill(pygame.color.Color(30, 30, 30))
 
-            # draw player light onto 
+            # draw player light onto
             light = pygame.Surface((480, 480)).convert_alpha()
-            light.fill((255,255,255,0))
+            light.fill((255, 255, 255, 0))
             light_polygon = []
             for coords in self.light_points:
                 light_polygon.append(coords)
             # must convert list -> typle for use in draw_polygon
 
-            pygame.draw.polygon(light, (255,255,196,128), tuple(light_polygon))
-            fog.blit(light,(0,0))
+            pygame.draw.polygon(light, (255, 255, 196, 128),
+                                tuple(light_polygon))
+            fog.blit(light, (0, 0))
 
             # draw any runtime instances created by the player
             for i in self.dynamic_instances:
                 i.update()
                 # all item type objects must have an isLightSource attribute
                 if i.isLightSource:
-                        fog.blit(i.light, (i.x - i.light_offsetx, i.y - i.light_offsety))
+                    fog.blit(i.light, (i.x - i.light_offsetx,
+                                       i.y - i.light_offsety))
                 # run area of effect code if the dynamic instance has an aoe
-                #if hasattr(i, "aoe_rect"):
-                    #pygame.draw.rect(self.screen, (255,255,128,255), i.aoe_rect, 5)
+                # if hasattr(i, "aoe_rect"):
+                #pygame.draw.rect(self.screen, (255,255,128,255), i.aoe_rect, 5)
                 # render the actual physical item
-                self.screen.blit(i.image, (i.x,i.y))
+                self.screen.blit(i.image, (i.x, i.y))
                 #pygame.draw.rect(self.screen, (255,255,128,255), i.rect, 5)
-
 
             # drawables all go ontop of dynamic instances
             self.drawables.draw(self.screen)
 
             #fog.blit(self.light_source.image, self.light_source.rect)
             #fog.blit(self.flashlight.image, self.flashlight.rect)
-            self.screen.blit(fog,(0,0),special_flags=pygame.BLEND_RGBA_MULT)
+            self.screen.blit(fog, (0, 0), special_flags=pygame.BLEND_RGBA_MULT)
 
             # show display ontop of fog
             if self.overlay:
@@ -177,22 +187,24 @@ class Engine:
     def rotate_image_center(self, img, angle, pos):
         w, h = img.get_size()
 
-        box = [pygame.math.Vector2(p) for p in [(0, 0), (w, 0), (w, -h), (0, -h)]]
+        box = [pygame.math.Vector2(p)
+               for p in [(0, 0), (w, 0), (w, -h), (0, -h)]]
         box_rotate = [p.rotate(angle) for p in box]
 
-        min_box = (min(box_rotate, key=lambda p: p[0])[0], min(box_rotate, key=lambda p: p[1])[1])
-        max_box = (max(box_rotate, key=lambda p: p[0])[0], max(box_rotate, key=lambda p: p[1])[1])
-        
+        min_box = (min(box_rotate, key=lambda p: p[0])[
+                   0], min(box_rotate, key=lambda p: p[1])[1])
+        max_box = (max(box_rotate, key=lambda p: p[0])[
+                   0], max(box_rotate, key=lambda p: p[1])[1])
 
         pivot = pygame.math.Vector2(w/5, -h/2)
         pivot_rotate = pivot.rotate(angle)
-        pivot_move   = pivot_rotate - pivot
+        pivot_move = pivot_rotate - pivot
 
-        origin = (pos[0] + min_box[0] - pivot_move[0], pos[1] - max_box[1] + pivot_move[1])
+        origin = (pos[0] + min_box[0] - pivot_move[0],
+                  pos[1] - max_box[1] + pivot_move[1])
 
         rotated_image = pygame.transform.rotate(img, angle)
         return (rotated_image, origin)
-
 
     def check_collisions(self):
         for i in self.collisions.keys():
@@ -207,10 +219,12 @@ class Engine:
 
     def show_statistics(self):
         statistics_string = "Version: " + str(Settings.version)
-        statistics_string = statistics_string +  " FPS: " + str(int(self.clock.get_fps()))
-        fps = self.statistics_font.render(statistics_string, True, Settings.statistics_color)
+        statistics_string = statistics_string + \
+            " FPS: " + str(int(self.clock.get_fps()))
+        fps = self.statistics_font.render(
+            statistics_string, True, Settings.statistics_color)
         self.screen.blit(fps, (10, 10))
-    
+
     def show_overlay(self):
         self.screen.blit(self.overlay.image, Settings.overlay_location)
 
@@ -226,19 +240,4 @@ class Engine:
                 self.events[event.type](self.game_delta_time)
             if event.type == pygame.KEYDOWN:
                 if event.key in self.key_events.keys():
-                    self.key_events[event.key](self.game_delta_time) 
-
-# [1 0 0 0
-#  0 cos -sin 0
-#  0 sin cos 0
-#  0 0 0 1] rotate x
-
-#[cos 0 sin 0
-# 0 1 0 0
-# -sin 0 cos 0
-# 0 0 0 1] rotate y
-
-#[cos -sin 0 0
-# sin cos 0 0
-# 0 0 1 0
-# 0 0 0 1] rotate z
+                    self.key_events[event.key](self.game_delta_time)

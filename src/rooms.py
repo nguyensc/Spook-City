@@ -49,7 +49,7 @@ class Room:
 
         
         # set up doors
-        d = Door(2, 300, 432, 300, 16, "first room", self.engine)
+        d = Door(2, 300, 432, 300, 16, "third room", self.engine)
         self.engine.objects.append(d)
         self.player.interactables.add(d)
         self.engine.drawables.add(d)
@@ -62,6 +62,7 @@ class Room:
 
         # door to next room
         d2 = Door(2,61,189,413,65,"third room", self.engine)
+        print("changing room")
         self.engine.drawables.add(d2)
         self.engine.objects.append(d2)
         self.player.interactables.add(d2)

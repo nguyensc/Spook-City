@@ -256,7 +256,6 @@ class Enemy(Character):
             if hasattr(hazard, "aoe_rect"):
                 # run aoe code
                 hazard.aoe(self)
-                print(hazard.fortitude)
                 if hazard.fortitude <= 0:
                     self.target = self.player
                     del hazard

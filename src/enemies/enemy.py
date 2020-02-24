@@ -179,7 +179,6 @@ class Enemy(Character):
 
         # collision handling
         while len(self.collisions) != 0:
-            print("hit")
             # move in opposite x/y directions
             # will not be moved if direction if 0
             self.x -= self.dirx * 3
@@ -206,7 +205,6 @@ class Enemy(Character):
 
         self.collider.x = tarx; self.collider.y = tary;
         if pygame.sprite.spritecollideany(self.collider, self.blocks) != None:
-            print("hit")
             if self.dirx < self.diry:
                 dirx = copysign(1, self.target.x - self.x)
                 diry *= -1
@@ -251,7 +249,6 @@ class Enemy(Character):
                 if hasattr(hazard, "aoe_rect"):
                     # run aoe code
                     hazard.aoe(self)
-                    print("x: ", self.rect.x, " hazard x: ", hazard.rect.x)
                     if hazard.fortitude <= 0:
                         self.hazards.remove(hazard)
                         self.player.items.remove(hazard)
