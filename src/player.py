@@ -35,6 +35,8 @@ class Player(Character):
         self.delta = 512
         self.screen = None
         self.sounds = Sound()
+        self.walk_sound = pygame.mixer.Sound('../assets/player/walk.wav')
+        self.walk_timer = pygame.time.get_ticks()
         # Where the player is positioned
         self.x = x
         self.y = y
@@ -113,6 +115,10 @@ class Player(Character):
                 raise OffScreenLeftException
             else:
                 self.x = self.x - amount
+                now = pygame.time.get_ticks()
+                if now - self.walk_timer > 300:
+                    self.walk_sound.play()
+                    self.walk_timer = now
                 self.update(0)
                 while(len(self.collisions) != 0):
                     self.x = self.x + amount
@@ -134,6 +140,10 @@ class Player(Character):
                 raise OffScreenRightException
             else:
                 self.x = self.x + amount
+                now = pygame.time.get_ticks()
+                if now - self.walk_timer > 300:
+                    self.walk_sound.play()
+                    self.walk_timer = now
                 self.update(0)
                 while(len(self.collisions) != 0):
                     self.x = self.x - amount
@@ -155,6 +165,10 @@ class Player(Character):
                 raise OffScreenTopException
             else:
                 self.y = self.y - amount
+                now = pygame.time.get_ticks()
+                if now - self.walk_timer > 300:
+                    self.walk_sound.play()
+                    self.walk_timer = now
                 self.update(0)
                 if len(self.collisions) != 0:
                     self.y = self.y + amount
@@ -177,6 +191,10 @@ class Player(Character):
                 raise OffScreenBottomException
             else:
                 self.y = self.y + amount
+                now = pygame.time.get_ticks()
+                if now - self.walk_timer > 300:
+                    self.walk_sound.play()
+                    self.walk_timer = now
                 self.update(0)
                 if len(self.collisions) != 0:
                     self.y = self.y - amount

@@ -26,6 +26,7 @@ class abbot(Character):
         self.sight_timeout = 30
         self.sight_counter = self.sight_timeout
         self.last_hit = pygame.time.get_ticks()
+        self.aggro = pygame.mixer.Sound('..assets/enemy/zombie/abbotagro.wav')
 
 
         # this image is only a place holder
@@ -173,6 +174,7 @@ class abbot(Character):
         
         # begin running instead of walking
         self.move_speed = self.run_speed
+        self.aggro.play()
         
         tarx = self.x + self.move_speed * self.dirx
         tary = self.y + self.move_speed * self.diry

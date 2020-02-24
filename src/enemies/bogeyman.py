@@ -52,6 +52,7 @@ class Enemy(Character):
         self.rect = self.image.get_rect(center=(self.x, self.y))
         self.rect.width *= 1 / 2; self.rect.height *= 1 / 2;
         self.mask = pygame.mask.from_surface(self.image)
+        self.aggro = pygame.mixer.Sound('../assets/enemy/zombie/bogeyagro')
 
         # How big the world is, so we can check for boundries
         self.world_size = (Settings.width, Settings.height)
@@ -198,6 +199,7 @@ class Enemy(Character):
         
         # begin running instead of walking
         self.move_speed = self.run_speed
+        self.aggro.play()
         tarx = self.x + self.move_speed * self.dirx
         tary = self.y + self.move_speed * self.diry
         # temporary direction values, will be changed if there is a potential collision

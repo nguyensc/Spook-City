@@ -38,6 +38,8 @@ class Spooks(Character):
         self.rect = self.image.get_rect(center=(self.x,self.y))
         self.mask = pygame.mask.from_surface(self.image)
         self.last_hit = pygame.time.get_ticks()
+        self.aggro = pygame.mixer.Sound('../assets/enemy/zombie/spookagro.wav')
+        self.spawn_grem = pygame.mixer.Sound('../assets/enemy/zombie/gremspawn.wav')
 
         self.blocks = pygame.sprite.Group()
         self.hazards_blocks = pygame.sprite.Group()
@@ -138,6 +140,7 @@ class Spooks(Character):
             self.engine.drawables.add(temp)
             self.engine.objects.append(temp)
             self.spawncounter = 100
+            self.spawn_grem.play()
             self.state = 0
         else:
             self.spawncounter = self.spawncounter - 1
@@ -174,6 +177,7 @@ class Spooks(Character):
         
         # begin running instead of walking
         self.move_speed = self.run_speed
+        self.aggro.play()
         tarx = self.x + self.move_speed * self.dirx
         tary = self.y + self.move_speed * self.diry
         # temporary direction values, will be changed if there is a potential collision
