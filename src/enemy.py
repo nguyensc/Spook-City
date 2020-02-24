@@ -256,7 +256,7 @@ class Enemy(Character):
                         self.hazards.remove(hazard)
                         self.player.items.remove(hazard)
                         self.target = self.player
-                        self.state = 0
+                        self.state = 0 
 
                 elif pygame.sprite.collide_rect(self, hazard) and not hazard.triggered:
                     hazard.triggered = 1

@@ -7,7 +7,8 @@ class BackgroundMusic():
             self.name = "../assets/music assets/Lavender Town.mp3"
         if name == "dream fatigue":
             self.name = "../assets/music assets/Dream Fatigue.mp3"
-        
+        else:
+            self.name = "../assets/music assets/Lavender Town.mp3"
         pygame.mixer.music.load(self.name)
     
     def start_music(self):
