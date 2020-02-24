@@ -45,6 +45,7 @@ class Engine:
         self.drawables = pygame.sprite.LayeredUpdates()
         self.mapDrawables = pygame.sprite.LayeredUpdates()
         self.screen = None
+        self.window = None
         self.real_delta_time = 0
         self.visible_statistics = False
         self.statistics_font = None
@@ -151,7 +152,7 @@ class Engine:
                 if hasattr(i, "aoe_rect"):
                     pygame.draw.rect(self.screen, (255,255,128,255), i.aoe_rect, 5)
                 # render the actual physical item
-                self.screen.blit(i.image, (i.x, i.y))
+                self.screen.blit(i.image, (i.x,i.y))
                 pygame.draw.rect(self.screen, (255,255,128,255), i.rect, 5)
 
 
@@ -179,7 +180,6 @@ class Engine:
 
             # Frame limiting code
             self.clock.tick(Settings.fps)
-
 
     def rotate_image_center(self, img, angle, pos):
         w, h = img.get_size()

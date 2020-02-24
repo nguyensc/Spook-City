@@ -19,11 +19,13 @@ def main() :
 
     p = Player(1, 240, 300)
     
-    mapRenderer = MapRenderer("first room", e)
+    mapRenderer = MapRenderer("fifth room", e)
     world_size = mapRenderer.renderBackground()
     p.world_size = world_size
     mapRenderer.renderForeGround()
-    d = Door(2, 300, 4, 300, 416, "second room", e)
+    l = Light(20, 0, 0, p)
+    #f = Flashlight(200, 500, 2, p)
+    d = Door(2, 300, 4, 300, 416, "first room", e)
     e.light_points = p.raycast_points
     e.player = p
     overlay = Overlay(p)
@@ -57,8 +59,8 @@ def main() :
     mapRenderer.renderForeGround()
 
 
-    #bgm = BackgroundMusic("lavender city")
-    #bgm.start_music()
+    bgm = BackgroundMusic("lavender town")
+    bgm.start_music()
   
     # add all impassable sprites to classes which need them
     for impassable in mapRenderer.getAllImpassables():
@@ -70,7 +72,7 @@ def main() :
 
     # create room object in engine
     e.room = Room(p, e, overlay)
-    
+
     e.key_events[pygame.K_a] = p.move_left
     e.key_events[pygame.K_d] = p.move_right
     e.key_events[pygame.K_w] = p.move_up
